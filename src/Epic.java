@@ -10,20 +10,20 @@ public class Epic extends Task {
         this.setStatus(Status.NEW);
     }
 
-    HashMap<Integer, SubTask> getSubTasks() {
+    protected HashMap<Integer, SubTask> getSubTasks() {
         return subTasks;
     }
 
-    void setSubTasks(int ID, SubTask subTask) {
+    protected void setSubTasks(int ID, SubTask subTask) {
         subTasks.put(ID, subTask);
     }
 
     @Override
     public String toString() {
-        return "\n[Тип задачи] Эпик,\n[ID] " + this.ID +
-                ",\n[Описание] " + this.description +
-                ",\n[Статус] " + this.status +
-                ",\n[Кол-во подзадач] " + this.subTasks.size() +
+        return "\n[Тип задачи] Эпик,\n[ID] " + this.getID() +
+                ",\n[Описание] " + this.getDescription() +
+                ",\n[Статус] " + this.getStatus() +
+                ",\n[Кол-во подзадач] " + subTasks.size() +
                 "\n******************";
     }
 }

@@ -8,19 +8,19 @@ public class SubTask extends Task{
         this.setStatus(Status.NEW);
     }
 
-    Epic getParentEpic() {
+    protected Epic getParentEpic() {
         return parentEpic;
     }
 
-    void setParentEpic(Epic parentEpic) {
+    protected void setParentEpic(Epic parentEpic) {
         this.parentEpic = parentEpic;
     }
 
     @Override
     public String toString() {
-        return "\n[Тип задачи] Подзадача,\n[ID] " + this.ID +
-                ",\n[Описание] " + this.description +
-                ",\n[Статус] " + this.status +
+        return "\n[Тип задачи] Подзадача,\n[ID] " + this.getID() +
+                ",\n[Описание] " + this.getDescription() +
+                ",\n[Статус] " + this.getStatus() +
                 ",\n[Эпик] " + this.parentEpic +
                 "\n-------------------";
     }

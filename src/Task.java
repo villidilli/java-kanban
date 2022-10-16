@@ -1,8 +1,8 @@
 public class Task {
-    protected int ID;
-    protected String name;
-    protected String description;
-    protected Status status;
+    private int ID;
+    private String name;
+    private String description;
+    private Status status;
 
     public Task(String name, String description){
         this.name = name;
@@ -22,6 +22,9 @@ public class Task {
         return name;
     }
 
+    protected void setName(String name) {
+        this.name = name;
+    }
 
     protected Status getStatus() {
         return status;
@@ -31,11 +34,18 @@ public class Task {
         this.status = status;
     }
 
+    protected String getDescription() {
+        return description;
+    }
+    protected void setDescription(String description) {
+        this.description = description;
+    }
+
     @Override
     public String toString() {
-        return "\n[Тип задачи] Задача,\n[ID] " + this.ID +
-                ",\n[Описание] " + this.description +
-                "\n[Статус] " + this.status +
+        return "\n[Тип задачи] Задача,\n[ID] " + ID +
+                ",\n[Описание] " + description +
+                "\n[Статус] " + status +
                 "\n******************";
     }
 }
