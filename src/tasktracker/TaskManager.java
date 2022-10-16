@@ -1,3 +1,5 @@
+package tasktracker;
+
 import java.util.HashMap;
 
 public class TaskManager {
@@ -30,7 +32,7 @@ public class TaskManager {
                 epics.put(epic.getID(), epic);
             }
         } else {
-            objectToReturn = "Задача не создана, объект не передан в метод";
+            objectToReturn = "=> О Ш И Б К А <= Передаваемый объект = null";
         }
         return objectToReturn;
     }
@@ -45,7 +47,7 @@ public class TaskManager {
             subTasks.put(subTask.getID(),subTask);
             objectToReturn = subTask;
         } else {
-            objectToReturn = "Задача не создана, объект не передан в метод";
+            objectToReturn = "=> О Ш И Б К А <= Передаваемый объект = null";
         }
         return objectToReturn;
     }
@@ -60,7 +62,7 @@ public class TaskManager {
                 objectToReturn = epics;
             }
         } else {
-            objectToReturn = "Не указан тип задачи для выполнения";
+            objectToReturn = "=> О Ш И Б К А <= Передаваемый объект = null";
         }
         return objectToReturn;
     }
@@ -73,15 +75,14 @@ public class TaskManager {
             } else if (aClass == Epic.class) {
                 epics.clear();
             }
-            System.out.println("Все задачи удалены");
         } else {
-            System.out.println("Не указан тип задачи для выполнения");
+            System.out.println("=> О Ш И Б К А <= Передаваемый объект = null");
         }
     }
     public Object getObjectByID (int ID){
         Object objectToReturn = "";
         if (ID == 0 || ID > countObjects) {
-            objectToReturn = "Объект с ID [" + ID + "] отсутствует";
+            objectToReturn = "=> О Ш И Б К А <= Объект с ID [" + ID + "] не найден";
         } else {
             if (tasks.containsKey(ID)) {
                 objectToReturn = tasks.get(ID);
@@ -90,33 +91,29 @@ public class TaskManager {
             } else if (epics.containsKey(ID)) {
                 objectToReturn = epics.get(ID);
             }
-            System.out.println("Задача с ID [" + ID + "]");
         }
         return  objectToReturn;
     }
     public Object deleteObjectByID (int ID){
         Object objectToReturn = "";
         if (ID == 0 || ID > countObjects) {
-            objectToReturn = "Объект с ID [" + ID + "] отсутствует";
+            objectToReturn = "=> О Ш И Б К А <= Объект с ID [" + ID + "] не найден";
         } else {
             if (tasks.containsKey(ID)) {
-                objectToReturn = "Удалена задача: [название] " + tasks.get(ID).getName()
-                        + " [ID] " + tasks.get(ID).getID();
+                objectToReturn = tasks.get(ID);
                 tasks.remove(ID);
             } else if (subTasks.containsKey(ID)) {
-                objectToReturn = "Удалена задача: [название] " + subTasks.get(ID).getName()
-                        + " [ID] " + subTasks.get(ID).getID();
+                objectToReturn = subTasks.get(ID);
                 subTasks.remove(ID);
             } else if (epics.containsKey(ID)) {
-                objectToReturn = "Удалена задача: [название] " + epics.get(ID).getName()
-                        + " [ID] " + epics.get(ID).getID();
+                objectToReturn = epics.get(ID);
                 epics.remove(ID);
             }
         }
         return objectToReturn;
     }
 
-    private void checkAndChangeEpicStatus(Epic epic){
+    private void reCheckEpicStatus(Epic epic){
         HashMap <Integer, SubTask> epicSubTasks = epic.getSubTasks();
         for (SubTask epicSubTask : epicSubTasks.values()){
             if (epicSubTask.getStatus() == Status.IN_PROGRESS){
@@ -124,14 +121,14 @@ public class TaskManager {
                 break;
             }
         }
+        boolean isAllSubTasksComplete = true;
         for (SubTask epicSubTask : epicSubTasks.values()){
-            boolean isAllSubTasksComplete = true;
             if(epicSubTask.getStatus() != Status.DONE){
                 isAllSubTasksComplete = false;
             }
-            if(isAllSubTasksComplete){
-                epic.setStatus(Status.DONE);
-            }
+        }
+        if(isAllSubTasksComplete){
+            epic.setStatus(Status.DONE);
         }
     }
 
@@ -144,7 +141,7 @@ public class TaskManager {
                 objectToReturn = Task;
             } else if (obj.getClass() == SubTask.class){
                 SubTask subTask = (SubTask) obj;
-                checkAndChangeEpicStatus(subTask.getParentEpic());
+                reCheckEpicStatus(subTask.getParentEpic());
                 subTasks.put(subTask.getID(), subTask);
                 objectToReturn = subTask;
             } else if (obj.getClass() == Epic.class) {
@@ -153,14 +150,14 @@ public class TaskManager {
                 objectToReturn = epic;
             }
         } else {
-            objectToReturn = "Обновление не завершено, объект не передан в метод";
+            objectToReturn = "=> О Ш И Б К А <= Передаваемый объект = null";
         }
         return objectToReturn;
     }
     public Object getSubTasksByEpic(Epic epic){
         Object objectToReturn = "";
         if(epic == null){
-            objectToReturn = "Выполнение невозможно, объект в метод не передан";
+            objectToReturn = "=> О Ш И Б К А <= Передаваемый объект = null";
         } else {
             objectToReturn = epic.getSubTasks();
         }

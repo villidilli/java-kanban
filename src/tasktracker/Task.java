@@ -1,13 +1,14 @@
+package tasktracker;
+
 public class Task {
     private int ID;
     private String name;
     private String description;
-    private Status status;
+    private Status status = Status.NEW;
 
     public Task(String name, String description){
         this.name = name;
         this.description = description;
-        this.status = Status.NEW;
     }
 
     protected int getID() {
@@ -43,10 +44,10 @@ public class Task {
 
     @Override
     public String toString() {
-        return "[id] " + getID()
-                + "[status] " + getStatus()
-                + "[type] Task"
-                + "[name] " + getName()
-                + "[description] " + getDescription();
+        return " [id: " + getID()
+                + "] [status: " + getStatus()
+                + "] [type: tasktracker.Task"
+                + "] [name: " + getName()
+                + "] [description: " + getDescription() + "]";
     }
 }

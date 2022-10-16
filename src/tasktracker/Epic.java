@@ -1,3 +1,5 @@
+package tasktracker;
+
 import java.util.HashMap;
 
 public class Epic extends Task {
@@ -7,7 +9,6 @@ public class Epic extends Task {
     public Epic(String name, String description) {
         super(name, description);
         subTasks = new HashMap<>();
-        this.setStatus(Status.NEW);
     }
 
     protected HashMap<Integer, SubTask> getSubTasks() {
@@ -20,12 +21,12 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return "[id] " + getID()
-                + "[status] " + getStatus()
-                + "[type] Epic"
-                + "[name] " + getName()
-                + "[description] " + getDescription()
-                + "[amount subtasks] " + subTasks.size();
+        return " [id: " + getID()
+                + "] [status: " + getStatus()
+                + "] [type: tasktracker.Epic"
+                + "] [name: " + getName()
+                + "] [description: " + getDescription()
+                + "] [amount subtasks: " + subTasks.size() +"]";
     }
 }
 

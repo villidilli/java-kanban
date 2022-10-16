@@ -1,3 +1,5 @@
+package tasktracker;
+
 public class SubTask extends Task{
 
     private Epic parentEpic;
@@ -5,7 +7,6 @@ public class SubTask extends Task{
     public SubTask(String name, String description, Epic epic){
         super(name, description);
         this.parentEpic = epic;
-        this.setStatus(Status.NEW);
     }
 
     protected Epic getParentEpic() {
@@ -18,11 +19,12 @@ public class SubTask extends Task{
 
     @Override
     public String toString() {
-        return "[id] " + getID()
-                + "[status] " + getStatus()
-                + "[type] Subtask"
-                + "[name] " + getName()
-                + "[description] " + getDescription()
-                + "[parent epic] " + parentEpic;
+        return " [id: " + getID()
+                + "] [status: " + getStatus()
+                + "] [type: Subtask"
+                + "] [name: " + getName()
+                + "] [description: " + getDescription()
+                + "] [parent epic ID: " + parentEpic.getID()
+                + "] [parent epic status: " + parentEpic.getStatus() + "]";
     }
 }
