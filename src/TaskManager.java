@@ -1,12 +1,12 @@
 import java.util.HashMap;
 
-public class Manager {
+public class TaskManager {
     private int countObjects;
      HashMap <Integer, Task> tasks;
      HashMap <Integer, SubTask> subTasks;
      HashMap <Integer, Epic> epics;
 
-    public Manager(){
+    public TaskManager(){
         countObjects = 1;
         tasks = new HashMap<>();
         subTasks = new HashMap<>();
