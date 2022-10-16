@@ -1,12 +1,19 @@
-import java.util.HashMap;
-
 public class SubTask extends Task{
-    /*
-        Наследует:
-        status
-     */
 
-    Epic parentEpic; // хранит эпик к которому принадлежит подзадача
+    private Epic parentEpic;
+
+    public SubTask(String name, String description, Epic epic){
+        super(name, description);
+        this.parentEpic = epic;
+    }
+
+    public Epic getParentEpic() {
+        return parentEpic;
+    }
+
+    public void setParentEpic(Epic parentEpic) {
+        this.parentEpic = parentEpic;
+    }
 
 
 

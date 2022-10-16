@@ -1,27 +1,51 @@
-import java.util.HashMap;
-
 public class Task {
-    private Status status; // хранит текущий статус задачи
-    private int id; // уникальный идентификатор для любого типа задач
+    private int ID;
+    private String name;
+    private String description;
+    protected Status status;
 
-
-    public Task(){
-        status = Status.NEW;
+    public Task(String name, String description){
+        this.name = name;
+        this.description = description;
+        this.status = Status.NEW;
     }
 
-    public int getId() {
-        return id;
+    public int getID() {
+        return ID;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setID(int ID) {
+        this.ID = ID;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
 
     @Override
     public String toString() {
         return "Task{" +
-                "status=" + status +
-                ", id=" + id +
+                "ID=" + ID +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", status=" + status +
                 '}';
     }
 }

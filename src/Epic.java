@@ -1,21 +1,24 @@
-import java.util.ArrayList;
 import java.util.HashMap;
 
 public class Epic extends Task{
-    /*
-        Наследует:
-        status
-    */
 
+    private HashMap <Integer, SubTask> subTasks;
+
+    public Epic(String name, String description) {
+        super(name, description);
+        subTasks = new HashMap<>();
+    }
+
+    public HashMap<Integer, SubTask> getSubTasks() {
+        return subTasks;
+    }
+
+    public void setSubTasks(int ID, SubTask subTask) {
+        subTasks.put(ID, subTask);
+    }
 
 
 
 }
 
 
-/*
-Для эпиков:
-если у эпика нет подзадач или все они имеют статус NEW, то статус должен быть NEW.
-если все подзадачи имеют статус DONE, то и эпик считается завершённым — со статусом DONE.
-во всех остальных случаях статус должен быть IN_PROGRESS.
-*/
