@@ -43,9 +43,10 @@ public class Task {
 
     @Override
     public String toString() {
-        return "\n[Тип задачи] Задача,\n[ID] " + ID +
-                ",\n[Описание] " + description +
-                "\n[Статус] " + status +
-                "\n******************";
+        return "[id] " + getID()
+                + "[status] " + getStatus()
+                + "[type] Task"
+                + "[name] " + getName()
+                + "[description] " + getDescription();
     }
 }

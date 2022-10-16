@@ -18,10 +18,11 @@ public class SubTask extends Task{
 
     @Override
     public String toString() {
-        return "\n[Тип задачи] Подзадача,\n[ID] " + this.getID() +
-                ",\n[Описание] " + this.getDescription() +
-                ",\n[Статус] " + this.getStatus() +
-                ",\n[Эпик] " + this.parentEpic +
-                "\n-------------------";
+        return "[id] " + getID()
+                + "[status] " + getStatus()
+                + "[type] Subtask"
+                + "[name] " + getName()
+                + "[description] " + getDescription()
+                + "[parent epic] " + parentEpic;
     }
 }

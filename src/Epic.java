@@ -20,11 +20,12 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return "\n[Тип задачи] Эпик,\n[ID] " + this.getID() +
-                ",\n[Описание] " + this.getDescription() +
-                ",\n[Статус] " + this.getStatus() +
-                ",\n[Кол-во подзадач] " + subTasks.size() +
-                "\n******************";
+        return "[id] " + getID()
+                + "[status] " + getStatus()
+                + "[type] Epic"
+                + "[name] " + getName()
+                + "[description] " + getDescription()
+                + "[amount subtasks] " + subTasks.size();
     }
 }
 
