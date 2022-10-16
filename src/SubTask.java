@@ -5,16 +5,23 @@ public class SubTask extends Task{
     public SubTask(String name, String description, Epic epic){
         super(name, description);
         this.parentEpic = epic;
+        this.setStatus(Status.NEW);
     }
 
-    public Epic getParentEpic() {
+    Epic getParentEpic() {
         return parentEpic;
     }
 
-    public void setParentEpic(Epic parentEpic) {
+    void setParentEpic(Epic parentEpic) {
         this.parentEpic = parentEpic;
     }
 
-
-
+    @Override
+    public String toString() {
+        return "\n[Тип задачи] Подзадача,\n[ID] " + this.ID +
+                ",\n[Описание] " + this.description +
+                ",\n[Статус] " + this.status +
+                ",\n[Эпик] " + this.parentEpic +
+                "\n-------------------";
+    }
 }
