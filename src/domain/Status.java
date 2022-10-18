@@ -1,4 +1,4 @@
-package tasktracker;
+package domain;
 
 public enum Status {
     NEW,

@@ -1,38 +1,32 @@
-package tasktracker;
+package manager;
 
+import domain.Epic;
+import domain.Status;
+import domain.SubTask;
+import domain.Task;
+
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class TaskManager {
-    private int countObjects;
-     HashMap <Integer, Task> tasks;
-     HashMap <Integer, SubTask> subTasks;
-     HashMap <Integer, Epic> epics;
-
-    public TaskManager(){
-        countObjects = 1;
-        tasks = new HashMap<>();
-        subTasks = new HashMap<>();
-        epics = new HashMap<>();
-    }
+    private int countObjects = 1;
+     private HashMap <Integer, Task> tasks  = new HashMap<>();
+     private HashMap <Integer, SubTask> subTasks = new HashMap<>();
+     private HashMap <Integer, Epic> epics = new HashMap<>();
 
     //создает сингл - объекты (эпики и таски)
-    public Object create(Object obj){
-        Object objectToReturn = "";
-        if (obj != null) {
-            if(obj.getClass() == Task.class){
-                Task task = (Task) obj;
+    public Task create(Task task){ //TODO: 1231
+      //  Object objectToReturn = "";
+        if (task = null) {
+            System.out.println("=> О Ш И Б К А <= Передаваемый объект = null");
+            return Objects.
                 task.setID(countObjects);
                 countObjects++;
                 tasks.put(task.getID(),task);
                 objectToReturn = task;
-            } else if (obj.getClass() == Epic.class){
-                Epic epic = (Epic) obj;
-                epic.setID(countObjects);
-                countObjects++;
-                epics.put(epic.getID(), epic);
-            }
         } else {
-            objectToReturn = "=> О Ш И Б К А <= Передаваемый объект = null";
+            objectToReturn = ;
         }
         return objectToReturn;
     }

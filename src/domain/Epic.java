@@ -1,21 +1,20 @@
-package tasktracker;
+package domain;
 
 import java.util.HashMap;
 
 public class Epic extends Task {
 
-    private HashMap <Integer, SubTask> subTasks;
+    private HashMap <Integer, SubTask> subTasks = new HashMap<>();
 
     public Epic(String name, String description) {
         super(name, description);
-        subTasks = new HashMap<>();
     }
 
-    protected HashMap<Integer, SubTask> getSubTasks() {
+    public HashMap<Integer, SubTask> getSubTasks() {
         return subTasks;
     }
 
-    protected void setSubTasks(int ID, SubTask subTask) {
+    public void setSubTasks(int ID, SubTask subTask) {
         subTasks.put(ID, subTask);
     }
 

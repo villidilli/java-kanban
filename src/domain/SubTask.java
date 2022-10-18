@@ -1,21 +1,18 @@
-package tasktracker;
+package domain;
 
 public class SubTask extends Task{
 
-    private Epic parentEpic;
+    private int parentEpicID;
 
-    public SubTask(String name, String description, Epic epic){
+    public SubTask(String name, String description, int parentEpicID){
         super(name, description);
-        this.parentEpic = epic;
+        this.parentEpicID = parentEpicID;
     }
 
     protected Epic getParentEpic() {
         return parentEpic;
     }
 
-    protected void setParentEpic(Epic parentEpic) {
-        this.parentEpic = parentEpic;
-    }
 
     @Override
     public String toString() {

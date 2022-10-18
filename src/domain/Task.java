@@ -1,4 +1,4 @@
-package tasktracker;
+package domain;
 
 public class Task {
     private int ID;
@@ -9,6 +9,12 @@ public class Task {
     public Task(String name, String description){
         this.name = name;
         this.description = description;
+    }
+
+    public Task(String name, String description, int ID){
+        this.name = name;
+        this.description = description;
+        this.ID = ID;
     }
 
     protected int getID() {
