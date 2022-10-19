@@ -3,57 +3,76 @@ package domain;
 public class Task {
     private int ID;
     private String name;
-    private String description;
+    private String description = "-";
     private Status status = Status.NEW;
 
+    /*
+        ЛЕГЕНДА:
+        Первое вхождение объекта обязательно без ID
+        Повторные вхождения всегда с ID
+     */
+
     public Task(String name, String description){
+        this.description = description;
+        this.name = name;
+    }
+
+    public Task(int ID, String name, String description){
+        this.ID = ID;
         this.name = name;
         this.description = description;
     }
-
-    public Task(String name, String description, int ID){
+    public Task(int ID, String name, String description, Status status){
+        this.ID = ID;
         this.name = name;
         this.description = description;
-        this.ID = ID;
-    }
-
-    protected int getID() {
-        return ID;
-    }
-
-    protected void setID(int ID) {
-        this.ID = ID;
-    }
-
-    protected String getName() {
-        return name;
-    }
-
-    protected void setName(String name) {
-        this.name = name;
-    }
-
-    protected Status getStatus() {
-        return status;
-    }
-
-    protected void setStatus(Status status) {
         this.status = status;
     }
 
-    protected String getDescription() {
+
+    public int getID() {
+        return ID;
+    }
+
+    public void setID(int ID) { // сеттер необходим для работы метода create()
+        if (this.ID == 0) { // защита от переустановки ID;
+            this.ID = ID;
+        } else {
+            System.out.println("ID уже установлен => [" + this.ID +"]");
+        }
+    }
+    //сеттер у имени не создается, т.к. переименование = создание нового таска
+    public String getName() {
+        return name;
+    }
+
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public String getDescription() {
         return description;
     }
-    protected void setDescription(String description) {
+
+    public void setDescription(String description) {
         this.description = description;
     }
 
+
+
     @Override
     public String toString() {
-        return " [id: " + getID()
+        return "[id: " + getID()
                 + "] [status: " + getStatus()
-                + "] [type: tasktracker.Task"
+                + "] [type: Задача"
                 + "] [name: " + getName()
                 + "] [description: " + getDescription() + "]";
     }
+
+
 }

@@ -4,28 +4,38 @@ import java.util.HashMap;
 
 public class Epic extends Task {
 
-    private HashMap <Integer, SubTask> subTasks = new HashMap<>();
+    private HashMap <Integer, SubTask> epicSubTasks = new HashMap<>();
 
-    public Epic(String name, String description) {
+    /*
+        ЛЕГЕНДА:
+        Первое вхождение объекта обязательно без ID
+        Повторные вхождения всегда с ID, но всегда без указания STATUS, т.к. рассчитывается на основании
+        статусов подзадач
+     */
+    public Epic (String name, String description) {
         super(name, description);
     }
 
-    public HashMap<Integer, SubTask> getSubTasks() {
-        return subTasks;
+    public Epic (int ID, String name, String description){
+        super(ID, name, description);
     }
 
-    public void setSubTasks(int ID, SubTask subTask) {
-        subTasks.put(ID, subTask);
+
+    public HashMap<Integer, SubTask> getEpicSubTasks() {
+        return epicSubTasks;
     }
+
+
+
 
     @Override
     public String toString() {
         return " [id: " + getID()
                 + "] [status: " + getStatus()
-                + "] [type: tasktracker.Epic"
+                + "] [type: Эпик"
                 + "] [name: " + getName()
                 + "] [description: " + getDescription()
-                + "] [amount subtasks: " + subTasks.size() +"]";
+                + "] [amount subtasks: " + epicSubTasks.size() +"]";
     }
 }
 

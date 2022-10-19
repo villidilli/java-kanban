@@ -4,24 +4,39 @@ public class SubTask extends Task{
 
     private int parentEpicID;
 
+    /*
+        ЛЕГЕНДА:
+        Первое вхождение объекта обязательно без ID
+        Повторные вхождения всегда с ID
+    */
+
+    // конструктор для 1-ого вхождения
     public SubTask(String name, String description, int parentEpicID){
         super(name, description);
         this.parentEpicID = parentEpicID;
     }
-
-    protected Epic getParentEpic() {
-        return parentEpic;
+    //ниже конструкторы для повторных вхождений
+    public SubTask(int ID, String name, String description, int parentEpicID){
+        super(ID, name, description);
+        this.parentEpicID = parentEpicID;
     }
 
+    public SubTask(int ID, String name, String description, Status status, int parentEpicID){
+        super(ID, name, description, status);
+        this.parentEpicID = parentEpicID;
+    }
+
+    public int getParentEpicID() {
+        return parentEpicID;
+    }
 
     @Override
     public String toString() {
         return " [id: " + getID()
                 + "] [status: " + getStatus()
-                + "] [type: Subtask"
+                + "] [type: Подзадача"
                 + "] [name: " + getName()
                 + "] [description: " + getDescription()
-                + "] [parent epic ID: " + parentEpic.getID()
-                + "] [parent epic status: " + parentEpic.getStatus() + "]";
+                + "] [parent Epic ID: " + this.parentEpicID + "]";
     }
 }
