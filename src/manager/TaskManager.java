@@ -72,26 +72,62 @@ public class TaskManager {
         } else {
             System.out.println("Подзадача: [" + subTasks.get(newSubTask.getID()).getName() + "]" +
                     " [ID: " + newSubTask.getID() + "] обновлена!");
-            subTasks.put(newSubTask.getID(), newSubTask); // перезаписали в мапе подзадач новый объект
             epics.get(newSubTask.getParentEpicID()).getEpicSubTasks().put(newSubTask.getID(), newSubTask); // перезаписали в мапе эпика его подзадачу
+            subTasks.put(newSubTask.getID(), newSubTask); // перезаписали в мапе подзадач новый объект
             reCheckEpicStatus(newSubTask.getParentEpicID()); // проверили и изменили статус эпика
         }
     }
+    /*
+        Легенда версия 2... нифига не понятно какая правильная:
+        все типы задач при создании инициализированы NEW, метод проверки статуса эпика присутствует
+        только в методе update, соответственно вывод, что без вызова update у любого из сабтасков статус
+        не может измениться, а если метод вызван, значит сабтаск уже в работе и не может иметь статус NEW
+        отсюда следует, что проверка объектов (сабтасков) на NEW не требуется.
+        Также согласно пояснения к ТЗ, таски не могут прыгать через статус NEW -> DONE, и как итог
+        всё что не равно IN PROGRESS при выполнении метода Update = DONE и наоборот
+     */
+//       private void reCheckEpicStatus(int epicID){
+//        for (SubTask subTask : epics.get(epicID).getEpicSubTasks().values()){
+//            if (subTask.getStatus() == Status.DONE){
+//                epics.get(epicID).setStatus(Status.DONE);
+//            } else {
+//                epics.get(epicID).setStatus(Status.IN_PROGRESS);
+//            }
+//        }
+//    }
 
-    private void reCheckEpicStatus(int epicID) { //TODO
-        HashMap <Integer, SubTask> epicSubTasks = epics.get(epicID).getEpicSubTasks();
-
-        int freq = Collections.frequency(epicSubTasks.values()., Status.DONE);
+    public void update (Epic newEpic){
+        if(newEpic == null){
+            System.out.println("[Ошибка] Объект задачи равен *null*");
+        } else if (epics.containsKey(newEpic.getID())){
+            System.out.println("Задача: [" + epics.get(newEpic.getID()).getName() + "] [ID: " + newEpic.getID() + "] обновлена!");
+            newEpic.setEpicSubTasks(epics.get(newEpic.getID()).getEpicSubTasks());
+            epics.put(newEpic.getID(), newEpic);
+            reCheckEpicStatus(newEpic.getID());
+        } else {
+            System.out.println("Задача с ID: " + newEpic.getID() + " не найдена! Создайте новую задачу");
+        }
     }
 
+    private void reCheckEpicStatus(int epicID){
+        int countDone = 0;
+        int countNew = 0;
+        for (SubTask subTask : epics.get(epicID).getEpicSubTasks().values()){
+            if (subTask.getStatus() == Status.NEW) {
+                countNew++;
+            } else if (subTask.getStatus() == Status.DONE) {
+                countDone++;
+            }
+        }
+        if(countNew == epics.get(epicID).getEpicSubTasks().size()){
+            epics.get(epicID).setStatus(Status.NEW);
+        } else if (countDone == epics.get(epicID).getEpicSubTasks().size()) {
+            epics.get(epicID).setStatus(Status.DONE);
+        } else {
+            epics.get(epicID).setStatus(Status.IN_PROGRESS);
+        }
+    }
 
-//            if (subTask.getStatus() == Status.IN_PROGRESS){ //если нашли хотя бы у одной подзадачи статус IN PROGRESS
-//                epics.get(epicID).setStatus(Status.IN_PROGRESS); // меняем у эпика статус на IN PROGRESS
-//                System.out.println("Статус Эпика [" + epics.get(epicID).getName() + "]" +
-//                        " [ID: " + epicID + "] изменен на " +
-//                        "[" + epics.get(epicID).getStatus() + "]");
-//                break;
-//            }
 
 
 //

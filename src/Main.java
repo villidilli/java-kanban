@@ -15,22 +15,24 @@ public class Main {
 
         Epic buildHouse = new Epic("Построить дом", "Квадратов этак на 500"); // первое вхождение
         manager.create(buildHouse);
-        System.out.println(buildHouse.toString());
-
         SubTask foundation = new SubTask("Залить фундамент", "Нанять рабочих", 1); // первое вхождение
         manager.create(foundation);
-        System.out.println(foundation.toString());
-
-        foundation = new SubTask(2, "Залить фундамент", "Нанять рабочих", Status.DONE,1);
+//        SubTask walls = new SubTask("Выложить стены", "из красного кирпича", 1); // первое вхождение
+//        manager.create(walls);
+//
+        foundation.setStatus(Status.IN_PROGRESS);
         manager.update(foundation);
-        SubTask walls = new SubTask("Выложить стены", "из красного кирпича", 1); // первое вхождение
-        manager.create(walls);
-        walls = new SubTask(3,"Выложить стены", "из красного кирпича",Status.DONE, 1);
-        manager.update(walls);
-        System.out.println(foundation.toString());
-        System.out.println(walls.toString());
+//        walls.setStatus(Status.DONE);
+//        manager.update(walls);
+//
+//        System.out.println(foundation.toString());
+//        System.out.println(walls.toString());
         System.out.println(buildHouse.toString());
 
+
+        buildHouse = new Epic(1,"Построить сарай", "Квадратов этак на 500");
+        manager.update(buildHouse);
+        System.out.println(buildHouse.toString());
 
 
 //        SubTask foundation = new SubTask("Залить фундамент", "Нанять рабочих", 1); // первое вхождение
