@@ -1,6 +1,8 @@
 package manager;
 
 import domain.*;
+
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TaskManager {
@@ -100,14 +102,14 @@ public class TaskManager {
             epics.get(epicID).setStatus(Status.IN_PROGRESS);
         }
     }
-    public HashMap <Integer, Task> getAllTasks() {
-        return tasks;
+    public ArrayList <Task> getAllTasks() {
+        return new ArrayList<>(tasks.values());
      }
-    public HashMap <Integer, SubTask> getAllSubTasks() {
-        return subTasks;
+    public ArrayList <SubTask> getAllSubTasks() {
+        return new ArrayList<>(subTasks.values());
     }
-    public HashMap <Integer, Epic> getAllEpics() {
-        return epics;
+    public ArrayList <Epic> getAllEpics() {
+        return new ArrayList<>(epics.values());
     }
     public void deleteAllTasks() {
         tasks.clear();
@@ -134,6 +136,7 @@ public class TaskManager {
     public Epic getEpicByID (int ID) {
         return epics.get(ID);
     }
+
 //    ВАРИАНТ 2 РЕАЛИЗАЦИИ ПОЛУЧЕНИЯ ОБЪЕКТА ПО ID
 //    public Optional <Task> getTaskByID(int ID) {
 //        if(tasks.containsKey(ID)){
@@ -174,7 +177,7 @@ public class TaskManager {
             System.out.println("Эпик с ID [" + ID + "] не найден!");
         }
     }
-    public HashMap<Integer, SubTask> getAllSubTasksByEpic (int ID){
-        return epics.get(ID).getEpicSubTasks();
+    public ArrayList<SubTask> getAllSubTasksByEpic (int ID){
+        return new ArrayList<>(epics.get(ID).getEpicSubTasks().values());
     }
 }
