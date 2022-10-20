@@ -67,11 +67,10 @@ public class Task {
 
     @Override
     public String toString() {
-        return "[id: " + getID()
-                + "] [status: " + getStatus()
-                + "] [type: Задача"
-                + "] [name: " + getName()
-                + "] [description: " + getDescription() + "]";
+        return "[Задача: " + getName() + "] " +
+                "[ID: " + getID() + "] " +
+                "[Cтатус: " + status.name() + "] " +
+                "[Описание: " + getDescription() + "]";
     }
 
 

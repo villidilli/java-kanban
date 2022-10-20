@@ -2,8 +2,8 @@ package manager;
 
 import domain.*;
 
-import java.util.Collections;
 import java.util.HashMap;
+
 
 
 public class TaskManager {
@@ -77,24 +77,6 @@ public class TaskManager {
             reCheckEpicStatus(newSubTask.getParentEpicID()); // проверили и изменили статус эпика
         }
     }
-    /*
-        Легенда версия 2... нифига не понятно какая правильная:
-        все типы задач при создании инициализированы NEW, метод проверки статуса эпика присутствует
-        только в методе update, соответственно вывод, что без вызова update у любого из сабтасков статус
-        не может измениться, а если метод вызван, значит сабтаск уже в работе и не может иметь статус NEW
-        отсюда следует, что проверка объектов (сабтасков) на NEW не требуется.
-        Также согласно пояснения к ТЗ, таски не могут прыгать через статус NEW -> DONE, и как итог
-        всё что не равно IN PROGRESS при выполнении метода Update = DONE и наоборот
-     */
-//       private void reCheckEpicStatus(int epicID){
-//        for (SubTask subTask : epics.get(epicID).getEpicSubTasks().values()){
-//            if (subTask.getStatus() == Status.DONE){
-//                epics.get(epicID).setStatus(Status.DONE);
-//            } else {
-//                epics.get(epicID).setStatus(Status.IN_PROGRESS);
-//            }
-//        }
-//    }
 
     public void update (Epic newEpic){
         if(newEpic == null){
@@ -128,24 +110,108 @@ public class TaskManager {
         }
     }
 
+     public HashMap <Integer, Task> getAllTasks() {
+        return tasks;
+     }
+
+    public HashMap <Integer, SubTask> getAllSubTasks() {
+        return subTasks;
+    }
+
+    public HashMap <Integer, Epic> getAllEpics() {
+        return epics;
+    }
+
+    public void deleteAllTasks() {
+        tasks.clear();
+        System.out.println("Все задачи удалены");
+    }
+
+    public void deleteAllSubTasks() {
+        subTasks.clear();
+        for (Epic epic : epics.values()){ // удаляем все подзадачи из мапы эпиков
+            epic.getEpicSubTasks().clear();
+        }
+        System.out.println("Все подзадачи удалены");
+    }
+
+    public void deleteAllEpics() {
+        epics.clear();
+        subTasks.clear(); // удаляем все подзадачи, т.к. они не являются самостоятельной сущностью программы
+        System.out.println("Все эпики удалены");
+    }
 
 
-//
-//    public Object getObjectsByType (Class aClass){
-//        Object objectToReturn = "";
-//        if (aClass != null){
-//            if (aClass == Task.class){
-//                objectToReturn = tasks;
-//            } else if (aClass == SubTask.class){
-//                objectToReturn = subTasks;
-//            } else if (aClass == Epic.class) {
-//                objectToReturn = epics;
-//            }
+    public Task getTaskByID (int ID) {
+        return tasks.get(ID);
+    }
+
+
+    public SubTask getSubTaskByID (int ID) {
+        return subTasks.get(ID);
+    }
+
+
+    public Epic getEpicByID (int ID) {
+        return epics.get(ID);
+    }
+
+
+        //ВАРИАНТ 2 РЕАЛИЗАЦИИ ПОЛУЧЕНИЯ ОБЪЕКТА ПО ID
+//    public Optional <Task> getTaskByID(int ID) {
+//        if(tasks.containsKey(ID)){
+//            return Optional.of(tasks.get(ID));
 //        } else {
-//            objectToReturn = "=> О Ш И Б К А <= Передаваемый объект = null";
+//            return Optional.ofNullable(tasks.get(ID));
 //        }
-//        return objectToReturn;
 //    }
+
+    public void deleteTaskByID(int ID) {
+        if (tasks.containsKey(ID)){
+            tasks.remove(ID);
+            System.out.println("Задача с ID [" + ID + "] успешно удалена!");
+        } else {
+            System.out.println("Задача с ID [" + ID + "] не найдена!");
+        }
+    }
+
+    public void deleteSubTaskByID(int ID) { // передается ID сабтаска
+        // проверка есть ли объект с таким ID в мапе менеджера и в мапе эпика, который его родитель
+        if (subTasks.containsKey(ID) && epics.get(subTasks.get(ID).getParentEpicID()).getEpicSubTasks().containsKey(ID)){
+
+            epics.get(subTasks.get(ID).getParentEpicID()).getEpicSubTasks().remove(ID); //удаляем из эпика
+            subTasks.remove(ID); //удаляем из менеджера
+            System.out.println("Подзадача с ID [" + ID + "] успешно удалена!");
+        } else {
+            System.out.println("Подзадача с ID [" + ID + "] не найдена!");
+        }
+    }
+
+    public void deleteEpicByID(int ID) {
+        if (epics.containsKey(ID)){
+            //удаляем и коллекции собтасков менеджера сабтаски, имеющие отношение к эпику
+            for (SubTask subTask : epics.get(ID).getEpicSubTasks().values()){
+                if (subTasks.containsKey(subTask.getID())){
+                    subTasks.remove(subTask.getID());
+                }
+            }
+            //теперь удаляем сам эпик
+            epics.remove(ID);
+            System.out.println("Эпик с ID [" + ID + "] успешно удален!");
+        } else {
+            System.out.println("Эпик с ID [" + ID + "] не найден!");
+        }
+    }
+
+    public HashMap<Integer, SubTask> getAllSubTasksByEpic (int ID){
+        return epics.get(ID).getEpicSubTasks();
+    }
+
+
+
+
+
+
 //    public void deleteObjectsByType (Class aClass){
 //        if (aClass != null){
 //            if (aClass == Task.class){

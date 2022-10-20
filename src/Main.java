@@ -1,51 +1,49 @@
 import domain.*;
 import manager.TaskManager;
 
-import java.util.Collections;
-
 public class Main {
     public static void main(String[] args) {
         TaskManager manager = new TaskManager();
-//        Task buyBread = new Task("Купить хлеб" ,"Бородинский"); // первое вхождение
-//        manager.create(buyBread);
-//
-//        buyBread = new Task(1, "Купить батон", "два батона", Status.DONE);
-//        manager.update(buyBread);
-//        System.out.println(buyBread.toString());
 
-        Epic buildHouse = new Epic("Построить дом", "Квадратов этак на 500"); // первое вхождение
+
+        System.out.println("----------------");
+        Task writeLetter = new Task("Купить хлеб", "не дороже 100 р");
+        manager.create(writeLetter);
+        Task repairClock = new Task("Починить часы", "-");
+        manager.create(repairClock);
+        System.out.println(manager.getAllTasks().toString());
+        System.out.println("----------------");
+        SubTask buyBricks = new SubTask("Купить кирпичи", "-", 1);
+        manager.create(buyBricks);
+        System.out.println("----------------");
+        Epic buildHouse = new Epic("Построить дом", "-");
         manager.create(buildHouse);
-        SubTask foundation = new SubTask("Залить фундамент", "Нанять рабочих", 1); // первое вхождение
-        manager.create(foundation);
-//        SubTask walls = new SubTask("Выложить стены", "из красного кирпича", 1); // первое вхождение
-//        manager.create(walls);
-//
-        foundation.setStatus(Status.IN_PROGRESS);
-        manager.update(foundation);
-//        walls.setStatus(Status.DONE);
-//        manager.update(walls);
-//
-//        System.out.println(foundation.toString());
-//        System.out.println(walls.toString());
-        System.out.println(buildHouse.toString());
-
-
-        buildHouse = new Epic(1,"Построить сарай", "Квадратов этак на 500");
-        manager.update(buildHouse);
-        System.out.println(buildHouse.toString());
-
-
-//        SubTask foundation = new SubTask("Залить фундамент", "Нанять рабочих", 1); // первое вхождение
-//        manager.create(foundation);
-
-
-
-        //        Epic buildHouse = new Epic("Построить дом", "Квардратов этам на 500"); // первое вхождение
-//        manager.create(buildHouse);
-//        SubTask foundation = new SubTask("Залить фундамент", "Нанять рабочих", 2); // первое вхождение
-//        manager.create(foundation);
-//        SubTask walls = new SubTask("Выложить стены", "из красного кирпича", 2); // первое вхождение
-//        manager.create(walls);
+        System.out.println(manager.getAllEpics());
+        System.out.println("----------------");
+        buyBricks = new SubTask("Купить кирпичи", "-", 3);
+        manager.create(buyBricks);
+        System.out.println(manager.getAllSubTasks());;
+        System.out.println("----------------");
+        buyBricks = new SubTask(4, "Купить пеноблоки", "", 3);
+        manager.update(buyBricks);
+        System.out.println(manager.getAllSubTasks());
+        System.out.println("----------------");
+        SubTask buildWalls = new SubTask("Построить стены", "", 3);
+        manager.create(buildWalls);
+        System.out.println(manager.getAllSubTasks());
+        System.out.println(manager.getAllSubTasksByEpic(3));
+        System.out.println("----------------");
+        Epic learnJava = new Epic("Выучить Java", "на ЯП");
+        manager.create(learnJava);
+        SubTask completeHW3 = new SubTask("Сдать ТЗ-3", "-", 6);
+        manager.create(completeHW3);
+        System.out.println(manager.getAllSubTasks());
+        System.out.println(manager.getAllSubTasksByEpic(6));
+        manager.deleteSubTaskByID(7);
+        System.out.println(manager.getAllSubTasksByEpic(6));
+        buildWalls.setStatus(Status.DONE);
+        manager.update(buildWalls);
+        System.out.println(manager.getEpicByID(3));
 
     }
 }
