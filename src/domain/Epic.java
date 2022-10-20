@@ -5,7 +5,6 @@ import java.util.HashMap;
 public class Epic extends Task {
 
     private HashMap <Integer, SubTask> epicSubTasks = new HashMap<>();
-
     /*
         ЛЕГЕНДА:
         Первое вхождение объекта обязательно без ID
@@ -31,12 +30,11 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return " [id: " + getID()
-                + "] [status: " + getStatus()
-                + "] [type: Эпик"
-                + "] [name: " + getName()
-                + "] [description: " + getDescription()
-                + "] [amount subtasks: " + epicSubTasks.size() +"]";
+        return "[Эпик: " + getName() + "] " +
+                "[ID: " + getID() + "] " +
+                "[Cтатус: " + getStatus() + "] " +
+                "[Описание: " + getDescription() + "]" +
+                "[Подзадачи: " + getEpicSubTasks().size() + "] ";
     }
 }
 

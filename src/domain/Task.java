@@ -28,12 +28,9 @@ public class Task {
         this.description = description;
         this.status = status;
     }
-
-
     public int getID() {
         return ID;
     }
-
     public void setID(int ID) { // сеттер необходим для работы метода create()
         if (this.ID == 0) { // защита от переустановки ID;
             this.ID = ID;
@@ -45,31 +42,23 @@ public class Task {
     public String getName() {
         return name;
     }
-
-
     public Status getStatus() {
         return status;
     }
-
     public void setStatus(Status status) {
         this.status = status;
     }
-
     public String getDescription() {
         return description;
     }
-
     public void setDescription(String description) {
         this.description = description;
     }
-
-
-
     @Override
     public String toString() {
         return "[Задача: " + getName() + "] " +
                 "[ID: " + getID() + "] " +
-                "[Cтатус: " + status.name() + "] " +
+                "[Cтатус: " + getStatus() + "] " +
                 "[Описание: " + getDescription() + "]";
     }
 

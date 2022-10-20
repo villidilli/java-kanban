@@ -1,10 +1,7 @@
 package manager;
 
 import domain.*;
-
 import java.util.HashMap;
-
-
 
 public class TaskManager {
      private int countObjects = 1;
@@ -23,7 +20,6 @@ public class TaskManager {
             tasks.put(newTask.getID(), newTask);
         }
     }
-
     public void create (SubTask newSubTask) {
         if (newSubTask == null){
             System.out.println("[Ошибка] Объект задачи равен *null*");
@@ -39,7 +35,6 @@ public class TaskManager {
             System.out.println("Эпик с ID [" + newSubTask.getParentEpicID() + "] не найден. Подзадача не может быть создана");
         }
     }
-
     public void create (Epic newEpic){
         if(newEpic == null){
             System.out.println("[Ошибка] Объект задачи равен *null*");
@@ -50,7 +45,6 @@ public class TaskManager {
             System.out.println("Эпик: [" + newEpic.getName() + "] [ID: " + newEpic.getID()+ "] создан!");
         }
     }
-
     public void update (Task newTask){
         if(newTask == null){
             System.out.println("[Ошибка] Объект задачи равен *null*");
@@ -61,7 +55,6 @@ public class TaskManager {
             System.out.println("Задача с ID: " + newTask.getID() + " не найдена! Создайте новую задачу");
         }
     }
-
     public void update (SubTask newSubTask){
         if(newSubTask == null){
             System.out.println("[Ошибка] Объект задачи равен *null*");
@@ -77,7 +70,6 @@ public class TaskManager {
             reCheckEpicStatus(newSubTask.getParentEpicID()); // проверили и изменили статус эпика
         }
     }
-
     public void update (Epic newEpic){
         if(newEpic == null){
             System.out.println("[Ошибка] Объект задачи равен *null*");
@@ -90,7 +82,6 @@ public class TaskManager {
             System.out.println("Задача с ID: " + newEpic.getID() + " не найдена! Создайте новую задачу");
         }
     }
-
     private void reCheckEpicStatus(int epicID){
         int countDone = 0;
         int countNew = 0;
@@ -109,24 +100,19 @@ public class TaskManager {
             epics.get(epicID).setStatus(Status.IN_PROGRESS);
         }
     }
-
-     public HashMap <Integer, Task> getAllTasks() {
+    public HashMap <Integer, Task> getAllTasks() {
         return tasks;
      }
-
     public HashMap <Integer, SubTask> getAllSubTasks() {
         return subTasks;
     }
-
     public HashMap <Integer, Epic> getAllEpics() {
         return epics;
     }
-
     public void deleteAllTasks() {
         tasks.clear();
         System.out.println("Все задачи удалены");
     }
-
     public void deleteAllSubTasks() {
         subTasks.clear();
         for (Epic epic : epics.values()){ // удаляем все подзадачи из мапы эпиков
@@ -134,30 +120,21 @@ public class TaskManager {
         }
         System.out.println("Все подзадачи удалены");
     }
-
     public void deleteAllEpics() {
         epics.clear();
         subTasks.clear(); // удаляем все подзадачи, т.к. они не являются самостоятельной сущностью программы
         System.out.println("Все эпики удалены");
     }
-
-
     public Task getTaskByID (int ID) {
         return tasks.get(ID);
     }
-
-
     public SubTask getSubTaskByID (int ID) {
         return subTasks.get(ID);
     }
-
-
     public Epic getEpicByID (int ID) {
         return epics.get(ID);
     }
-
-
-        //ВАРИАНТ 2 РЕАЛИЗАЦИИ ПОЛУЧЕНИЯ ОБЪЕКТА ПО ID
+//    ВАРИАНТ 2 РЕАЛИЗАЦИИ ПОЛУЧЕНИЯ ОБЪЕКТА ПО ID
 //    public Optional <Task> getTaskByID(int ID) {
 //        if(tasks.containsKey(ID)){
 //            return Optional.of(tasks.get(ID));
@@ -165,7 +142,6 @@ public class TaskManager {
 //            return Optional.ofNullable(tasks.get(ID));
 //        }
 //    }
-
     public void deleteTaskByID(int ID) {
         if (tasks.containsKey(ID)){
             tasks.remove(ID);
@@ -174,11 +150,8 @@ public class TaskManager {
             System.out.println("Задача с ID [" + ID + "] не найдена!");
         }
     }
-
-    public void deleteSubTaskByID(int ID) { // передается ID сабтаска
-        // проверка есть ли объект с таким ID в мапе менеджера и в мапе эпика, который его родитель
+    public void deleteSubTaskByID(int ID) { // передается ID сабтаска , проверка есть ли объект с таким ID в мапе менеджера и в мапе эпика, который его родитель
         if (subTasks.containsKey(ID) && epics.get(subTasks.get(ID).getParentEpicID()).getEpicSubTasks().containsKey(ID)){
-
             epics.get(subTasks.get(ID).getParentEpicID()).getEpicSubTasks().remove(ID); //удаляем из эпика
             subTasks.remove(ID); //удаляем из менеджера
             System.out.println("Подзадача с ID [" + ID + "] успешно удалена!");
@@ -186,7 +159,6 @@ public class TaskManager {
             System.out.println("Подзадача с ID [" + ID + "] не найдена!");
         }
     }
-
     public void deleteEpicByID(int ID) {
         if (epics.containsKey(ID)){
             //удаляем и коллекции собтасков менеджера сабтаски, имеющие отношение к эпику
@@ -202,93 +174,7 @@ public class TaskManager {
             System.out.println("Эпик с ID [" + ID + "] не найден!");
         }
     }
-
     public HashMap<Integer, SubTask> getAllSubTasksByEpic (int ID){
         return epics.get(ID).getEpicSubTasks();
     }
-
-
-
-
-
-
-//    public void deleteObjectsByType (Class aClass){
-//        if (aClass != null){
-//            if (aClass == Task.class){
-//                tasks.clear();
-//            } else if (aClass == SubTask.class){
-//                subTasks.clear();
-//            } else if (aClass == Epic.class) {
-//                epics.clear();
-//            }
-//        } else {
-//            System.out.println("=> О Ш И Б К А <= Передаваемый объект = null");
-//        }
-//    }
-//    public Object getObjectByID (int ID){
-//        Object objectToReturn = "";
-//        if (ID == 0 || ID > countObjects) {
-//            objectToReturn = "=> О Ш И Б К А <= Объект с ID [" + ID + "] не найден";
-//        } else {
-//            if (tasks.containsKey(ID)) {
-//                objectToReturn = tasks.get(ID);
-//            } else if (subTasks.containsKey(ID)) {
-//                objectToReturn = subTasks.get(ID);
-//            } else if (epics.containsKey(ID)) {
-//                objectToReturn = epics.get(ID);
-//            }
-//        }
-//        return  objectToReturn;
-//    }
-//    public Object deleteObjectByID (int ID){
-//        Object objectToReturn = "";
-//        if (ID == 0 || ID > countObjects) {
-//            objectToReturn = "=> О Ш И Б К А <= Объект с ID [" + ID + "] не найден";
-//        } else {
-//            if (tasks.containsKey(ID)) {
-//                objectToReturn = tasks.get(ID);
-//                tasks.remove(ID);
-//            } else if (subTasks.containsKey(ID)) {
-//                objectToReturn = subTasks.get(ID);
-//                subTasks.remove(ID);
-//            } else if (epics.containsKey(ID)) {
-//                objectToReturn = epics.get(ID);
-//                epics.remove(ID);
-//            }
-//        }
-//        return objectToReturn;
-//    }
-//
-//
-//    public Object update (Object obj){
-//        Object objectToReturn = "";
-//        if (obj != null) {
-//            if (obj.getClass() == Task.class){
-//                Task Task = (Task) obj;
-//                tasks.put(Task.getID(), Task);
-//                objectToReturn = Task;
-//            } else if (obj.getClass() == SubTask.class){
-//                SubTask subTask = (SubTask) obj;
-//                reCheckEpicStatus(subTask.getParentEpic());
-//                subTasks.put(subTask.getID(), subTask);
-//                objectToReturn = subTask;
-//            } else if (obj.getClass() == Epic.class) {
-//                Epic epic = (Epic) obj;
-//                epics.put(epic.getID(), epic);
-//                objectToReturn = epic;
-//            }
-//        } else {
-//            objectToReturn = "=> О Ш И Б К А <= Передаваемый объект = null";
-//        }
-//        return objectToReturn;
-//    }
-//    public Object getSubTasksByEpic(Epic epic){
-//        Object objectToReturn = "";
-//        if(epic == null){
-//            objectToReturn = "=> О Ш И Б К А <= Передаваемый объект = null";
-//        } else {
-//            objectToReturn = epic.getSubTasks();
-//        }
-//        return objectToReturn;
-//    }
 }
