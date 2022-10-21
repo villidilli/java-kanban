@@ -5,7 +5,6 @@ public class Main {
     public static void main(String[] args) {
         TaskManager manager = new TaskManager();
 
-
         System.out.println("----------------");
         Task writeLetter = new Task("Купить хлеб", "не дороже 100 р");
         manager.create(writeLetter);
