@@ -1,5 +1,5 @@
-import domain.*;
-import manager.TaskManager;
+import ru.yandex.practicum.tasks.*;
+import ru.yandex.practicum.taskmanager.TaskManager;
 
 public class Main {
     public static void main(String[] args) {
