@@ -1,11 +1,12 @@
 package ru.yandex.practicum.taskmanager;
 
 import ru.yandex.practicum.tasks.*;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class TaskManager {
-    private int countObjects = 1;
+    private int generatorID = 1;
     private HashMap<Integer, Task> tasks = new HashMap<>();
     private HashMap<Integer, SubTask> subTasks = new HashMap<>();
     private HashMap<Integer, Epic> epics = new HashMap<>();
@@ -15,29 +16,32 @@ public class TaskManager {
         if (newTask == null) {
             System.out.println("[Ошибка] Объект задачи равен *null*");
         } else {
-            newTask.setID(countObjects);
-            countObjects++;
+            newTask.setID(generatorID);
+            generatorID++;
             System.out.println("Задача: [" + newTask.getName() + "] [ID: " + newTask.getID() + "] создана!");
             tasks.put(newTask.getID(), newTask);
         }
     }
 
     public void create(SubTask newSubTask) {
-        if (newSubTask == null) {
-            System.out.println("[Ошибка] Объект задачи равен *null*");
-            // если родительский эпик существует, создаем задачу
-        } else if (epics.containsKey(newSubTask.getParentEpicID())) {
-            newSubTask.setID(countObjects);
-            countObjects++;
-            System.out.println("Подзадача: [" + newSubTask.getName() + "] [ID: " +
-                                newSubTask.getID() + "] [ID эпика: " +
-                                newSubTask.getParentEpicID() + "] создана!");
-            subTasks.put(newSubTask.getID(), newSubTask);
-            epics.get(newSubTask.getParentEpicID()).getEpicSubTasks().put(newSubTask.getID(), newSubTask);
-            reCheckEpicStatus(newSubTask.getParentEpicID());
+        if (newSubTask != null) {
+            Epic parentEpic = epics.get(newSubTask.getParentEpicID()); //может быть null
+
+            if (parentEpic != null) {
+                newSubTask.setID(generatorID);
+                subTasks.put(generatorID, newSubTask);
+                parentEpic.getEpicSubTasks().put(generatorID, newSubTask);
+                reCheckEpicStatus(parentEpic.getID());
+                generatorID++;
+                System.out.println("Подзадача: [" + newSubTask.getName() + "] [ID: " +
+                                    newSubTask.getID() + "] [ID эпика: " +
+                                    newSubTask.getParentEpicID() + "] создана!");
+            } else {
+                System.out.println("Эпик с ID [" + newSubTask.getParentEpicID() + "] не найден. " +
+                                   "Подзадача не может быть создана");
+            }
         } else {
-            System.out.println("Эпик с ID [" + newSubTask.getParentEpicID() + "] не найден. " +
-                               "Подзадача не может быть создана");
+            System.out.println("[Ошибка] Объект задачи равен *null*");
         }
     }
 
@@ -45,8 +49,8 @@ public class TaskManager {
         if (newEpic == null) {
             System.out.println("[Ошибка] Объект задачи равен *null*");
         } else {
-            newEpic.setID(countObjects);
-            countObjects++;
+            newEpic.setID(generatorID);
+            generatorID++;
             epics.put(newEpic.getID(), newEpic);
             System.out.println("Эпик: [" + newEpic.getName() + "] [ID: " + newEpic.getID() + "] создан!");
         }
