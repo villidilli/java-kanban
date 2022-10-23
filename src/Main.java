@@ -45,6 +45,7 @@ public class Main {
         System.out.println(manager.getEpicByID(3));
         System.out.println(manager.getTaskByID(1));
         System.out.println(manager.getEpicByID(3));
+
         manager.deleteEpicByID(3);
         System.out.println(manager.getAllEpics());
 
