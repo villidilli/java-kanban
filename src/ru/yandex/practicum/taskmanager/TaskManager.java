@@ -92,14 +92,18 @@ public class TaskManager {
     }
 
     public void update(Epic newEpic) {
-        if (newEpic == null) {
-            System.out.println("[Ошибка] Объект задачи равен *null*");
-        } else if (epics.containsKey(newEpic.getID())) {
-            System.out.println("Задача: [" + epics.get(newEpic.getID()).getName() + "] [ID: " + newEpic.getID() + "] обновлена!");
-            epics.put(newEpic.getID(), newEpic);
-            reCheckEpicStatus(newEpic.getID());
+        if (newEpic != null) {
+            Epic currentEpic = epics.get(newEpic.getID());
+            if (currentEpic != null) {
+                epics.put(currentEpic.getID(), newEpic);
+                reCheckEpicStatus(currentEpic.getID());
+                System.out.println("Задача: [" + epics.get(newEpic.getID()).getName() + " ]" +
+                                   "[ID: " + newEpic.getID() + "] обновлена!");
+            } else {
+                System.out.println("Задача с ID: " + newEpic.getID() + " не найдена! Создайте новую задачу");
+            }
         } else {
-            System.out.println("Задача с ID: " + newEpic.getID() + " не найдена! Создайте новую задачу");
+            System.out.println("[Ошибка] Объект задачи равен *null*");
         }
     }
 
