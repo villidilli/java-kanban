@@ -179,13 +179,14 @@ public class TaskManager {
         HashMap<Integer, SubTask> epicSubTasks = parentEpic.getEpicSubTasks();
         epicSubTasks.remove(ID); //удаляем из эпика
         subTasks.remove(ID); //удаляем из менеджера
+        reCheckEpicStatus(parentEpic.getID());
         System.out.println("Подзадача с ID [" + ID + "] успешно удалена!");
     }
 
     public void deleteEpicByID(int ID) {
         //удаляем и коллекции собтасков менеджера сабтаски, имеющие отношение к эпику
         for (SubTask subTask : epics.get(ID).getEpicSubTasks().values()) {
-            if (subTasks.containsKey(subTask.getID())) {
+            if (subTasks.get(subTask.getID()) != null) {
                 subTasks.remove(subTask.getID());
             }
         }
