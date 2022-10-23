@@ -11,7 +11,25 @@ public class TaskManager {
     private HashMap<Integer, SubTask> subTasks = new HashMap<>();
     private HashMap<Integer, Epic> epics = new HashMap<>();
 
-    //создает сингл - объекты (эпики и таски)
+    private void reCheckEpicStatus(int epicID) {
+        int countDone = 0;
+        int countNew = 0;
+        for (SubTask subTask : epics.get(epicID).getEpicSubTasks().values()) {
+            if (subTask.getStatus() == Status.NEW) {
+                countNew++;
+            } else if (subTask.getStatus() == Status.DONE) {
+                countDone++;
+            }
+        }
+        if (countNew == epics.get(epicID).getEpicSubTasks().size()) {
+            epics.get(epicID).setStatus(Status.NEW);
+        } else if (countDone == epics.get(epicID).getEpicSubTasks().size()) {
+            epics.get(epicID).setStatus(Status.DONE);
+        } else {
+            epics.get(epicID).setStatus(Status.IN_PROGRESS);
+        }
+    }
+
     public void create(Task newTask) {
         if (newTask == null) {
             System.out.println("[Ошибка] Объект задачи равен *null*");
@@ -107,25 +125,6 @@ public class TaskManager {
         }
     }
 
-    private void reCheckEpicStatus(int epicID) {
-        int countDone = 0;
-        int countNew = 0;
-        for (SubTask subTask : epics.get(epicID).getEpicSubTasks().values()) {
-            if (subTask.getStatus() == Status.NEW) {
-                countNew++;
-            } else if (subTask.getStatus() == Status.DONE) {
-                countDone++;
-            }
-        }
-        if (countNew == epics.get(epicID).getEpicSubTasks().size()) {
-            epics.get(epicID).setStatus(Status.NEW);
-        } else if (countDone == epics.get(epicID).getEpicSubTasks().size()) {
-            epics.get(epicID).setStatus(Status.DONE);
-        } else {
-            epics.get(epicID).setStatus(Status.IN_PROGRESS);
-        }
-    }
-
     public ArrayList<Task> getAllTasks() {
         return new ArrayList<>(tasks.values());
     }
@@ -170,41 +169,29 @@ public class TaskManager {
     }
 
     public void deleteTaskByID(int ID) {
-        if (tasks.containsKey(ID)) {
-            tasks.remove(ID);
-            System.out.println("Задача с ID [" + ID + "] успешно удалена!");
-        } else {
-            System.out.println("Задача с ID [" + ID + "] не найдена!");
-        }
+        tasks.remove(ID);
+        System.out.println("Задача с ID [" + ID + "] успешно удалена!");
     }
 
     public void deleteSubTaskByID(int ID) {
         // передается ID сабтаска, проверка есть ли объект с таким ID в мапе менеджера и в мапе эпика-родителя
         Epic parentEpic = epics.get(subTasks.get(ID).getParentEpicID());
         HashMap<Integer, SubTask> epicSubTasks = parentEpic.getEpicSubTasks();
-        if (subTasks.containsKey(ID) && epicSubTasks.containsKey(ID)) {
-            epicSubTasks.remove(ID); //удаляем из эпика
-            subTasks.remove(ID); //удаляем из менеджера
-            System.out.println("Подзадача с ID [" + ID + "] успешно удалена!");
-        } else {
-            System.out.println("Подзадача с ID [" + ID + "] не найдена!");
-        }
+        epicSubTasks.remove(ID); //удаляем из эпика
+        subTasks.remove(ID); //удаляем из менеджера
+        System.out.println("Подзадача с ID [" + ID + "] успешно удалена!");
     }
 
     public void deleteEpicByID(int ID) {
-        if (epics.containsKey(ID)) {
-            //удаляем и коллекции собтасков менеджера сабтаски, имеющие отношение к эпику
-            for (SubTask subTask : epics.get(ID).getEpicSubTasks().values()) {
-                if (subTasks.containsKey(subTask.getID())) {
-                    subTasks.remove(subTask.getID());
-                }
+        //удаляем и коллекции собтасков менеджера сабтаски, имеющие отношение к эпику
+        for (SubTask subTask : epics.get(ID).getEpicSubTasks().values()) {
+            if (subTasks.containsKey(subTask.getID())) {
+                subTasks.remove(subTask.getID());
             }
-            //теперь удаляем сам эпик
-            epics.remove(ID);
-            System.out.println("Эпик с ID [" + ID + "] успешно удален!");
-        } else {
-            System.out.println("Эпик с ID [" + ID + "] не найден!");
         }
+        //теперь удаляем сам эпик
+        epics.remove(ID);
+        System.out.println("Эпик с ID [" + ID + "] успешно удален!");
     }
 
     public ArrayList<SubTask> getAllSubTasksByEpic(int ID) {
