@@ -25,8 +25,7 @@ public class TaskManager {
 
     public void create(SubTask newSubTask) {
         if (newSubTask != null) {
-            Epic parentEpic = epics.get(newSubTask.getParentEpicID()); //может быть null
-
+            Epic parentEpic = epics.get(newSubTask.getParentEpicID());
             if (parentEpic != null) {
                 newSubTask.setID(generatorID);
                 subTasks.put(generatorID, newSubTask);
@@ -57,13 +56,15 @@ public class TaskManager {
     }
 
     public void update(Task newTask) {
-        if (newTask == null) {
-            System.out.println("[Ошибка] Объект задачи равен *null*");
-        } else if (tasks.containsKey(newTask.getID())) { // проверяем есть ли в программе объект с таким id
-            System.out.println("Задача: [" + tasks.get(newTask.getID()).getName() + "] [ID: " + newTask.getID() + "] обновлена!");
-            tasks.put(newTask.getID(), newTask);
+        if (newTask != null) {
+            Task currentTask = tasks.get(newTask.getID());
+            if (currentTask != null) {
+                tasks.put(currentTask.getID(), newTask);
+            } else {
+                System.out.println("Задача с ID: " + newTask.getID() + " не найдена! Создайте новую задачу");
+            }
         } else {
-            System.out.println("Задача с ID: " + newTask.getID() + " не найдена! Создайте новую задачу");
+            System.out.println("[Ошибка] Объект задачи равен *null*");
         }
     }
 
