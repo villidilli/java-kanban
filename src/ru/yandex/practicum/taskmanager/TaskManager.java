@@ -69,18 +69,25 @@ public class TaskManager {
     }
 
     public void update(SubTask newSubTask) {
-        if (newSubTask == null) {
-            System.out.println("[Ошибка] Объект задачи равен *null*");
-        } else if (!subTasks.containsKey(newSubTask.getID())) { // если в программе нет сабтаска с таким ID
-            System.out.println("[Ошибка] Подзадача [ID: " + newSubTask.getID() + "] не найдена!");
-        } else if (!epics.containsKey(newSubTask.getParentEpicID())) { // если в программе нет эпика с таким ID
-            System.out.println("[Ошибка] Эпик [ID: " + newSubTask.getParentEpicID() + "] не найден!");
+        if (newSubTask != null) {
+            SubTask currentSubTask = subTasks.get(newSubTask.getID());
+            if (currentSubTask != null) {
+                Epic parentEpic = epics.get(currentSubTask.getParentEpicID());
+                if (parentEpic != null) {
+                    // сохраняем по ID новый объект-подзадачу
+                    parentEpic.getEpicSubTasks().put(currentSubTask.getID(), newSubTask);
+                    subTasks.put(currentSubTask.getID(), newSubTask);
+                    reCheckEpicStatus(parentEpic.getID());
+                    System.out.println("Подзадача: [" + currentSubTask.getName() + "] " +
+                                       "[ID: " + currentSubTask.getID() + "] обновлена!");
+                } else {
+                    System.out.println("[Ошибка] Эпик [ID: " + currentSubTask.getParentEpicID() + "] не найден!");
+                }
+            } else {
+                System.out.println("[Ошибка] Подзадача [ID: " + newSubTask.getID() + "] не найдена!");
+            }
         } else {
-            System.out.println("Подзадача: [" + subTasks.get(newSubTask.getID()).getName() + "]" +
-                    " [ID: " + newSubTask.getID() + "] обновлена!");
-            epics.get(newSubTask.getParentEpicID()).getEpicSubTasks().put(newSubTask.getID(), newSubTask); // перезаписали в мапе эпика его подзадачу
-            subTasks.put(newSubTask.getID(), newSubTask); // перезаписали в мапе подзадач новый объект
-            reCheckEpicStatus(newSubTask.getParentEpicID()); // проверили и изменили статус эпика
+            System.out.println("[Ошибка] Объект задачи равен *null*");
         }
     }
 
