@@ -36,8 +36,8 @@ public class TaskManager {
         } else {
             newTask.setID(generatorID);
             generatorID++;
-            System.out.println("Задача: [" + newTask.getName() + "] [ID: " + newTask.getID() + "] создана!");
             tasks.put(newTask.getID(), newTask);
+            System.out.println("Задача: [" + newTask.getName() + "] [ID: " + newTask.getID() + "] создана!");
         }
     }
 
@@ -146,6 +146,7 @@ public class TaskManager {
         subTasks.clear();
         for (Epic epic : epics.values()) { // удаляем все подзадачи из мапы эпиков
             epic.getEpicSubTasks().clear();
+            reCheckEpicStatus(epic.getID());
         }
         System.out.println("Все подзадачи удалены");
     }
