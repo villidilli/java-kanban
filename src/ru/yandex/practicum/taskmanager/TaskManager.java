@@ -14,19 +14,24 @@ public class TaskManager {
     private void reCheckEpicStatus(int epicID) {
         int countDone = 0;
         int countNew = 0;
-        for (SubTask subTask : epics.get(epicID).getEpicSubTasks().values()) {
-            if (subTask.getStatus() == Status.NEW) {
-                countNew++;
-            } else if (subTask.getStatus() == Status.DONE) {
-                countDone++;
-            }
-        }
-        if (countNew == epics.get(epicID).getEpicSubTasks().size()) {
+
+        if (epics.get(epicID).getEpicSubTasks().size() == 0) {
             epics.get(epicID).setStatus(Status.NEW);
-        } else if (countDone == epics.get(epicID).getEpicSubTasks().size()) {
-            epics.get(epicID).setStatus(Status.DONE);
         } else {
-            epics.get(epicID).setStatus(Status.IN_PROGRESS);
+            for (SubTask subTask : epics.get(epicID).getEpicSubTasks().values()) {
+                if (subTask.getStatus() == Status.NEW) {
+                    countNew++;
+                } else if (subTask.getStatus() == Status.DONE) {
+                    countDone++;
+                }
+            }
+            if (countNew == epics.get(epicID).getEpicSubTasks().size()) {
+                epics.get(epicID).setStatus(Status.NEW);
+            } else if (countDone == epics.get(epicID).getEpicSubTasks().size()) {
+                epics.get(epicID).setStatus(Status.DONE);
+            } else {
+                epics.get(epicID).setStatus(Status.IN_PROGRESS);
+            }
         }
     }
 
