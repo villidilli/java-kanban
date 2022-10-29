@@ -1,9 +1,9 @@
 import ru.yandex.practicum.tasks.*;
-import ru.yandex.practicum.taskmanager.TaskManager;
+import ru.yandex.practicum.taskmanager.InMemoryTaskManager;
 
 public class Main {
     public static void main(String[] args) {
-        TaskManager manager = new TaskManager();
+        InMemoryTaskManager manager = new InMemoryTaskManager();
 
         Epic epic = new Epic("Эпик", "-");
         manager.create(epic);
