@@ -20,5 +20,7 @@ public class Main {
         System.out.println(manager.getEpicByID(1));
         manager.deleteAllSubTasks();
         System.out.println(manager.getEpicByID(1));
+
+        System.out.println(manager.getHistory());
     }
 }

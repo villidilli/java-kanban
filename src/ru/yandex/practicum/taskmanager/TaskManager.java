@@ -1,18 +1,15 @@
 package ru.yandex.practicum.taskmanager;
 
-import ru.yandex.practicum.tasks.Epic;
-import ru.yandex.practicum.tasks.Status;
-import ru.yandex.practicum.tasks.SubTask;
-import ru.yandex.practicum.tasks.Task;
+import ru.yandex.practicum.tasks.*;
+
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
+
 
 public interface TaskManager {
 
-    void reCheckEpicStatus(int epicID);
-
-    void create(Task newTask);
+    void create (Task newTask);
 
     void create(SubTask newSubTask);
 
@@ -24,11 +21,11 @@ public interface TaskManager {
 
     void update(Epic newEpic);
 
-    ArrayList<Task> getAllTasks();
+    List<Task> getAllTasks();
 
-    ArrayList<SubTask> getAllSubTasks();
+    List<SubTask> getAllSubTasks();
 
-    ArrayList<Epic> getAllEpics();
+    List<Epic> getAllEpics();
 
     void deleteAllTasks();
 
@@ -48,5 +45,7 @@ public interface TaskManager {
 
     void deleteEpicByID(int ID);
 
-    ArrayList<SubTask> getAllSubTasksByEpic(int ID);
+    List<SubTask> getAllSubTasksByEpic(int ID);
+
+    List<Task> getHistory();
 }
