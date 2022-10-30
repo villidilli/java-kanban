@@ -1,9 +1,8 @@
-package ru.yandex.practicum.taskmanager;
+package ru.yandex.practicum.managers;
 
 import ru.yandex.practicum.tasks.*;
 
 
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -47,5 +46,5 @@ public interface TaskManager {
 
     List<SubTask> getAllSubTasksByEpic(int ID);
 
-    List<Task> getHistory();
+    List<Task> getHistory(); //Todo: нужен ли тут?
 }

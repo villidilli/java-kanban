@@ -1,4 +1,4 @@
-package ru.yandex.practicum.taskmanager;
+package ru.yandex.practicum.managers;
 
 import ru.yandex.practicum.tasks.*;
 
@@ -240,7 +240,7 @@ public class InMemoryTaskManager implements TaskManager{
     }
 
     @Override
-    public List<Task> getHistory() {
+    public List<Task> getHistory(){
         return browsingHistory;
     }
 }
