@@ -9,11 +9,11 @@ import java.util.Map;
 
 public class InMemoryTaskManager implements TaskManager{
     private int generatorID = 1;
-    private Map<Integer, Task> tasks = new HashMap<>();
-    private Map<Integer, SubTask> subTasks = new HashMap<>();
-    private Map<Integer, Epic> epics = new HashMap<>();
+    private final Map<Integer, Task> tasks = new HashMap<>();
+    private final Map<Integer, SubTask> subTasks = new HashMap<>();
+    private final Map<Integer, Epic> epics = new HashMap<>();
+    private final List<Task> browsingHistory = new ArrayList<>();
 
-    final private List<Task> browsingHistory = new ArrayList<>();
 
     //сервисный метод, не выносим в интерфейс
     private void reCheckEpicStatus(int epicID) {
@@ -38,13 +38,6 @@ public class InMemoryTaskManager implements TaskManager{
                 epics.get(epicID).setStatus(Status.IN_PROGRESS);
             }
         }
-    }
-
-    private void addToBrowsingHistory(Task anyTask){
-        if (browsingHistory.size() == 10) {
-            browsingHistory.remove(0);
-        }
-        browsingHistory.add(anyTask);
     }
 
     @Override
@@ -188,19 +181,16 @@ public class InMemoryTaskManager implements TaskManager{
 
     @Override
     public Task getTaskByID(int ID) {
-        addToBrowsingHistory(tasks.get(ID));
         return tasks.get(ID);
     }
 
     @Override
     public SubTask getSubTaskByID(int ID) {
-        addToBrowsingHistory(subTasks.get(ID));
         return subTasks.get(ID);
     }
 
     @Override
     public Epic getEpicByID(int ID) {
-        addToBrowsingHistory(epics.get(ID));
         return epics.get(ID);
     }
 
@@ -240,7 +230,7 @@ public class InMemoryTaskManager implements TaskManager{
     }
 
     @Override
-    public List<Task> getHistory(){
+    public List<Task> getHistory() {
         return browsingHistory;
     }
 }

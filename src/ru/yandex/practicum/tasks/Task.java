@@ -5,6 +5,7 @@ public class Task {
     private String name;
     private String description;
     private Status status = Status.NEW;
+    private boolean isViewed = false;
 
     /*
      * ЛЕГЕНДА:
