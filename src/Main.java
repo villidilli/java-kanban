@@ -1,8 +1,5 @@
-import ru.yandex.practicum.managers.HistoryManager;
 import ru.yandex.practicum.managers.Managers;
-import ru.yandex.practicum.managers.TaskManager;
 import ru.yandex.practicum.tasks.*;
-import ru.yandex.practicum.managers.InMemoryTaskManager;
 
 public class Main {
     public static void main(String[] args) {
@@ -47,15 +44,6 @@ public class Main {
         Managers.getDefault().getTaskByID(task3.getID());
         Managers.getDefault().getSubTaskByID(subTask2.getID());
         Managers.getDefault().getSubTaskByID(subTask2.getID());
-        Managers.getDefault().getEpicByID(epic1.getID());
-        Managers.getDefault().getEpicByID(epic1.getID());
-        Managers.getDefault().getSubTaskByID(subTask2.getID());
-        Managers.getDefault().getSubTaskByID(subTask2.getID());
-        Managers.getDefault().getSubTaskByID(subTask2.getID());
-        Managers.getDefault().getSubTaskByID(subTask2.getID());
-        Managers.getDefault().getSubTaskByID(subTask2.getID());
-        Managers.getDefault().getSubTaskByID(subTask2.getID());
-        Managers.getDefault().getTaskByID(task3.getID());
 
         System.out.println(Managers.getDefaultHistory().getHistory().toString());
     }
