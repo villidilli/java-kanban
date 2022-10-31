@@ -5,7 +5,6 @@ public class Task {
     private String name;
     private String description;
     private Status status = Status.NEW;
-    private boolean isViewed = false;
 
     /*
      * ЛЕГЕНДА:
@@ -65,9 +64,9 @@ public class Task {
 
     @Override
     public String toString() {
-        return "[Задача: " + getName() + "] " +
+        return "\n[Задача: " + getName() + "] " +
                 "[ID: " + getID() + "] " +
                 "[Cтатус: " + getStatus() + "] " +
-                "[Описание: " + getDescription() + "]";
+                "[Описание: " + getDescription() + "] ";
     }
 }

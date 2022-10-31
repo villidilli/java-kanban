@@ -2,9 +2,7 @@ package ru.yandex.practicum.managers;
 
 import ru.yandex.practicum.tasks.*;
 
-
 import java.util.List;
-
 
 public interface TaskManager {
 
@@ -45,6 +43,4 @@ public interface TaskManager {
     void deleteEpicByID(int ID);
 
     List<SubTask> getAllSubTasksByEpic(int ID);
-
-    List<Task> getHistory();
 }

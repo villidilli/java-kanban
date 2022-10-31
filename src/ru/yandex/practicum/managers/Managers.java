@@ -1,7 +1,5 @@
 package ru.yandex.practicum.managers;
 
-import ru.yandex.practicum.tasks.Task;
-
 public class Managers {
 
     private static final TaskManager defaultTaskManager = new InMemoryTaskManager();

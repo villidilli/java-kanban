@@ -33,7 +33,7 @@ public class SubTask extends Task {
 
     @Override
     public String toString() {
-        return "[Подзадача: " + getName() + "] " +
+        return "\n[Подзадача: " + getName() + "] " +
                 "[ID: " + getID() + "] " +
                 "[Cтатус: " + getStatus() + "] " +
                 "[Описание: " + getDescription() + "]" +

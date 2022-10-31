@@ -8,12 +8,11 @@ import java.util.List;
 import java.util.Map;
 
 public class InMemoryTaskManager implements TaskManager{
+
     private int generatorID = 1;
     private final Map<Integer, Task> tasks = new HashMap<>();
     private final Map<Integer, SubTask> subTasks = new HashMap<>();
     private final Map<Integer, Epic> epics = new HashMap<>();
-    private final List<Task> browsingHistory = new ArrayList<>();
-
 
     //сервисный метод, не выносим в интерфейс
     private void reCheckEpicStatus(int epicID) {
@@ -181,16 +180,19 @@ public class InMemoryTaskManager implements TaskManager{
 
     @Override
     public Task getTaskByID(int ID) {
+        Managers.getDefaultHistory().add(tasks.get(ID));
         return tasks.get(ID);
     }
 
     @Override
     public SubTask getSubTaskByID(int ID) {
+        Managers.getDefaultHistory().add(subTasks.get(ID));
         return subTasks.get(ID);
     }
 
     @Override
     public Epic getEpicByID(int ID) {
+        Managers.getDefaultHistory().add(epics.get(ID));
         return epics.get(ID);
     }
 
@@ -227,10 +229,5 @@ public class InMemoryTaskManager implements TaskManager{
     @Override
     public List<SubTask> getAllSubTasksByEpic(int ID) {
         return new ArrayList<>(epics.get(ID).getEpicSubTasks().values());
-    }
-
-    @Override
-    public List<Task> getHistory() {
-        return browsingHistory;
     }
 }
