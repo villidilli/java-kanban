@@ -6,7 +6,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    private final static int maxHistoryLength = 10;
+    private static final int MAX_HISTORY_LENGTH = 10;
 
     //объявил не через интерфейс чтобы был доступ к методам LinkedList
     private final LinkedList<Task> browsingHistory = new LinkedList<>();
@@ -14,7 +14,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     @Override
     public void add(Task task) {
         if (task != null) {
-            if (browsingHistory.size() == maxHistoryLength) {
+            if (browsingHistory.size() == MAX_HISTORY_LENGTH) {
                 browsingHistory.removeFirst();
             }
             browsingHistory.addLast(task);
