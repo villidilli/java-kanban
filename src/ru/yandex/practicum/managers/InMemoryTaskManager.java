@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class InMemoryTaskManager implements TaskManager{
+public class InMemoryTaskManager implements TaskManager {
     private int generatorID = 1;
     private final Map<Integer, Task> tasks = new HashMap<>();
     private final Map<Integer, SubTask> subTasks = new HashMap<>();
@@ -17,20 +17,21 @@ public class InMemoryTaskManager implements TaskManager{
     private void reCheckEpicStatus(int epicID) {
         int countDone = 0;
         int countNew = 0;
+        HashMap<Integer, SubTask> epicSubTasks = epics.get(epicID).getEpicSubTasks();
 
-        if (epics.get(epicID).getEpicSubTasks().size() == 0) {
+        if (epicSubTasks.size() == 0) {
             epics.get(epicID).setStatus(Status.NEW);
         } else {
-            for (SubTask subTask : epics.get(epicID).getEpicSubTasks().values()) {
+            for (SubTask subTask : epicSubTasks.values()) {
                 if (subTask.getStatus() == Status.NEW) {
                     countNew++;
                 } else if (subTask.getStatus() == Status.DONE) {
                     countDone++;
                 }
             }
-            if (countNew == epics.get(epicID).getEpicSubTasks().size()) {
+            if (countNew == epicSubTasks.size()) {
                 epics.get(epicID).setStatus(Status.NEW);
-            } else if (countDone == epics.get(epicID).getEpicSubTasks().size()) {
+            } else if (countDone == epicSubTasks.size()) {
                 epics.get(epicID).setStatus(Status.DONE);
             } else {
                 epics.get(epicID).setStatus(Status.IN_PROGRESS);
@@ -61,11 +62,11 @@ public class InMemoryTaskManager implements TaskManager{
                 reCheckEpicStatus(parentEpic.getID());
                 generatorID++;
                 System.out.println("Подзадача: [" + newSubTask.getName() + "] [ID: " +
-                                    newSubTask.getID() + "] [ID эпика: " +
-                                    newSubTask.getParentEpicID() + "] создана!");
+                        newSubTask.getID() + "] [ID эпика: " +
+                        newSubTask.getParentEpicID() + "] создана!");
             } else {
                 System.out.println("Эпик с ID [" + newSubTask.getParentEpicID() + "] не найден. " +
-                                   "Подзадача не может быть создана");
+                        "Подзадача не может быть создана");
             }
         } else {
             System.out.println("[Ошибка] Объект задачи равен *null*");
@@ -110,7 +111,7 @@ public class InMemoryTaskManager implements TaskManager{
                     subTasks.put(currentSubTask.getID(), newSubTask);
                     reCheckEpicStatus(parentEpic.getID());
                     System.out.println("Подзадача: [" + currentSubTask.getName() + "] " +
-                                       "[ID: " + currentSubTask.getID() + "] обновлена!");
+                            "[ID: " + currentSubTask.getID() + "] обновлена!");
                 } else {
                     System.out.println("[Ошибка] Эпик [ID: " + currentSubTask.getParentEpicID() + "] не найден!");
                 }
@@ -130,7 +131,7 @@ public class InMemoryTaskManager implements TaskManager{
                 epics.put(currentEpic.getID(), newEpic);
                 reCheckEpicStatus(currentEpic.getID());
                 System.out.println("Задача: [" + epics.get(newEpic.getID()).getName() + " ]" +
-                                   "[ID: " + newEpic.getID() + "] обновлена!");
+                        "[ID: " + newEpic.getID() + "] обновлена!");
             } else {
                 System.out.println("Задача с ID: " + newEpic.getID() + " не найдена! Создайте новую задачу");
             }
