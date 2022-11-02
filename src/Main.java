@@ -5,7 +5,6 @@ public class Main {
     public static void main(String[] args) {
 
         TaskManager tm = Managers.getDefault();
-        HistoryManager hm = Managers.getDefaultHistory();
 
         Task task = new Task("Таск", "-");
         Task task1 = new Task("Таск", "-");
@@ -57,6 +56,6 @@ public class Main {
         tm.getSubTaskByID(subTask2.getID());
         tm.getTaskByID(task3.getID());
 
-        System.out.println(hm.getHistory().toString());
+        System.out.println(tm.getHistory().toString());
     }
 }
