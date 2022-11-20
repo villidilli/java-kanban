@@ -195,6 +195,7 @@ public class InMemoryTaskManager implements TaskManager {
 	@Override
 	public void deleteTaskByID(int ID) {
 		tasks.remove(ID);
+		historyManager.remove(ID);
 		System.out.println("Задача с ID [" + ID + "] успешно удалена!");
 	}
 
@@ -206,18 +207,21 @@ public class InMemoryTaskManager implements TaskManager {
 		epicSubTasks.remove(ID); //удаляем из эпика
 		subTasks.remove(ID); //удаляем из менеджера
 		reCheckEpicStatus(parentEpic.getID());
+		historyManager.remove(ID);
 		System.out.println("Подзадача с ID [" + ID + "] успешно удалена!");
 	}
 
 	@Override
 	public void deleteEpicByID(int ID) {
-		//удаляем и коллекции собтасков менеджера сабтаски, имеющие отношение к эпику
+		//удаляем из коллекции собтасков менеджера сабтаски, имеющие отношение к эпику
 		for (SubTask subTask : epics.get(ID).getEpicSubTasks().values()) {
 			if (subTasks.get(subTask.getID()) != null) {
+				historyManager.remove(subTask.getID());
 				subTasks.remove(subTask.getID());
 			}
 		}
 		//теперь удаляем сам эпик
+		historyManager.remove(ID);
 		epics.remove(ID);
 		System.out.println("Эпик с ID [" + ID + "] успешно удален!");
 	}
