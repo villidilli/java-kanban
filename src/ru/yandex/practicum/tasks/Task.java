@@ -1,5 +1,7 @@
 package ru.yandex.practicum.tasks;
 
+import java.util.Objects;
+
 public class Task {
 	private int ID;
 	private String name;
@@ -65,5 +67,18 @@ public class Task {
 	@Override
 	public String toString() {
 		return "\n[Задача: " + getName() + "] " + "[ID: " + getID() + "] " + "[Cтатус: " + getStatus() + "] " + "[Описание: " + getDescription() + "] ";
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Task task = (Task) o;
+		return ID == task.ID;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(ID);
 	}
 }
