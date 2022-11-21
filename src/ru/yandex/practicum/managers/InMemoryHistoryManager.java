@@ -21,14 +21,14 @@ public class InMemoryHistoryManager implements HistoryManager {
             historyTail = node;
             historyHead = historyTail;
         }
+        //если история содержит добавляемую ноду, старую удаляем, новую добавляем чтобы встала в хвост связки
+        if (history.containsKey(task.getID())) {
+            remove(task.getID());
+        }
         // если есть хотя бы 1 элемент, значит хвост имеет ноду
         if (history.size() > 0) {
             historyTail.next = node;
             historyTail = node;
-        }
-        //если история содержит добавляемую ноду, старую удаляем, новую добавляем чтобы встала в хвост связки
-        if (history.containsKey(task.getID())) {
-            remove(task.getID());
         }
         history.put(task.getID(), node);
     }
