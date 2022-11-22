@@ -16,21 +16,15 @@ public class InMemoryHistoryManager implements HistoryManager {
         //т.к. мы добавляем в конец списка, то ссылка next у ноды будет всегда null (инициализируется в конструкторе)
         Node node = new Node(historyTail, task);
 
-        // если история пустая, тогда голова будет равняться хвосту
-        if (history.isEmpty()) {
-            historyTail = node;
-            historyHead = historyTail;
-        }
-        //если история содержит добавляемую ноду, старую удаляем, новую добавляем чтобы встала в хвост связки
-        if (history.containsKey(task.getID())) {
-            remove(task.getID());
-        }
-        // если есть хотя бы 1 элемент, значит хвост имеет ноду
-        if (history.size() > 0) {
+        //если голова пустая, значит в истории нет объектов, тогда голова = новой ноде
+        if (historyHead == null) {
+            historyHead = node;
+        } else {
+            //в противном случае старой ноде-хвосту присваиваем ссылку на след.ноду = новой ноде
             historyTail.next = node;
-            historyTail = node;
         }
-        history.put(task.getID(), node);
+        //новая нода всегда будет хвостом
+        historyTail = node;
     }
 
     private void removeNode(Node<Task> deletingNode) {
@@ -69,14 +63,11 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     private List<Task> getTasks() {
         List<Task> historyList = new ArrayList<>();
-
-        if (history.size() != 0){
-            //движемся по ссылкам next каждой ноды, начиная с головы
-            Node<Task> currentNode = historyHead; // переменная в роли курсора, перед какой нодой стоим
-            while (currentNode != null) { // пока не дошли до ссылки на null у хвоста
-                historyList.add(currentNode.task);
-                currentNode = currentNode.next; // передвинули курсор на след.ноду
-            }
+        //движемся по ссылкам next каждой ноды, начиная с головы
+        Node<Task> currentNode = historyHead; // переменная в роли курсора, перед какой нодой стоим
+        while (currentNode != null) { // пока не дошли до ссылки на null у хвоста
+            historyList.add(currentNode.task);
+            currentNode = currentNode.next; // передвинули курсор на след.ноду
         }
         return historyList;
     }
@@ -89,7 +80,10 @@ public class InMemoryHistoryManager implements HistoryManager {
     @Override
     public void add(Task task) {
         if (task != null) {
+            //перенёс удаление из linkLast, чтобы linkLast выполнял только 1 функцию - создавать хвост
+            remove(task.getID()); //удаляет старую ноду, чтобы в связке не было дублей-ссылок
             linkLast(task);
+            history.put(task.getID(), historyTail);
         } else {
             System.out.println("[Ошибка] Входящий объект = null");
         }
@@ -106,7 +100,7 @@ public class InMemoryHistoryManager implements HistoryManager {
         Task task;
 
         // private - чтобы ноду нельзя было создать из-вне
-        private Node(Node<Task> prev, Task task) {
+        Node(Node<Task> prev, Task task) {
             this.prev = prev;
             this.task = task;
         }
