@@ -94,12 +94,11 @@ public class InMemoryHistoryManager implements HistoryManager {
         return getTasks();
     }
 
-    private class Node<Task> {
+    static class Node<Task> {
         Node<Task> prev = null;
         Node<Task> next = null;
         Task task;
 
-        // private - чтобы ноду нельзя было создать из-вне
         Node(Node<Task> prev, Task task) {
             this.prev = prev;
             this.task = task;
