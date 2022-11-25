@@ -14,7 +14,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     private void linkLast(Task task) {
         //т.к. мы добавляем в конец списка, то ссылка next у ноды будет всегда null (инициализируется в конструкторе)
-        Node node = new Node(historyTail, task);
+        Node node = new Node(historyTail, task, null);
 
         //если голова пустая, значит в истории нет объектов, тогда голова = новой ноде
         if (historyHead == null) {
@@ -27,37 +27,24 @@ public class InMemoryHistoryManager implements HistoryManager {
         historyTail = node;
     }
 
-    private void removeNode(Node<Task> deletingNode) {
-        if (deletingNode != null) { // иначе бросает NPE
-            Node<Task> nextNode = deletingNode.next;
-            Node<Task> prevNode = deletingNode.prev;
-
-            boolean isHead = historyHead == deletingNode; // удаляемая нода - голова?
-            boolean isTail = historyTail == deletingNode; // удаляемая нода - хвост?
-
-            // если удаляем ноду-голову и есть ещё ноды в связке
-            if (isHead && nextNode != null) {
-                nextNode.prev = prevNode; // у следующей ноды ссылку ставим на предыдущую ноду
-                historyHead = nextNode; // головой = следующая нода
-            }
-            // если удаляем ноду-хвост и есть ещё ноды в связке
-            if (isTail && prevNode != null) {
-                prevNode.next = nextNode; // У пред.ноды ссылку ставим на следующую ноду
-                historyTail = prevNode; // хвост = предыдущая нода
-            }
-            // если удаляем из середины связки (не голова и не хвост)
-            if (!isHead && !isTail) {
-                // т.к. это середина связки, просто меняем ссылки
-                prevNode.next = nextNode;
-                nextNode.prev = prevNode;
-            }
-            // если удаляем единственную ноду связи (голова=хвост)
-            if (isHead && isTail) {
-                // обнуляем ссылки, иначе не корректно работает getTasks() для getHistory()
-                historyHead = null;
+    private void removeNode(Node<Task> node) {
+        if (node != null) { // иначе бросает NPE
+            if (node.next == null && node.prev == null) { // это единственная нода в связке
                 historyTail = null;
+                historyHead = null;
+            } else if (node.next == null) { // это хвост и есть ещё элементы в связке
+                historyTail = node.prev;
+                historyTail.next = null;
+            } else if (node.prev == null) { // это голова и есть ещё элементы в связке
+                historyHead = node.next;
+                historyHead.prev = null;
+            } else { // значит нода из середины, то меняем ссылки соседних нод друг на друга
+                node.prev.next = node.next;
+                node.next.prev = node.prev;
             }
-            history.remove(deletingNode.task.getID()); // удаляем саму ноду
+            history.remove(node.task.getID()); // удаляем саму ноду
+        } else {
+            return;
         }
     }
 
@@ -95,13 +82,14 @@ public class InMemoryHistoryManager implements HistoryManager {
     }
 
     static class Node<Task> {
-        Node<Task> prev = null;
-        Node<Task> next = null;
+        Node<Task> prev;
+        Node<Task> next;
         Task task;
 
-        Node(Node<Task> prev, Task task) {
+        Node(Node<Task> prev, Task task, Node<Task> next) {
             this.prev = prev;
             this.task = task;
+            this.next = next;
         }
     }
 }
