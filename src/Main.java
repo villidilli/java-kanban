@@ -5,20 +5,20 @@ public class Main {
     public static void main(String[] args) {
 
         TaskManager tm = Managers.getDefault();
-
-        Task task1 = new Task("Таск1", ""); //1
-        tm.create(task1);
-        Task task2 = new Task("Таск2", ""); //2
-        tm.create(task2);
-        Epic epic1 = new Epic("Эпик1", ""); //3
-        tm.create(epic1);
-        SubTask subTask1 = new SubTask("Саб1", "", 3); //4
-        tm.create(subTask1);
-        SubTask subTask2 = new SubTask("Саб2", "", 3); //5
-        tm.create(subTask2);
-        SubTask subTask3 = new SubTask("Саб3", "",3); //6
-        tm.create(subTask3);
-
+        FileBackedTasksManager f = new FileBackedTasksManager();
+        Task task1 = new Task("Таск1", "-"); //1
+        f.create(task1);
+        Task task2 = new Task("Таск2", "-"); //2
+        f.create(task2);
+        Epic epic1 = new Epic("Эпик1", "-"); //3
+        f.create(epic1);
+        SubTask subTask1 = new SubTask("Саб1", "-", 3); //4
+        f.create(subTask1);
+        SubTask subTask2 = new SubTask("Саб2", "-", 3); //5
+        f.create(subTask2);
+        SubTask subTask3 = new SubTask("Саб3", "Описание саб3",3); //6
+        f.create(subTask3);
+/*
         System.out.println("\nПроверяем порядок истории (без дублей)");
         tm.getTaskByID(task2.getID());
         tm.getSubTaskByID(subTask2.getID());
@@ -57,5 +57,8 @@ public class Main {
         tm.deleteEpicByID(3);
 
         System.out.println(tm.getHistory());
+ */
+
+
     }
 }
