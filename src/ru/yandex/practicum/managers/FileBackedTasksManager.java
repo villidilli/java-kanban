@@ -3,14 +3,16 @@ package ru.yandex.practicum.managers;
 import ru.yandex.practicum.tasks.Epic;
 import ru.yandex.practicum.tasks.SubTask;
 import ru.yandex.practicum.tasks.Task;
-import ru.yandex.practicum.tasks.TaskTypes;
+import ru.yandex.practicum.utilities.TaskConverter;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Iterator;
 import java.util.List;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
@@ -19,49 +21,39 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     private static void loadFromFile(File file) {
     }
 
-    //заменить на private
-    public String toString(Task task) {
-        StringBuilder stringBuilder = new StringBuilder();
-
-        // добавляем поля, которые не привязываны к типу класса
-        stringBuilder.append(task.getID() + ",");
-        stringBuilder.append(task.getName() + ",");
-        stringBuilder.append(task.getStatus() + ",");
-        stringBuilder.append(task.getDescription() + ",");
-
-        // добавляем название класса = константе enum
-        if (task.getClass() == Task.class) {
-            stringBuilder.insert(2, TaskTypes.TASK + ",");
-        } else if (task.getClass() == SubTask.class) {
-            stringBuilder.insert(2, TaskTypes.SUBTASK + ",");
-            stringBuilder.append(((SubTask) task).getParentEpicID());
-        } else if (task.getClass() == Epic.class) {
-            stringBuilder.insert(2, TaskTypes.EPIC + ",");
-        } else {
-            throw new ManagerSaveException("Ошибка -> Неизвестный тип класса");
+    private void writeHistoryToFile(BufferedWriter bufferedWriter, List<? extends Task> list) {
+        String history = TaskConverter.historyToString(list);
+        try {
+            bufferedWriter.write(history);
+        } catch (IOException exception) {
+            throw new ManagerSaveException("Ошибка -> Не удалось записать данные");
         }
-        return stringBuilder.toString();
     }
 
-    private void writeFile(FileWriter fileWriter, List<? extends Task> list) {
-        for (Task task : list) {
-            try {
-                fileWriter.write(toString(task) + "\n");
-            } catch (IOException exception) {
-                throw new ManagerSaveException("Ошибка -> Не удалось записать данные");
+    private void writeTaskToFile(BufferedWriter bufferedWriter, List<? extends Task> list) {
+        try {
+            for (Task task : list) {
+                bufferedWriter.write(TaskConverter.toString(task) + "\n");
             }
+        } catch (IOException exception) {
+            throw new ManagerSaveException("Ошибка -> Не удалось записать данные");
         }
+    }
+
+    private String getHeaderTasks() {
+        return "id,type,name,status,description,epic\n";
     }
 
     //сделать Private
     public void save() {
-        FileWriter fileWriter = null;
-        try {
-            fileWriter = new FileWriter(path.toFile(), StandardCharsets.UTF_8);
-            writeFile(fileWriter, super.getAllTasks());
-            writeFile(fileWriter, super.getAllSubTasks());
-            writeFile(fileWriter, super.getAllEpics());
-            fileWriter.close();
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(path.toFile(), StandardCharsets.UTF_8))) {
+            bufferedWriter.write(getHeaderTasks());
+            writeTaskToFile(bufferedWriter, super.getAllTasks());
+            writeTaskToFile(bufferedWriter, super.getAllSubTasks());
+            writeTaskToFile(bufferedWriter, super.getAllEpics());
+            bufferedWriter.newLine();
+            writeHistoryToFile(bufferedWriter, super.getHistory());
+            bufferedWriter.flush();
         } catch (IOException exception) {
             throw new ManagerSaveException("Ошибка -> Сохранение не удалось");
         }
