@@ -1,24 +1,37 @@
 package ru.yandex.practicum.managers;
 
-import ru.yandex.practicum.tasks.Epic;
-import ru.yandex.practicum.tasks.SubTask;
-import ru.yandex.practicum.tasks.Task;
+import ru.yandex.practicum.tasks.*;
 import ru.yandex.practicum.utilities.TaskConverter;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Iterator;
 import java.util.List;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
-    private final Path path = Paths.get("D:\\JavaDev\\java-kanban\\resources\\Backup.csv");
 
-    private static void loadFromFile(File file) {
+    public static void main(String[] args) {
+        loadFromFile(FileBackedTasksManager.backupFile);
+    }
+
+    private static final File backupFile = new File("resources\\Backup.csv");
+    //заменить на класс
+    private static String loadFromFile(File file) {
+        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager();
+        fileBackedTasksManager.readFile(file);
+
+        return " ";
+    }
+
+    private void readFile(File file) {
+        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(
+                FileBackedTasksManager.backupFile, StandardCharsets.UTF_8))) {
+
+
+        } catch (FileNotFoundException exception) {
+            throw new ManagerSaveException("Ошибка -> Файл не найден");
+        } catch (IOException e) {
+            throw new ManagerSaveException("Ошибка -> Ошибка чтения файла");
+        }
     }
 
     private void writeHistoryToFile(BufferedWriter bufferedWriter, List<? extends Task> list) {
@@ -33,7 +46,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     private void writeTaskToFile(BufferedWriter bufferedWriter, List<? extends Task> list) {
         try {
             for (Task task : list) {
-                bufferedWriter.write(TaskConverter.toString(task) + "\n");
+                bufferedWriter.write(TaskConverter.taskToString(task) + "\n");
             }
         } catch (IOException exception) {
             throw new ManagerSaveException("Ошибка -> Не удалось записать данные");
@@ -46,7 +59,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     //сделать Private
     public void save() {
-        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(path.toFile(), StandardCharsets.UTF_8))) {
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(FileBackedTasksManager.backupFile, StandardCharsets.UTF_8))) {
             bufferedWriter.write(getHeaderTasks());
             writeTaskToFile(bufferedWriter, super.getAllTasks());
             writeTaskToFile(bufferedWriter, super.getAllSubTasks());

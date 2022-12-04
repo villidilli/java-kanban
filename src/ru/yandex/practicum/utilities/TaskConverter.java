@@ -1,11 +1,9 @@
 package ru.yandex.practicum.utilities;
 
-import ru.yandex.practicum.managers.HistoryManager;
 import ru.yandex.practicum.managers.ManagerSaveException;
 import ru.yandex.practicum.tasks.*;
 import ru.yandex.practicum.tasks.TaskTypes;
 
-import java.util.Iterator;
 import java.util.List;
 
 public class TaskConverter {
@@ -13,7 +11,7 @@ public class TaskConverter {
 
     private TaskConverter() {}
 
-    public static String toString (Task task) {
+    public static String taskToString(Task task) {
         stringBuilder = new StringBuilder();
 
         // добавляем поля, которые не привязываны к типу класса
@@ -47,5 +45,9 @@ public class TaskConverter {
             }
         }
         return stringBuilder.toString();
+    }
+
+    public static Task taskFromString(String value) {
+        return new Task("1", "2");
     }
 }
