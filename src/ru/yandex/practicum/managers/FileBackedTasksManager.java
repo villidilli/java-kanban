@@ -5,33 +5,68 @@ import ru.yandex.practicum.utilities.TaskConverter;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.List;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
 
     public static void main(String[] args) {
-        loadFromFile(FileBackedTasksManager.backupFile);
+        loadFromFile(backupFile.toFile());
+        FileBackedTasksManager f = new FileBackedTasksManager();
+
+        Task task1 = new Task("Таск1", "-"); //1
+        f.create(task1);
+        Epic epic1 = new Epic("Эпик1", "-"); //2
+        f.create(epic1);
+        SubTask subTask1 = new SubTask("Саб1", "-", 2); //3
+        f.create(subTask1);
+        SubTask subTask2 = new SubTask("Саб2", "-", 2); //4
+        f.create(subTask2);
+        SubTask subTask3 = new SubTask("Саб3", "-",2); //5
+        f.create(subTask3);
+
+        System.out.println("\nПроверяем порядок истории (без дублей)");
+        f.getSubTaskByID(subTask2.getID());
+        f.getSubTaskByID(subTask3.getID());
+        f.getEpicByID(epic1.getID());
+        System.out.println("\nОжидаем порядок id 4 - 5 - 2");
+        System.out.println(f.getHistory());
     }
 
-    private static final File backupFile = new File("resources\\Backup.csv");
+    private static final Path backupFile = Path.of("resources\\Backup.csv");
+
     //заменить на класс
-    private static String loadFromFile(File file) {
-        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager();
-        fileBackedTasksManager.readFile(file);
-
-        return " ";
+    public static FileBackedTasksManager loadFromFile(File file) {
+        String[] rows = readFile(file);
+        // начинаем со второй строки, исключая шапку
+        for (int i = 1; i < rows.length ; i++) {
+            // читаем пока не дойдём до строки-разделителя тасков от истории
+            while(!rows[i].isBlank()) {
+                Task task = TaskConverter.taskFromString(rows[i]);
+                //TODO
+            }
+        }
+        return new FileBackedTasksManager();
     }
 
-    private void readFile(File file) {
-        try (BufferedReader bufferedReader = new BufferedReader(new FileReader(
-                FileBackedTasksManager.backupFile, StandardCharsets.UTF_8))) {
-
-
-        } catch (FileNotFoundException exception) {
-            throw new ManagerSaveException("Ошибка -> Файл не найден");
-        } catch (IOException e) {
-            throw new ManagerSaveException("Ошибка -> Ошибка чтения файла");
+    private static String[] readFile(File file) {
+        String fileData;
+        String[] rows;
+        try {
+            fileData = Files.readString(file.toPath());
+            rows = fileData.split("\\r?\\n");
+        } catch (IOException exception) {
+            throw new ManagerSaveException("Ошибка -> Чтение файла невозможно");
         }
+        return rows;
+    }
+    private static void addToMap(Task task) {
+        if (task.getClass().equals(Task.class)) {
+
+        }
+
     }
 
     private void writeHistoryToFile(BufferedWriter bufferedWriter, List<? extends Task> list) {
@@ -59,7 +94,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     //сделать Private
     public void save() {
-        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(FileBackedTasksManager.backupFile, StandardCharsets.UTF_8))) {
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(backupFile.toFile(), StandardCharsets.UTF_8))) {
             bufferedWriter.write(getHeaderTasks());
             writeTaskToFile(bufferedWriter, super.getAllTasks());
             writeTaskToFile(bufferedWriter, super.getAllSubTasks());

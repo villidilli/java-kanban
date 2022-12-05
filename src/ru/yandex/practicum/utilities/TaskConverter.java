@@ -48,6 +48,29 @@ public class TaskConverter {
     }
 
     public static Task taskFromString(String value) {
-        return new Task("1", "2");
+        Task task = null;
+        String[] fields = value.split(",");
+
+        int ID = Integer.parseInt(fields[0]);
+        TaskTypes type = TaskTypes.convertToEnum(fields[1]);
+        String name = fields[2];
+        Status status = Status.convertToEnum(fields[3]);
+        String description = fields[4];
+
+        switch (type) {
+            case TASK:
+                task = new Task(ID, name, description, status);
+                break;
+            case SUBTASK:
+                int parentEpicID = Integer.parseInt(fields[5]);
+                task = new SubTask(ID, name, description, parentEpicID);
+                task.setStatus(status);
+                break;
+            case EPIC:
+                task = new Epic(ID, name, description);
+                task.setStatus(status);
+                break;
+        }
+        return task;
     }
 }
