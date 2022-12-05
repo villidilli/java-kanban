@@ -25,7 +25,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         f.create(subTask1);
         SubTask subTask2 = new SubTask("Саб2", "-", 2); //4
         f.create(subTask2);
-        SubTask subTask3 = new SubTask("Саб3", "-",2); //5
+        SubTask subTask3 = new SubTask("Саб3", "-", 2); //5
         f.create(subTask3);
 
         System.out.println("\nПроверяем порядок истории (без дублей)");
@@ -52,39 +52,52 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         final Map<Integer, Task> allTasks = new HashMap<>();
 
         String[] rows = readFile(file);
-        boolean isNotReadBlankLine = true;
-        int indexBlankRow = -1;
 
-        for (int i = 1; i < rows.length && isNotReadBlankLine; i++) {
-            if (!rows[i].isBlank()) {
-                Task fileBackedTask = TaskConverter.taskFromString(rows[i]);
-                addTaskToMap(backedTasksManager, fileBackedTask);
-                allTasks.put(fileBackedTask.getID(), fileBackedTask);
+        for (int i = 1; i < rows.length; i++) {
+            if (rows[i].isBlank()) {
+                List<Integer> history = TaskConverter.historyFromString(rows[++i]);
+                Task task = null;
+                for (Integer ID : history) {
+                    if (backedTasksManager.tasks.containsKey(ID)) {
+                        task = backedTasksManager.tasks.get(ID);
+                    } else if (backedTasksManager.subTasks.containsKey(ID)) {
+                        task = backedTasksManager.subTasks.get(ID);
+                    } else if (backedTasksManager.epics.containsKey(ID)) {
+                        task = backedTasksManager.epics.get(ID);
+                    }
+                    historyManager.add(task);
+                }
             } else {
-                indexBlankRow = i;
-                isNotReadBlankLine = false;
+                Task task = TaskConverter.taskFromString(rows[i]);
+                if (task.getClass() == Task.class) {
+                    backedTasksManager.tasks.put(task.getID(), task);
+                } else if (task.getClass() == SubTask.class) {
+                    backedTasksManager.subTasks.put(task.getID(), (SubTask) task);
+                } else if (task.getClass() == Epic.class) {
+                    backedTasksManager.epics.put(task.getID(), (Epic) task);
+                }
             }
         }
-        addHistoryToMap(historyManager, rows[indexBlankRow + 1], allTasks);
         return backedTasksManager;
     }
 
-    private static void addTaskToMap(FileBackedTasksManager backedTasksManager, Task task) {
-        if (task.getClass() == Task.class) {
-            backedTasksManager.tasks.put(task.getID(), task);
-        } else if (task.getClass() == SubTask.class) {
-            backedTasksManager.subTasks.put(task.getID(), (SubTask) task);
-        } else if (task.getClass() == Epic.class) {
-            backedTasksManager.epics.put(task.getID(), (Epic) task);
-        }
-    }
+//    private static void addTaskToMap(FileBackedTasksManager backedTasksManager, Task task) {
+//
+//        if (task.getClass() == Task.class) {
+//            backedTasksManager.tasks.put(task.getID(), task);
+//        } else if (task.getClass() == SubTask.class) {
+//            backedTasksManager.subTasks.put(task.getID(), (SubTask) task);
+//        } else if (task.getClass() == Epic.class) {
+//            backedTasksManager.epics.put(task.getID(), (Epic) task);
+//        }
+//    }
 
-    private static void addHistoryToMap(HistoryManager historyManager, String row, Map <Integer, Task> allTasks) {
-        List<Integer> history = TaskConverter.historyFromString(row);
-        for (Integer idTask : history) {
-            historyManager.add(allTasks.get(idTask));
-        }
-    }
+//    private static void addHistoryToMap(HistoryManager historyManager, String row, Map <Integer, Task> allTasks) {
+//        List<Integer> history = TaskConverter.historyFromString(row);
+//        for (Integer idTask : history) {
+//            historyManager.add(allTasks.get(idTask));
+//        }
+//    }
 
     private static String[] readFile(File file) {
         String fileData;

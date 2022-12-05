@@ -8,6 +8,8 @@ public enum TaskTypes {
     SUBTASK,
     EPIC;
 
+    Class<Task> aClass;
+
     public static TaskTypes convertToEnum(String type) {
         TaskTypes taskType = null;
         for (TaskTypes elem : TaskTypes.values()) {
