@@ -47,40 +47,42 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     //заменить на класс
     public static FileBackedTasksManager loadFromFile(File file) {
+        FileBackedTasksManager backedTasksManager = new FileBackedTasksManager();
+        HistoryManager historyManager = backedTasksManager.historyManager;
         final Map<Integer, Task> allTasks = new HashMap<>();
-        FileBackedTasksManager fbtm = new FileBackedTasksManager();
-        boolean isReadBlankLine = false;
-        int indexBlankRow = -1;
-        String[] rows = readFile(file);
 
-        for (int i = 1; i < rows.length && !isReadBlankLine; i++) {
+        String[] rows = readFile(file);
+        boolean isNotReadBlankLine = true;
+        int indexBlankRow = -1;
+
+        for (int i = 1; i < rows.length && isNotReadBlankLine; i++) {
             if (!rows[i].isBlank()) {
-                Task task = TaskConverter.taskFromString(rows[i]);
-                addTaskToMap(fbtm, task);
-                allTasks.put(task.getID(), task);
+                Task fileBackedTask = TaskConverter.taskFromString(rows[i]);
+                addTaskToMap(backedTasksManager, fileBackedTask);
+                allTasks.put(fileBackedTask.getID(), fileBackedTask);
             } else {
                 indexBlankRow = i;
-                isReadBlankLine = true;
+                isNotReadBlankLine = false;
             }
         }
-        addHistoryToMap(fbtm, rows[indexBlankRow + 1], allTasks);
-       return fbtm;
+        addHistoryToMap(historyManager, rows[indexBlankRow + 1], allTasks);
+        return backedTasksManager;
     }
 
-    private static void addTaskToMap(FileBackedTasksManager fbtm, Task task) {
+    private static void addTaskToMap(FileBackedTasksManager backedTasksManager, Task task) {
         if (task.getClass() == Task.class) {
-            fbtm.tasks.put(task.getID(), task);
+            backedTasksManager.tasks.put(task.getID(), task);
         } else if (task.getClass() == SubTask.class) {
-            fbtm.subTasks.put(task.getID(), (SubTask) task);
+            backedTasksManager.subTasks.put(task.getID(), (SubTask) task);
         } else if (task.getClass() == Epic.class) {
-            fbtm.epics.put(task.getID(), (Epic) task);
+            backedTasksManager.epics.put(task.getID(), (Epic) task);
         }
     }
 
-    private static void addHistoryToMap(FileBackedTasksManager fbtm, String row, Map <Integer, Task> allTasks) {
+    private static void addHistoryToMap(HistoryManager historyManager, String row, Map <Integer, Task> allTasks) {
         List<Integer> history = TaskConverter.historyFromString(row);
         for (Integer idTask : history) {
-            fbtm.historyManager.add(allTasks.get(idTask));
+            historyManager.add(allTasks.get(idTask));
         }
     }
 
@@ -123,7 +125,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     //сделать Private
     public void save() {
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(backupFile.toFile(),
-                                                                StandardCharsets.UTF_8))) {
+                StandardCharsets.UTF_8))) {
             bufferedWriter.write(getHeaderTasks());
             writeTaskToFile(bufferedWriter, tasks);
             writeTaskToFile(bufferedWriter, subTasks);
