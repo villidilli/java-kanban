@@ -9,11 +9,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
 
     public static void main(String[] args) {
-        loadFromFile(backupFile.toFile());
         FileBackedTasksManager f = new FileBackedTasksManager();
 
         Task task1 = new Task("Таск1", "-"); //1
@@ -33,6 +33,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         f.getEpicByID(epic1.getID());
         System.out.println("\nОжидаем порядок id 4 - 5 - 2");
         System.out.println(f.getHistory());
+
+        FileBackedTasksManager f1 = loadFromFile(backupFile.toFile());
+        System.out.println(f1.tasks);
+
     }
 
     private static final Path backupFile = Path.of("resources\\Backup.csv");
@@ -40,14 +44,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     //заменить на класс
     public static FileBackedTasksManager loadFromFile(File file) {
         String[] rows = readFile(file);
+        Task task = TaskConverter.taskFromString(rows[1]);
         // начинаем со второй строки, исключая шапку
-        for (int i = 1; i < rows.length ; i++) {
-            // читаем пока не дойдём до строки-разделителя тасков от истории
-            while(!rows[i].isBlank()) {
-                Task task = TaskConverter.taskFromString(rows[i]);
-                //TODO
-            }
-        }
+
         return new FileBackedTasksManager();
     }
 
@@ -62,15 +61,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
         return rows;
     }
-    private static void addToMap(Task task) {
+    private static void addToMap(Task task) { //TODO
         if (task.getClass().equals(Task.class)) {
 
         }
 
     }
 
-    private void writeHistoryToFile(BufferedWriter bufferedWriter, List<? extends Task> list) {
-        String history = TaskConverter.historyToString(list);
+    private void writeHistoryToFile(BufferedWriter bufferedWriter, List<Task> list) {
+        String history = TaskConverter.historyToString(historyManager);
         try {
             bufferedWriter.write(history);
         } catch (IOException exception) {
@@ -78,9 +77,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
-    private void writeTaskToFile(BufferedWriter bufferedWriter, List<? extends Task> list) {
+    private void writeTaskToFile(BufferedWriter bufferedWriter, Map<Integer, ? extends Task> list) {
         try {
-            for (Task task : list) {
+            for (Task task : list.values()) {
                 bufferedWriter.write(TaskConverter.taskToString(task) + "\n");
             }
         } catch (IOException exception) {
@@ -96,9 +95,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     public void save() {
         try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(backupFile.toFile(), StandardCharsets.UTF_8))) {
             bufferedWriter.write(getHeaderTasks());
-            writeTaskToFile(bufferedWriter, super.getAllTasks());
-            writeTaskToFile(bufferedWriter, super.getAllSubTasks());
-            writeTaskToFile(bufferedWriter, super.getAllEpics());
+            writeTaskToFile(bufferedWriter, tasks);
+            writeTaskToFile(bufferedWriter, subTasks);
+            writeTaskToFile(bufferedWriter, epics);
             bufferedWriter.newLine();
             writeHistoryToFile(bufferedWriter, super.getHistory());
             bufferedWriter.flush();

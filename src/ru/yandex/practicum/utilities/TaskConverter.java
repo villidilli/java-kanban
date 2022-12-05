@@ -1,9 +1,11 @@
 package ru.yandex.practicum.utilities;
 
+import ru.yandex.practicum.managers.HistoryManager;
 import ru.yandex.practicum.managers.ManagerSaveException;
 import ru.yandex.practicum.tasks.*;
 import ru.yandex.practicum.tasks.TaskTypes;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class TaskConverter {
@@ -34,18 +36,32 @@ public class TaskConverter {
         return stringBuilder.toString();
     }
 
-    public static String historyToString(List <? extends Task> list) {
+    public static String historyToString(HistoryManager historyManager) {
+        List<Task> history = historyManager.getHistory();
         stringBuilder = new StringBuilder();
         // проходим через fori, чтобы у последнего id не ставить запятую
-        for (int i = 0; i < list.size(); i++) {
-            if (i != list.size() - 1) {
-                stringBuilder.append(list.get(i).getID() + ",");
+        for (int i = 0; i < history.size(); i++) {
+            if (i != history.size() - 1) {
+                stringBuilder.append(history.get(i).getID() + ",");
             } else {
-                stringBuilder.append(list.get(i).getID());
+                stringBuilder.append(history.get(i).getID());
             }
         }
         return stringBuilder.toString();
     }
+
+//    public static String historyToString(List <Task> list) {
+//        stringBuilder = new StringBuilder();
+//        // проходим через fori, чтобы у последнего id не ставить запятую
+//        for (int i = 0; i < list.size(); i++) {
+//            if (i != list.size() - 1) {
+//                stringBuilder.append(list.get(i).getID() + ",");
+//            } else {
+//                stringBuilder.append(list.get(i).getID());
+//            }
+//        }
+//        return stringBuilder.toString();
+//    }
 
     public static Task taskFromString(String value) {
         Task task = null;

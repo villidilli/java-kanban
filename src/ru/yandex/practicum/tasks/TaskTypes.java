@@ -8,14 +8,13 @@ public enum TaskTypes {
     SUBTASK,
     EPIC;
 
-    public static TaskTypes convertToEnum(String type) throws ManagerSaveException {
+    public static TaskTypes convertToEnum(String type) {
         TaskTypes taskType = null;
         for (TaskTypes elem : TaskTypes.values()) {
             if (elem.name().equals(type)){
                 taskType = elem;
-            } else {
-                throw new ManagerSaveException("Ошибка -> Не найден элемент Enum равный типу из файла");
             }
+            break;
         }
         return taskType;
     }

@@ -11,7 +11,7 @@ public class InMemoryTaskManager implements TaskManager {
 	protected final Map<Integer, Task> tasks = new HashMap<>();
 	protected final Map<Integer, SubTask> subTasks = new HashMap<>();
 	protected final Map<Integer, Epic> epics = new HashMap<>();
-	private final HistoryManager historyManager = Managers.getDefaultHistory();
+	protected final HistoryManager historyManager = Managers.getDefaultHistory();
 	private int generatorID = 1;
 
 	//сервисный метод, не выносим в интерфейс

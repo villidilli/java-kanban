@@ -7,14 +7,13 @@ public enum Status {
     IN_PROGRESS,
     DONE;
 
-    public static Status convertToEnum(String status) throws ManagerSaveException {
+    public static Status convertToEnum(String status) {
         Status enumStatus = null;
         for (Status elem : Status.values()) {
             if (elem.name().equals(status)){
                 enumStatus = elem;
-            } else {
-                throw new ManagerSaveException("Ошибка -> Не найден элемент Enum равный типу из файла");
             }
+            break;
         }
         return enumStatus;
     }
