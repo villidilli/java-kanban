@@ -43,12 +43,44 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     //заменить на класс
     public static FileBackedTasksManager loadFromFile(File file) {
+        FileBackedTasksManager fbtm = new FileBackedTasksManager();
+        boolean isWasBlankLine = false;
         String[] rows = readFile(file);
-        Task task = TaskConverter.taskFromString(rows[1]);
-        // начинаем со второй строки, исключая шапку
 
+        if (!isWasBlankLine) {
+            int numBlankRow = 0;
+            for (String row : rows) {
+                if (!row.isBlank()) {
+                    addTaskToMap(fbtm, TaskConverter.taskFromString(row));
+                } else {
+                    isWasBlankLine = true;
+                    n
+                    break;
+                }
+            }
+        } else if (isWasBlankLine){
+
+        }
+
+        for (int numRow = 1; numRow < rows.length ; numRow++) { //TODO заходит в строку истории и падает 7 эл
+            if(!rows[numRow].isBlank()) {
+                addTaskToMap(fbtm,TaskConverter.taskFromString(rows[numRow]));
+            } //TODO историю
+        }
         return new FileBackedTasksManager();
     }
+
+    private static void addTaskToMap(FileBackedTasksManager fbtm, Task task) {
+        if (task.getClass() == Task.class) {
+            fbtm.tasks.put(task.getID(), task);
+        } else if (task.getClass() == SubTask.class) {
+            fbtm.subTasks.put(task.getID(), (SubTask) task);
+        } else if (task.getClass() == Epic.class) {
+            fbtm.epics.put(task.getID(), (Epic) task);
+        }
+    }
+
+//    private static void addHistoryToMap(FileBackedTasksManager fbtm,)
 
     private static String[] readFile(File file) {
         String fileData;
@@ -61,14 +93,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
         return rows;
     }
-    private static void addToMap(Task task) { //TODO
-        if (task.getClass().equals(Task.class)) {
 
-        }
 
-    }
-
-    private void writeHistoryToFile(BufferedWriter bufferedWriter, List<Task> list) {
+    private void writeHistoryToFile(BufferedWriter bufferedWriter, HistoryManager historyManager) {
         String history = TaskConverter.historyToString(historyManager);
         try {
             bufferedWriter.write(history);
@@ -93,13 +120,14 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     //сделать Private
     public void save() {
-        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(backupFile.toFile(), StandardCharsets.UTF_8))) {
+        try (BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(backupFile.toFile(),
+                                                                StandardCharsets.UTF_8))) {
             bufferedWriter.write(getHeaderTasks());
             writeTaskToFile(bufferedWriter, tasks);
             writeTaskToFile(bufferedWriter, subTasks);
             writeTaskToFile(bufferedWriter, epics);
             bufferedWriter.newLine();
-            writeHistoryToFile(bufferedWriter, super.getHistory());
+            writeHistoryToFile(bufferedWriter, historyManager);
             bufferedWriter.flush();
         } catch (IOException exception) {
             throw new ManagerSaveException("Ошибка -> Сохранение не удалось");

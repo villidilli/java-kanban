@@ -12,8 +12,8 @@ public enum Status {
         for (Status elem : Status.values()) {
             if (elem.name().equals(status)){
                 enumStatus = elem;
+                break;
             }
-            break;
         }
         return enumStatus;
     }

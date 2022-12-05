@@ -13,8 +13,8 @@ public enum TaskTypes {
         for (TaskTypes elem : TaskTypes.values()) {
             if (elem.name().equals(type)){
                 taskType = elem;
+                break;
             }
-            break;
         }
         return taskType;
     }
