@@ -90,7 +90,12 @@ public class TaskConverter {
         return task;
     }
 
-//    public static List<Integer> historyFromString(String value) {
-//
-//    }
+    public static List<Integer> historyFromString(String value) {
+        String[] stringIDs = value.split(",");
+        List<Integer> listHistoryID = new ArrayList<>();
+        for (int i = 0; i < stringIDs.length; i++) {
+            listHistoryID.add(Integer.parseInt(stringIDs[i]));
+        }
+        return listHistoryID;
+    }
 }

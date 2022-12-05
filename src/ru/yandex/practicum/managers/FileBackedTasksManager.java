@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -35,7 +36,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         System.out.println(f.getHistory());
 
         FileBackedTasksManager f1 = loadFromFile(backupFile.toFile());
-        System.out.println(f1.tasks);
+        System.out.println(f1.tasks.size());
+        System.out.println(f1.subTasks.size());
+        System.out.println(f1.epics.size());
+        System.out.println(f1.getHistory().size());
 
     }
 
@@ -43,31 +47,24 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     //заменить на класс
     public static FileBackedTasksManager loadFromFile(File file) {
+        final Map<Integer, Task> allTasks = new HashMap<>();
         FileBackedTasksManager fbtm = new FileBackedTasksManager();
-        boolean isWasBlankLine = false;
+        boolean isReadBlankLine = false;
+        int indexBlankRow = -1;
         String[] rows = readFile(file);
 
-        if (!isWasBlankLine) {
-            int numBlankRow = 0;
-            for (String row : rows) {
-                if (!row.isBlank()) {
-                    addTaskToMap(fbtm, TaskConverter.taskFromString(row));
-                } else {
-                    isWasBlankLine = true;
-                    n
-                    break;
-                }
+        for (int i = 1; i < rows.length && !isReadBlankLine; i++) {
+            if (!rows[i].isBlank()) {
+                Task task = TaskConverter.taskFromString(rows[i]);
+                addTaskToMap(fbtm, task);
+                allTasks.put(task.getID(), task);
+            } else {
+                indexBlankRow = i;
+                isReadBlankLine = true;
             }
-        } else if (isWasBlankLine){
-
         }
-
-        for (int numRow = 1; numRow < rows.length ; numRow++) { //TODO заходит в строку истории и падает 7 эл
-            if(!rows[numRow].isBlank()) {
-                addTaskToMap(fbtm,TaskConverter.taskFromString(rows[numRow]));
-            } //TODO историю
-        }
-        return new FileBackedTasksManager();
+        addHistoryToMap(fbtm, rows[indexBlankRow + 1], allTasks);
+       return fbtm;
     }
 
     private static void addTaskToMap(FileBackedTasksManager fbtm, Task task) {
@@ -80,7 +77,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         }
     }
 
-//    private static void addHistoryToMap(FileBackedTasksManager fbtm,)
+    private static void addHistoryToMap(FileBackedTasksManager fbtm, String row, Map <Integer, Task> allTasks) {
+        List<Integer> history = TaskConverter.historyFromString(row);
+        for (Integer idTask : history) {
+            fbtm.historyManager.add(allTasks.get(idTask));
+        }
+    }
 
     private static String[] readFile(File file) {
         String fileData;
