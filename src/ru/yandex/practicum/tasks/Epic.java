@@ -3,7 +3,7 @@ package ru.yandex.practicum.tasks;
 import java.util.HashMap;
 
 public class Epic extends Task {
-
+    private TaskTypes taskType = TaskTypes.EPIC;
     private final HashMap<Integer, SubTask> epicSubTasks = new HashMap<>();
 
     /*
@@ -23,6 +23,16 @@ public class Epic extends Task {
 
     public HashMap<Integer, SubTask> getEpicSubTasks() {
         return epicSubTasks;
+    }
+
+    @Override
+    public TaskTypes getTaskType() {
+        return taskType;
+    }
+
+    @Override
+    public void setTaskType(TaskTypes taskType) {
+        this.taskType = taskType;
     }
 
     @Override

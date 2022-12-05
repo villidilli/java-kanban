@@ -1,9 +1,8 @@
 package ru.yandex.practicum.utilities;
 
 import ru.yandex.practicum.managers.HistoryManager;
-import ru.yandex.practicum.managers.ManagerSaveException;
+
 import ru.yandex.practicum.tasks.*;
-import ru.yandex.practicum.tasks.TaskTypes;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,29 +10,29 @@ import java.util.List;
 public class TaskConverter {
     private static StringBuilder stringBuilder;
 
-    private TaskConverter() {}
-
     public static String taskToString(Task task) {
-        stringBuilder = new StringBuilder();
+        TaskTypes taskType = task.getTaskType();
+        String result = null;
 
-        // добавляем поля, которые не привязываны к типу класса
-        stringBuilder.append(task.getID() + ",");
-        stringBuilder.append(task.getName() + ",");
-        stringBuilder.append(task.getStatus() + ",");
-        stringBuilder.append(task.getDescription() + ",");
-
-        // добавляем название класса = константе enum
-        if (task.getClass() == Task.class) {
-            stringBuilder.insert(2, TaskTypes.TASK + ",");
-        } else if (task.getClass() == SubTask.class) {
-            stringBuilder.insert(2, TaskTypes.SUBTASK + ",");
-            stringBuilder.append(((SubTask) task).getParentEpicID());
-        } else if (task.getClass() == Epic.class) {
-            stringBuilder.insert(2, TaskTypes.EPIC + ",");
-        } else {
-            throw new ManagerSaveException("Ошибка -> Неизвестный тип класса");
+        switch (taskType) {
+            case TASK:
+            case EPIC:
+                result = task.getID() + "," +
+                        task.getTaskType().name() + "," +
+                        task.getName() + "," +
+                        task.getStatus() + "," +
+                        task.getDescription() + ",";
+                break;
+            case SUBTASK:
+                result = task.getID() + "," +
+                        task.getTaskType().name() + "," +
+                        task.getName() + "," +
+                        task.getStatus() + "," +
+                        task.getDescription() + "," +
+                        ((SubTask) task).getParentEpicID();
+                break;
         }
-        return stringBuilder.toString();
+        return result;
     }
 
     public static String historyToString(HistoryManager historyManager) {
@@ -50,27 +49,16 @@ public class TaskConverter {
         return stringBuilder.toString();
     }
 
-//    public static String historyToString(List <Task> list) {
-//        stringBuilder = new StringBuilder();
-//        // проходим через fori, чтобы у последнего id не ставить запятую
-//        for (int i = 0; i < list.size(); i++) {
-//            if (i != list.size() - 1) {
-//                stringBuilder.append(list.get(i).getID() + ",");
-//            } else {
-//                stringBuilder.append(list.get(i).getID());
-//            }
-//        }
-//        return stringBuilder.toString();
-//    }
-
     public static Task taskFromString(String value) {
         Task task = null;
+        //рассплитили строку по полям
         String[] fields = value.split(",");
 
+        //инициализируем поля для создания объекта задач через конструкторы
         int ID = Integer.parseInt(fields[0]);
-        TaskTypes type = TaskTypes.convertToEnum(fields[1]);
+        TaskTypes type = TaskTypes.convertTypeToEnum(fields[1]);
         String name = fields[2];
-        Status status = Status.convertToEnum(fields[3]);
+        Status status = Status.convertStatusToEnum(fields[3]);
         String description = fields[4];
 
         switch (type) {
@@ -91,10 +79,12 @@ public class TaskConverter {
     }
 
     public static List<Integer> historyFromString(String value) {
-        String[] stringIDs = value.split(",");
+        //рассплитили строку на массив ID
+        String[] arrayID = value.split(",");
         List<Integer> listHistoryID = new ArrayList<>();
-        for (int i = 0; i < stringIDs.length; i++) {
-            listHistoryID.add(Integer.parseInt(stringIDs[i]));
+        //приводим стринговое ID к инту и сохраняем в список
+        for (int i = 0; i < arrayID.length; i++) {
+            listHistoryID.add(Integer.parseInt(arrayID[i]));
         }
         return listHistoryID;
     }

@@ -3,6 +3,7 @@ package ru.yandex.practicum.tasks;
 public class SubTask extends Task {
 
     private int parentEpicID;
+    private TaskTypes taskType = TaskTypes.SUBTASK;
 
     /*
      * ЛЕГЕНДА:
@@ -29,6 +30,16 @@ public class SubTask extends Task {
 
     public int getParentEpicID() {
         return parentEpicID;
+    }
+
+    @Override
+    public TaskTypes getTaskType() {
+        return taskType;
+    }
+
+    @Override
+    public void setTaskType(TaskTypes taskType) {
+        this.taskType = taskType;
     }
 
     @Override

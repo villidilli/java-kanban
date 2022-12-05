@@ -7,6 +7,7 @@ public class Task {
 	private String name;
 	private String description;
 	private Status status = Status.NEW;
+	private TaskTypes taskType = TaskTypes.TASK;
 
 	/*
 	 * ЛЕГЕНДА:
@@ -62,6 +63,14 @@ public class Task {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public TaskTypes getTaskType() {
+		return taskType;
+	}
+
+	public void setTaskType(TaskTypes taskType) {
+		this.taskType = taskType;
 	}
 
 	@Override

@@ -1,16 +1,11 @@
 package ru.yandex.practicum.tasks;
 
-import ru.yandex.practicum.managers.ManagerSaveException;
-import ru.yandex.practicum.tasks.*;
-
 public enum TaskTypes {
     TASK,
     SUBTASK,
     EPIC;
 
-    Class<Task> aClass;
-
-    public static TaskTypes convertToEnum(String type) {
+    public static TaskTypes convertTypeToEnum(String type) {
         TaskTypes taskType = null;
         for (TaskTypes elem : TaskTypes.values()) {
             if (elem.name().equals(type)){
