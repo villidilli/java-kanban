@@ -15,7 +15,7 @@ import java.util.Map;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
     public static void main(String[] args) {
-        //имитируем созданные ранее задачи
+ /*       //имитируем созданные ранее задачи
         FileBackedTasksManager f = new FileBackedTasksManager();
 
         Task task1 = new Task("Таск1", "-"); //1
@@ -47,14 +47,16 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         System.out.println("\nПроверяем историю (без дублей)");
         System.out.println("\nОжидаем порядок id 4 - 5 - 3 - 2");
         System.out.println(f1.getHistory());
+
+  */
     }
 
-    private static final Path backupFile = Path.of("resources\\Backup.csv");
+    private static File backupFile = null;
 
-    //заменить на класс
     public static FileBackedTasksManager loadFromFile(File file) {
         FileBackedTasksManager backedTasksManager = new FileBackedTasksManager();
         HistoryManager historyManager = backedTasksManager.historyManager;
+        backupFile = file;
         //считали из файла все строки
         String[] rows = readFile(file);
         //начинаем с 1 чтобы пропустить шапку
@@ -135,7 +137,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private void save() {
         try (BufferedWriter bufferedWriter =
-                     new BufferedWriter(new FileWriter(backupFile.toFile(), StandardCharsets.UTF_8))) {
+                     new BufferedWriter(new FileWriter(backupFile, StandardCharsets.UTF_8))) {
             //записали шапку
             bufferedWriter.write(getHeaderTasks());
             writeTaskToFile(bufferedWriter, tasks);

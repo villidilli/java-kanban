@@ -40,7 +40,7 @@ public class Main {
         System.out.println("\nОжидаем порядок id 1 - 6 - 5 - 3 - 2");
         System.out.println(tm.getHistory());
 
-        System.out.println("\nПроверяем удаление головы");
+/*        System.out.println("\nПроверяем удаление головы");
         tm.deleteTaskByID(1);
         System.out.println(tm.getHistory());
 
@@ -56,5 +56,9 @@ public class Main {
         tm.deleteEpicByID(3);
 
         System.out.println(tm.getHistory());
+
+ */
+        FileBackedTasksManager f = Managers.getDefaultFileBacked();
+        f.getHistory();
     }
 }
