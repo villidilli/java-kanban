@@ -64,7 +64,7 @@ public class Main {
         System.out.println("*** Имитируем первый запуск программы ***");
         System.out.println("*** Создаем задачи и наполняем историю (main() FileBackedManager) ***\n");
         FileBackedTasksManager f = new FileBackedTasksManager(
-                new File("D:\\JavaDev\\java-kanban\\resources\\Backup.csv"));
+                new File("resources\\Backup.csv"));
         f.main(null);
         System.out.println("\n*** Программа завершена ***");
 

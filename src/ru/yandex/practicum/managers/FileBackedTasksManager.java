@@ -18,7 +18,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
 	public static void main(String[] args) {
 		FileBackedTasksManager f = new FileBackedTasksManager(
-				new File("D:\\JavaDev\\java-kanban\\resources\\Backup.csv"));
+				new File("resources\\Backup.csv"));
 
 		Task task1 = new Task("Таск1", "-"); //1
 		f.create(task1);
