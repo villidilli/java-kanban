@@ -60,6 +60,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 		for (int i = 1; i < rows.length; i++) {
 			//если строка пустая, значит следующая строка истории
 			String line = rows[i];
+			Task task;
 			if (line.isBlank()) {
 				//прибавили к индексу 1, чтобы получить следующую строку (историю)
 				//сконвертировали строку истории в список ID
@@ -67,11 +68,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 				List<Integer> history = TaskConverter.historyFromString(line);
 				//ищет задачу в мапах по ID и записываем в историю
 				for (Integer ID : history) {
-					histManager.add(backedManager.getTask(ID));
+					task = backedManager.getTask(ID);
+					histManager.add(task);
 				}
 				//если строка не пустая значит мы работаем со строками-задачами
 			} else {
-				Task task = TaskConverter.taskFromString(rows[i]);
+				task = TaskConverter.taskFromString(rows[i]);
 				switch (task.getTaskType()) {
 					case TASK:
 						backedManager.tasks.put(task.getID(), task);
