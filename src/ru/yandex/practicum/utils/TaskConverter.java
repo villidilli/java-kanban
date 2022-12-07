@@ -42,10 +42,8 @@ public class TaskConverter {
     }
 
     public static Task taskFromString(String value) {
-        Task task = null;
         //рассплитили строку по полям
         String[] fields = value.split(",");
-
         //инициализируем поля для создания объекта задач через конструкторы
         int ID = Integer.parseInt(fields[0]);
         TaskTypes type = TaskTypes.valueOf(fields[1]);
@@ -59,10 +57,9 @@ public class TaskConverter {
             case SUBTASK:
                 int parentEpicID = Integer.parseInt(fields[5]);
                 return new SubTask(ID, name, description, status, parentEpicID);
-            case EPIC:
-                return new  Epic(ID, name, description,status);
+
         }
-        return null;
+        return new Epic(ID, name, description, status);
     }
 
     public static List<Integer> historyFromString(String value) {
