@@ -73,20 +73,25 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 				}
 				//если строка не пустая значит мы работаем со строками-задачами
 			} else {
-				task = TaskConverter.taskFromString(rows[i]);
-				switch (task.getTaskType()) {
-					case TASK:
-						backedManager.tasks.put(task.getID(), task);
-						break;
-					case SUBTASK:
-						backedManager.subTasks.put(task.getID(), (SubTask) task);
-						break;
-					case EPIC:
-						backedManager.epics.put(task.getID(), (Epic) task);
-				}
+				task = TaskConverter.taskFromString(line);
+				backedManager.addTask(task);
 			}
 		}
 		return backedManager;
+	}
+
+	private void addTask(Task task) {
+		int ID = task.getID();
+		switch (task.getTaskType()) {
+			case TASK:
+				tasks.put(ID, task);
+				break;
+			case SUBTASK:
+				subTasks.put(ID, (SubTask) task);
+				break;
+			case EPIC:
+				epics.put(ID, (Epic) task);
+		}
 	}
 
 	private Task getTask(int ID) {
