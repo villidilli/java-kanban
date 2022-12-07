@@ -31,11 +31,6 @@ public class Epic extends Task {
     }
 
     @Override
-    public void setTaskType(TaskTypes taskType) {
-        this.taskType = taskType;
-    }
-
-    @Override
     public String toString() {
         return "\n[Эпик: " + getName() + "] " +
                 "[ID: " + getID() + "] " +

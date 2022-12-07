@@ -28,18 +28,14 @@ public class SubTask extends Task {
         this.parentEpicID = parentEpicID;
     }
 
-    public int getParentEpicID() {
+    @Override
+    public Integer getParentEpicID() {
         return parentEpicID;
     }
 
     @Override
     public TaskTypes getTaskType() {
         return taskType;
-    }
-
-    @Override
-    public void setTaskType(TaskTypes taskType) {
-        this.taskType = taskType;
     }
 
     @Override

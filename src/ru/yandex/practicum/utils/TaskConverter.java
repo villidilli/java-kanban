@@ -11,27 +11,19 @@ public class TaskConverter {
 
     public static String taskToString(Task task) {
         TaskTypes taskType = task.getTaskType();
-        String result = null;
-
-        switch (taskType) {
-            case TASK:
-            case EPIC:
-                result = task.getID() + "," +
-                        task.getTaskType().name() + "," +
-                        task.getName() + "," +
-                        task.getStatus() + "," +
-                        task.getDescription() + ",";
-                break;
-            case SUBTASK:
-                result = task.getID() + "," +
-                        task.getTaskType().name() + "," +
-                        task.getName() + "," +
-                        task.getStatus() + "," +
-                        task.getDescription() + "," +
-                        ((SubTask) task).getParentEpicID();
-                break;
+        if (taskType != TaskTypes.SUBTASK) {
+            return task.getID() + "," +
+                    taskType.name() + "," +
+                    task.getName() + "," +
+                    task.getStatus() + "," +
+                    task.getDescription() + ",";
         }
-        return result;
+        return task.getID() + "," +
+                taskType.name() + "," +
+                task.getName() + "," +
+                task.getStatus() + "," +
+                task.getDescription() + "," +
+                task.getParentEpicID();
     }
 
     public static String historyToString(HistoryManager historyManager) {
