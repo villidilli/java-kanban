@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TaskConverter {
-    private static StringBuilder stringBuilder;
 
     public static String taskToString(Task task) {
         TaskTypes taskType = task.getTaskType();
@@ -37,7 +36,7 @@ public class TaskConverter {
 
     public static String historyToString(HistoryManager historyManager) {
         List<Task> history = historyManager.getHistory();
-        stringBuilder = new StringBuilder();
+        StringBuilder stringBuilder = new StringBuilder();
         // проходим через fori, чтобы у последнего id не ставить запятую
         for (int i = 0; i < history.size(); i++) {
             if (i != history.size() - 1) {
