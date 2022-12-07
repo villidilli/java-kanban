@@ -1,9 +1,9 @@
 id,type,name,status,description,epic
-1,TASK,ТаскФФФ1,NEW,-,
-2,TASK,ТаскФФ2,NEW,-,
-4,SUBTASK,СабФ1,NEW,-,3
-5,SUBTASK,СабФФ2,NEW,-,3
-6,SUBTASK,СабФФФ3,NEW,-,3
-3,EPIC,ЭпикФФФФФФФФФФФФФФФФФФФ1,NEW,-,
+1,TASK,Таск1,NEW,-,
+6,TASK,Таск6,NEW,-,
+3,SUBTASK,Саб1,NEW,-,2
+4,SUBTASK,Саб2,NEW,-,2
+5,SUBTASK,Саб3,NEW,-,2
+2,EPIC,Эпик1,NEW,-,
 
-2,5,6,3
+4,5,3,2,6

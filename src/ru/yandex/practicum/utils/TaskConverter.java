@@ -75,6 +75,7 @@ public class TaskConverter {
                 task.setStatus(status);
                 break;
         }
+
         return task;
     }
 

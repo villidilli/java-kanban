@@ -17,38 +17,25 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 	}
 
 	public static void main(String[] args) {
-		//имитируем созданные ранее задачи
-//		FileBackedTasksManager f = new FileBackedTasksManager(file);
-//
-//		Task task1 = new Task("Таск1", "-"); //1
-//		f.create(task1);
-//		Epic epic1 = new Epic("Эпик1", "-"); //2
-//		f.create(epic1);
-//		SubTask subTask1 = new SubTask("Саб1", "-", 2); //3
-//		f.create(subTask1);
-//		SubTask subTask2 = new SubTask("Саб2", "-", 2); //4
-//		f.create(subTask2);
-//		SubTask subTask3 = new SubTask("Саб3", "-", 2); //5
-//		f.create(subTask3);
-//
-//		f.getSubTaskByID(subTask2.getID());
-//		f.getSubTaskByID(subTask3.getID());
-//		f.getSubTaskByID(subTask1.getID());
-//		f.getEpicByID(epic1.getID());
-//
-//
-//		System.out.println("\nПроверяем сохранение истории после создания нового менеджера");
-//		//создаем новый менеджер через статический метод
-//		FileBackedTasksManager f1 = loadFromFile(file);
-//		System.out.println("\nВыводим все Задачи");
-//		System.out.println(f1.getAllTasks());
-//		System.out.println("\nВыводим все Подзадачи");
-//		System.out.println(f1.getAllSubTasks());
-//		System.out.println("\nВыводим все Эпики");
-//		System.out.println(f1.getAllEpics());
-//		System.out.println("\nПроверяем историю (без дублей)");
-//		System.out.println("\nОжидаем порядок id 4 - 5 - 3 - 2");
-//		System.out.println(f1.getHistory());
+		FileBackedTasksManager f = new FileBackedTasksManager(
+				new File("D:\\JavaDev\\java-kanban\\resources\\Backup.csv"));
+
+		Task task1 = new Task("Таск1", "-"); //1
+		f.create(task1);
+		Epic epic1 = new Epic("Эпик1", "-"); //2
+		f.create(epic1);
+		SubTask subTask1 = new SubTask("Саб1", "-", 2); //3
+		f.create(subTask1);
+		SubTask subTask2 = new SubTask("Саб2", "-", 2); //4
+		f.create(subTask2);
+		SubTask subTask3 = new SubTask("Саб3", "-", 2); //5
+		f.create(subTask3);
+
+		f.getSubTaskByID(subTask2.getID()); //4
+		f.getSubTaskByID(subTask3.getID()); //5
+		f.getSubTaskByID(subTask1.getID()); //3
+		f.getEpicByID(epic1.getID()); //2
+
 	}
 
 	public static FileBackedTasksManager loadFromFile(File file) {
@@ -74,6 +61,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 				//если строка не пустая значит мы работаем со строками-задачами
 			} else {
 				task = TaskConverter.taskFromString(line);
+				backedManager.updateGeneratorID(task);
 				backedManager.addTask(task);
 			}
 		}
@@ -103,6 +91,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 			}
 		}
 		return task;
+	}
+
+	private void updateGeneratorID(Task task){
+		if (generatorID < task.getID()) {
+			generatorID = task.getID() + 1;
+		}
 	}
 
 	private static String[] readFile(File file) {
