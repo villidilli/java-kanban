@@ -56,9 +56,9 @@ public class TaskConverter {
 
         //инициализируем поля для создания объекта задач через конструкторы
         int ID = Integer.parseInt(fields[0]);
-        TaskTypes type = TaskTypes.convertTypeToEnum(fields[1]);
+        TaskTypes type = TaskTypes.valueOf(fields[1]);
         String name = fields[2];
-        Status status = Status.convertStatusToEnum(fields[3]);
+        Status status = Status.valueOf(fields[3]);
         String description = fields[4];
 
         switch (type) {
