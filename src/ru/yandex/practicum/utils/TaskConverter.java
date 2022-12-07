@@ -31,10 +31,11 @@ public class TaskConverter {
         StringBuilder stringBuilder = new StringBuilder();
         // проходим через fori, чтобы у последнего id не ставить запятую
         for (int i = 0; i < history.size(); i++) {
+            int ID = history.get(i).getID();
             if (i != history.size() - 1) {
-                stringBuilder.append(history.get(i).getID() + ",");
+                stringBuilder.append(ID + ",");
             } else {
-                stringBuilder.append(history.get(i).getID());
+                stringBuilder.append(ID);
             }
         }
         return stringBuilder.toString();
