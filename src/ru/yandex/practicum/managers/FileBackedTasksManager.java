@@ -127,7 +127,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 		try {
 			for (Task task : list.values()) {
 				//пишем в файл полученную в строчном представлении задачу
-				bufferedWriter.write(TaskConverter.taskToString(task) + "\n");
+				bufferedWriter.write(TaskConverter.taskToString(task));
+				bufferedWriter.newLine();
 			}
 		} catch (IOException exception) {
 			throw new ManagerSaveException("Ошибка -> Не удалось записать данные задачи");
