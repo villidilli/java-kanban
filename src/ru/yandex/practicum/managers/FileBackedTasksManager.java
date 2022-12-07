@@ -13,47 +13,50 @@ import java.util.List;
 import java.util.Map;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
-	private static File backupFile;
+	private final File backupfile;
+
+	public FileBackedTasksManager(File file) {
+		backupfile = file;
+	}
 
 	public static void main(String[] args) {
 		//имитируем созданные ранее задачи
-		FileBackedTasksManager f = new FileBackedTasksManager();
-
-		Task task1 = new Task("Таск1", "-"); //1
-		f.create(task1);
-		Epic epic1 = new Epic("Эпик1", "-"); //2
-		f.create(epic1);
-		SubTask subTask1 = new SubTask("Саб1", "-", 2); //3
-		f.create(subTask1);
-		SubTask subTask2 = new SubTask("Саб2", "-", 2); //4
-		f.create(subTask2);
-		SubTask subTask3 = new SubTask("Саб3", "-", 2); //5
-		f.create(subTask3);
-
-		f.getSubTaskByID(subTask2.getID());
-		f.getSubTaskByID(subTask3.getID());
-		f.getSubTaskByID(subTask1.getID());
-		f.getEpicByID(epic1.getID());
-
-
-		System.out.println("\nПроверяем сохранение истории после создания нового менеджера");
-		//создаем новый менеджер через статический метод
-		FileBackedTasksManager f1 = loadFromFile(backupFile);
-		System.out.println("\nВыводим все Задачи");
-		System.out.println(f1.getAllTasks());
-		System.out.println("\nВыводим все Подзадачи");
-		System.out.println(f1.getAllSubTasks());
-		System.out.println("\nВыводим все Эпики");
-		System.out.println(f1.getAllEpics());
-		System.out.println("\nПроверяем историю (без дублей)");
-		System.out.println("\nОжидаем порядок id 4 - 5 - 3 - 2");
-		System.out.println(f1.getHistory());
+//		FileBackedTasksManager f = new FileBackedTasksManager(file);
+//
+//		Task task1 = new Task("Таск1", "-"); //1
+//		f.create(task1);
+//		Epic epic1 = new Epic("Эпик1", "-"); //2
+//		f.create(epic1);
+//		SubTask subTask1 = new SubTask("Саб1", "-", 2); //3
+//		f.create(subTask1);
+//		SubTask subTask2 = new SubTask("Саб2", "-", 2); //4
+//		f.create(subTask2);
+//		SubTask subTask3 = new SubTask("Саб3", "-", 2); //5
+//		f.create(subTask3);
+//
+//		f.getSubTaskByID(subTask2.getID());
+//		f.getSubTaskByID(subTask3.getID());
+//		f.getSubTaskByID(subTask1.getID());
+//		f.getEpicByID(epic1.getID());
+//
+//
+//		System.out.println("\nПроверяем сохранение истории после создания нового менеджера");
+//		//создаем новый менеджер через статический метод
+//		FileBackedTasksManager f1 = loadFromFile(file);
+//		System.out.println("\nВыводим все Задачи");
+//		System.out.println(f1.getAllTasks());
+//		System.out.println("\nВыводим все Подзадачи");
+//		System.out.println(f1.getAllSubTasks());
+//		System.out.println("\nВыводим все Эпики");
+//		System.out.println(f1.getAllEpics());
+//		System.out.println("\nПроверяем историю (без дублей)");
+//		System.out.println("\nОжидаем порядок id 4 - 5 - 3 - 2");
+//		System.out.println(f1.getHistory());
 	}
 
 	public static FileBackedTasksManager loadFromFile(File file) {
-		FileBackedTasksManager backedTasksManager = new FileBackedTasksManager();
-		HistoryManager historyManager = backedTasksManager.historyManager;
-		backupFile = file;
+		final FileBackedTasksManager backedManager = new FileBackedTasksManager(file);
+		final HistoryManager histManager = backedManager.historyManager;
 		//считали из файла все строки
 		String[] rows = readFile(file);
 		//начинаем с 1 чтобы пропустить шапку
@@ -66,31 +69,31 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 				Task task = null;
 				//ищет задачу в мапах по ID и записываем в историю
 				for (Integer ID : history) {
-					if (backedTasksManager.tasks.containsKey(ID)) {
-						task = backedTasksManager.tasks.get(ID);
-					} else if (backedTasksManager.subTasks.containsKey(ID)) {
-						task = backedTasksManager.subTasks.get(ID);
-					} else if (backedTasksManager.epics.containsKey(ID)) {
-						task = backedTasksManager.epics.get(ID);
+					if (backedManager.tasks.containsKey(ID)) {
+						task = backedManager.tasks.get(ID);
+					} else if (backedManager.subTasks.containsKey(ID)) {
+						task = backedManager.subTasks.get(ID);
+					} else if (backedManager.epics.containsKey(ID)) {
+						task = backedManager.epics.get(ID);
 					}
-					historyManager.add(task);
+					histManager.add(task);
 				}
 				//если строка не пустая значит мы работаем со строками-задачами
 			} else {
 				Task task = TaskConverter.taskFromString(rows[i]);
 				switch (task.getTaskType()) {
 					case TASK:
-						backedTasksManager.tasks.put(task.getID(), task);
+						backedManager.tasks.put(task.getID(), task);
 						break;
 					case SUBTASK:
-						backedTasksManager.subTasks.put(task.getID(), (SubTask) task);
+						backedManager.subTasks.put(task.getID(), (SubTask) task);
 						break;
 					case EPIC:
-						backedTasksManager.epics.put(task.getID(), (Epic) task);
+						backedManager.epics.put(task.getID(), (Epic) task);
 				}
 			}
 		}
-		return backedTasksManager;
+		return backedManager;
 	}
 
 	private static String[] readFile(File file) {
@@ -134,7 +137,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
 	private void save() {
 		try (BufferedWriter bufferedWriter =
-					 new BufferedWriter(new FileWriter(backupFile, StandardCharsets.UTF_8))) {
+					 new BufferedWriter(new FileWriter(backupfile, StandardCharsets.UTF_8))) {
 			//записали шапку
 			bufferedWriter.write(getHeaderTasks());
 			writeTaskToFile(bufferedWriter, tasks);

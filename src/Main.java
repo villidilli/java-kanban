@@ -61,17 +61,17 @@ public class Main {
         System.out.println("\n*** Проверка работоспособности FileBackedManagers ***\n");
         FileBackedTasksManager f = Managers.getDefaultFileBacked();
 
-        Task taskF1 = new Task("ТаскФ1", "-"); //1
+        Task taskF1 = new Task("ТаскФФФ1", "-"); //1
         f.create(taskF1);
-        Task taskF2 = new Task("ТаскФ2", "-"); //2
+        Task taskF2 = new Task("ТаскФФ2", "-"); //2
         f.create(taskF2);
-        Epic epicF1 = new Epic("ЭпикФ1", "-"); //3
+        Epic epicF1 = new Epic("ЭпикФФФФФФФФФФФФФФФФФФФ1", "-"); //3
         f.create(epicF1);
         SubTask subTaskF1 = new SubTask("СабФ1", "-", 3); //4
         f.create(subTaskF1);
-        SubTask subTaskF2 = new SubTask("СабФ2", "-", 3); //5
+        SubTask subTaskF2 = new SubTask("СабФФ2", "-", 3); //5
         f.create(subTaskF2);
-        SubTask subTaskF3 = new SubTask("СабФ3", "-",3); //6
+        SubTask subTaskF3 = new SubTask("СабФФФ3", "-",3); //6
         f.create(subTaskF3);
 
         System.out.println("\nПроверяем порядок истории (без дублей) FileBackedManagers");
