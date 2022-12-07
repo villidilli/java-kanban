@@ -3,10 +3,7 @@ package ru.yandex.practicum.managers;
 import ru.yandex.practicum.tasks.*;
 import ru.yandex.practicum.utils.TaskConverter;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.List;
@@ -62,21 +59,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 		//начинаем с 1 чтобы пропустить шапку
 		for (int i = 1; i < rows.length; i++) {
 			//если строка пустая, значит следующая строка истории
-			if (rows[i].isBlank()) {
+			String line = rows[i];
+			if (line.isBlank()) {
 				//прибавили к индексу 1, чтобы получить следующую строку (историю)
 				//сконвертировали строку истории в список ID
-				List<Integer> history = TaskConverter.historyFromString(rows[++i]);
-				Task task = null;
+				line = rows[++i];
+				List<Integer> history = TaskConverter.historyFromString(line);
 				//ищет задачу в мапах по ID и записываем в историю
 				for (Integer ID : history) {
-					if (backedManager.tasks.containsKey(ID)) {
-						task = backedManager.tasks.get(ID);
-					} else if (backedManager.subTasks.containsKey(ID)) {
-						task = backedManager.subTasks.get(ID);
-					} else if (backedManager.epics.containsKey(ID)) {
-						task = backedManager.epics.get(ID);
-					}
-					histManager.add(task);
+					histManager.add(backedManager.getTask(ID));
 				}
 				//если строка не пустая значит мы работаем со строками-задачами
 			} else {
@@ -94,6 +85,17 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 			}
 		}
 		return backedManager;
+	}
+
+	private Task getTask(int ID) {
+		Task task = tasks.get(ID);
+		if (task == null) {
+			task = subTasks.get(ID);
+			if (task == null) {
+				task = epics.get(ID);
+			}
+		}
+		return task;
 	}
 
 	private static String[] readFile(File file) {
