@@ -136,7 +136,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 	}
 
 	private String getHeaderTasks() {
-		return "id,type,name,status,description,epic\n";
+		return "id,type,name,status,description,epic";
 	}
 
 	private void save() {
@@ -144,6 +144,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 					 new BufferedWriter(new FileWriter(backupfile, StandardCharsets.UTF_8))) {
 			//записали шапку
 			bufferedWriter.write(getHeaderTasks());
+			bufferedWriter.newLine();
 			writeTaskToFile(bufferedWriter, tasks);
 			writeTaskToFile(bufferedWriter, subTasks);
 			writeTaskToFile(bufferedWriter, epics);
