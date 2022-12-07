@@ -1,6 +1,8 @@
 package ru.yandex.practicum.managers;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class Managers {
 
@@ -14,6 +16,6 @@ public class Managers {
 
 	public static FileBackedTasksManager getDefaultFileBacked() {
 		return FileBackedTasksManager.loadFromFile(
-				new File("D:\\JavaDev\\java-kanban\\resources\\Backup.csv"));
+				new File("resources/Backup.csv"));
 	}
 }
