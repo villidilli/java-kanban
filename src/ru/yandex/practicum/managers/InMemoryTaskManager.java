@@ -12,7 +12,7 @@ public class InMemoryTaskManager implements TaskManager {
 	protected final Map<Integer, SubTask> subTasks = new HashMap<>();
 	protected final Map<Integer, Epic> epics = new HashMap<>();
 	protected final HistoryManager historyManager = Managers.getDefaultHistory();
-	private int generatorID = 1;
+	protected int generatorID = 1;
 
 	//сервисный метод, не выносим в интерфейс
 	private void reCheckEpicStatus(int epicID) {
