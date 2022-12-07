@@ -67,8 +67,8 @@ public class TaskConverter {
         String[] arrayID = value.split(",");
         List<Integer> listHistoryID = new ArrayList<>();
         //приводим стринговое ID к инту и сохраняем в список
-        for (int i = 0; i < arrayID.length; i++) {
-            listHistoryID.add(Integer.parseInt(arrayID[i]));
+        for (String ID : arrayID) {
+            listHistoryID.add(Integer.parseInt(ID));
         }
         return listHistoryID;
     }
