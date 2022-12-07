@@ -55,20 +55,14 @@ public class TaskConverter {
 
         switch (type) {
             case TASK:
-                task = new Task(ID, name, description, status);
-                break;
+                return new Task(ID, name, description, status);
             case SUBTASK:
                 int parentEpicID = Integer.parseInt(fields[5]);
-                task = new SubTask(ID, name, description, parentEpicID);
-                task.setStatus(status);
-                break;
+                return new SubTask(ID, name, description, status, parentEpicID);
             case EPIC:
-                task = new Epic(ID, name, description);
-                task.setStatus(status);
-                break;
+                return new  Epic(ID, name, description,status);
         }
-
-        return task;
+        return null;
     }
 
     public static List<Integer> historyFromString(String value) {

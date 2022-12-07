@@ -21,6 +21,10 @@ public class Epic extends Task {
         super(ID, name, description);
     }
 
+    public Epic(int ID, String name, String description, Status status) {
+        super(ID, name, description, status);
+    }
+
     public HashMap<Integer, SubTask> getEpicSubTasks() {
         return epicSubTasks;
     }
