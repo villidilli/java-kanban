@@ -29,7 +29,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 			if (line.isBlank()) {
 				//прибавили к индексу 1, чтобы получить следующую строку (историю)
 				//сконвертировали строку истории в список ID
-				line = rows[++i];
+				line = rows[i + 1];
 				List<Integer> history = TaskConverter.historyFromString(line);
 				//ищет задачу в мапах по ID и записываем в историю
 				for (Integer ID : history) {
