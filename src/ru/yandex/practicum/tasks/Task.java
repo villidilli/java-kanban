@@ -1,5 +1,6 @@
 package ru.yandex.practicum.tasks;
 
+import java.util.HashMap;
 import java.util.Objects;
 
 public class Task {

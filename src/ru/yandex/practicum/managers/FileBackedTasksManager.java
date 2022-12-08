@@ -35,7 +35,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 		f.getSubTaskByID(subTask3.getID()); //5
 		f.getSubTaskByID(subTask1.getID()); //3
 		f.getEpicByID(epic1.getID()); //2
-
+		System.out.printf("\nСОЗДАНО: ТАСК = %d, САБ = %d, ЭПИК = %d",
+				f.getAllTasks().size(), f.getAllSubTasks().size(), f.getAllEpics().size());
+		System.out.println("\nИСТОРИЯ: " + f.getHistory());
 	}
 
 	public static FileBackedTasksManager loadFromFile(File file) {
@@ -76,10 +78,16 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 				break;
 			case SUBTASK:
 				subTasks.put(ID, (SubTask) task);
+				addSubTaskToEpic((SubTask) task);
 				break;
 			case EPIC:
 				epics.put(ID, (Epic) task);
 		}
+	}
+
+	private void addSubTaskToEpic(SubTask subTask) {
+		Epic epic = (Epic) getTask(subTask.getParentEpicID());
+		epic.getEpicSubTasks().put(subTask.getID(), subTask);
 	}
 
 	private Task getTask(int ID) {
@@ -94,7 +102,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 	}
 
 	private void updateGeneratorID(Task task){
-		if (generatorID < task.getID()) {
+		if (generatorID <= task.getID()) {
 			generatorID = task.getID() + 1;
 		}
 	}
@@ -146,8 +154,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 			bufferedWriter.write(getHeaderTasks());
 			bufferedWriter.newLine();
 			writeTaskToFile(bufferedWriter, tasks);
-			writeTaskToFile(bufferedWriter, subTasks);
 			writeTaskToFile(bufferedWriter, epics);
+			writeTaskToFile(bufferedWriter, subTasks);
 			bufferedWriter.newLine();
 			writeHistoryToFile(bufferedWriter, historyManager);
 			bufferedWriter.flush();
