@@ -10,7 +10,25 @@ public class Main {
         System.out.println("*** ИМИТИРУЕМ ПЕРВЫЙ ЗАПУСК ПРОГРАММЫ ***");
         System.out.println("*** Создаем задачи и наполняем историю (main() FileBackedManager) ***\n");
         FileBackedTasksManager f = Managers.getDefaultFileBacked();
-        f.main(null);
+        Task task1 = new Task("Таск1", "-"); //1
+        f.create(task1);
+        Epic epic1 = new Epic("Эпик1", "-"); //2
+        f.create(epic1);
+        SubTask subTask1 = new SubTask("Саб1", "-", 2); //3
+        f.create(subTask1);
+        SubTask subTask2 = new SubTask("Саб2", "-", 2); //4
+        f.create(subTask2);
+        SubTask subTask3 = new SubTask("Саб3", "-", 2); //5
+        f.create(subTask3);
+
+        f.getSubTaskByID(subTask2.getID()); //4
+        f.getSubTaskByID(subTask3.getID()); //5
+        f.getSubTaskByID(subTask1.getID()); //3
+        f.getEpicByID(epic1.getID()); //2
+
+        System.out.printf("\nСОЗДАНО: ТАСК = %d, САБ = %d, ЭПИК = %d",
+                f.getAllTasks().size(), f.getAllSubTasks().size(), f.getAllEpics().size());
+        System.out.println("\nИСТОРИЯ: " + f.getHistory());
 
         System.out.println("\n*** Программа завершена ***");
         System.out.println("-----------------------------");
