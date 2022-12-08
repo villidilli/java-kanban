@@ -56,7 +56,6 @@ public class TaskConverter {
 			case SUBTASK:
 				int parentEpicID = Integer.parseInt(fields[5]);
 				return new SubTask(ID, name, description, status, parentEpicID);
-
 		}
 		return new Epic(ID, name, description, status);
 	}

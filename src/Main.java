@@ -2,7 +2,6 @@ import ru.yandex.practicum.managers.*;
 import ru.yandex.practicum.tasks.*;
 
 import java.io.File;
-import java.util.Locale;
 
 public class Main {
     public static void main(String[] args) {

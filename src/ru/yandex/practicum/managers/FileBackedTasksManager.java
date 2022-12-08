@@ -35,6 +35,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 		f.getSubTaskByID(subTask3.getID()); //5
 		f.getSubTaskByID(subTask1.getID()); //3
 		f.getEpicByID(epic1.getID()); //2
+
 		System.out.printf("\nСОЗДАНО: ТАСК = %d, САБ = %d, ЭПИК = %d",
 				f.getAllTasks().size(), f.getAllSubTasks().size(), f.getAllEpics().size());
 		System.out.println("\nИСТОРИЯ: " + f.getHistory());
@@ -70,6 +71,19 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 		return backedManager;
 	}
 
+	private static String[] readFile(File file) {
+		String fileData;
+		String[] rows;
+		//вначале считали файл целиком в String, потом рассплитили по строкам в массив
+		try {
+			fileData = Files.readString(file.toPath());
+			rows = fileData.split("\\r?\\n");
+		} catch (IOException exception) {
+			throw new ManagerSaveException("Ошибка -> Чтение файла невозможно");
+		}
+		return rows;
+	}
+
 	private void addTask(Task task) {
 		int ID = task.getID();
 		switch (task.getTaskType()) {
@@ -101,23 +115,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 		return task;
 	}
 
-	private void updateGeneratorID(Task task){
+	private void updateGeneratorID(Task task) {
 		if (generatorID <= task.getID()) {
 			generatorID = task.getID() + 1;
 		}
-	}
-
-	private static String[] readFile(File file) {
-		String fileData;
-		String[] rows;
-		//вначале считали файл целиком в String, потом рассплитили по строкам в массив
-		try {
-			fileData = Files.readString(file.toPath());
-			rows = fileData.split("\\r?\\n");
-		} catch (IOException exception) {
-			throw new ManagerSaveException("Ошибка -> Чтение файла невозможно");
-		}
-		return rows;
 	}
 
 	private void writeHistoryToFile(BufferedWriter bufferedWriter, HistoryManager historyManager) {
