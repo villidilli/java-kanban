@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class TaskConverter {
+	public static final String LINE_SEPARATOR = "\\r?\\n";
 
 	public static String taskToString(Task task) {
 		TaskTypes taskType = task.getTaskType();

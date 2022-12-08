@@ -53,7 +53,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 		//вначале считали файл целиком в String, потом рассплитили по строкам в массив
 		try {
 			fileData = Files.readString(file.toPath());
-			rows = fileData.split("\\r?\\n");
+			rows = fileData.split(TaskConverter.LINE_SEPARATOR);
 		} catch (IOException exception) {
 			throw new ManagerSaveException("Ошибка -> Чтение файла невозможно");
 		}
