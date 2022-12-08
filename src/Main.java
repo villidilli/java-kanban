@@ -9,7 +9,7 @@ public class Main {
         System.out.println("*****************************************************");
         System.out.println("*** ИМИТИРУЕМ ПЕРВЫЙ ЗАПУСК ПРОГРАММЫ ***");
         System.out.println("*** Создаем задачи и наполняем историю (main() FileBackedManager) ***\n");
-        FileBackedTasksManager f = Managers.getDefaultFileBacked();
+        FileBackedTasksManager f = new FileBackedTasksManager(new File("resources/Backup.csv"));
         Task task1 = new Task("Таск1", "-"); //1
         f.create(task1);
         Epic epic1 = new Epic("Эпик1", "-"); //2
