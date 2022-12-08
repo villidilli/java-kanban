@@ -8,7 +8,7 @@ public class Main {
         System.out.println("*** ПРОВЕРКА РАБОТОСПОСОБНОСТИ FileBackedManagers ***");
         System.out.println("*****************************************************");
         System.out.println("*** ИМИТИРУЕМ ПЕРВЫЙ ЗАПУСК ПРОГРАММЫ ***");
-        System.out.println("*** Создаем задачи и наполняем историю (main() FileBackedManager) ***\n");
+        System.out.println("*** Создаем задачи и наполняем историю ***\n");
         FileBackedTasksManager f = new FileBackedTasksManager(new File("resources/Backup.csv"));
         Task task1 = new Task("Таск1", "-"); //1
         f.create(task1);
