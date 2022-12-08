@@ -55,7 +55,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 			fileData = Files.readString(file.toPath());
 			rows = fileData.split(TaskConverter.LINE_SEPARATOR);
 		} catch (IOException exception) {
-			throw new ManagerSaveException("Ошибка -> Невозможно прочитать " + file.getName());
+			throw new ManagerSaveException("Ошибка -> Невозможно прочитать " + file.getName().toUpperCase());
 		}
 		return rows;
 	}
@@ -103,9 +103,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 		try {
 			bufferedWriter.write(history);
 		} catch (IOException exception) {
-			throw new ManagerSaveException("Ошибка -> Не удалось записать в файл историю");
+			throw new ManagerSaveException(
+					"Ошибка -> Не удалось записать данные истории в файл " + backupfile.getName().toUpperCase());
 		}
-	}
+}
 
 	private void writeTaskToFile(BufferedWriter bufferedWriter, Map<Integer, ? extends Task> list) {
 		//принимаем одну из мап с задачами и перебираем значения (объекты)
@@ -116,7 +117,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 				bufferedWriter.newLine();
 			}
 		} catch (IOException exception) {
-			throw new ManagerSaveException("Ошибка -> Не удалось записать данные задачи");
+			throw new ManagerSaveException(
+					"Ошибка -> Не удалось записать данные задачи в файл " + backupfile.getName().toUpperCase());
 		}
 	}
 
