@@ -104,7 +104,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 			bufferedWriter.write(history);
 		} catch (IOException exception) {
 			throw new ManagerSaveException(
-					"Ошибка -> Не удалось записать данные истории в файл " + backupfile.getName().toUpperCase());
+					"Ошибка -> Не удалось записать историю строкой в файл " + backupfile.getName().toUpperCase());
 		}
 }
 
@@ -118,7 +118,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 			}
 		} catch (IOException exception) {
 			throw new ManagerSaveException(
-					"Ошибка -> Не удалось записать данные задачи в файл " + backupfile.getName().toUpperCase());
+					"Ошибка -> Не удалось записать задачу строкой в файл " + backupfile.getName().toUpperCase());
 		}
 	}
 
@@ -139,7 +139,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 			writeHistoryToFile(bufferedWriter, historyManager);
 			bufferedWriter.flush();
 		} catch (IOException exception) {
-			throw new ManagerSaveException("Ошибка -> Не удалось записать объекты в файл");
+			throw new ManagerSaveException(
+					"Ошибка -> Не удалось сохранить объекты в файл" + backupfile.getName().toUpperCase());
 		}
 	}
 
