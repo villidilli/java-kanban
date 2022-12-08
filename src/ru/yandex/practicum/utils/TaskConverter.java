@@ -29,13 +29,13 @@ public class TaskConverter {
 	public static String historyToString(HistoryManager historyManager) {
 		List<Task> history = historyManager.getHistory();
 		StringBuilder stringBuilder = new StringBuilder();
-		// проходим через fori, чтобы у последнего id не ставить запятую
-		for (int i = 0; i < history.size(); i++) {
-			if (i != history.size() - 1) {
-				stringBuilder.append(history.get(i).getID() + ",");
-			} else {
-				stringBuilder.append(history.get(i).getID());
-			}
+		if (history.isEmpty()) {
+			return "";
+		}
+		stringBuilder.append(history.get(0).getID());
+		for (int i = 1; i < history.size(); i++) {
+			stringBuilder.append(",");
+			stringBuilder.append(history.get(i).getID());
 		}
 		return stringBuilder.toString();
 	}

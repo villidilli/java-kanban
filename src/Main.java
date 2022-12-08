@@ -2,6 +2,7 @@ import ru.yandex.practicum.managers.*;
 import ru.yandex.practicum.tasks.*;
 
 import java.io.File;
+import java.util.Locale;
 
 public class Main {
     public static void main(String[] args) {
@@ -60,13 +61,16 @@ public class Main {
 
         System.out.println(tm.getHistory());
 
-        System.out.println("\n*** Проверка работоспособности FileBackedManagers ***\n");
-        System.out.println("*** Имитируем первый запуск программы ***");
+        System.out.println("*****************************************************");
+        System.out.println("*** ПРОВЕРКА РАБОТОСПОСОБНОСТИ FileBackedManagers ***");
+        System.out.println("*****************************************************");
+        System.out.println("*** ИМИТИРУЕМ ПЕРВЫЙ ЗАПУСК ПРОГРАММЫ ***");
         System.out.println("*** Создаем задачи и наполняем историю (main() FileBackedManager) ***\n");
         FileBackedTasksManager f = new FileBackedTasksManager(
                 new File("resources\\Backup.csv"));
         f.main(null);
         System.out.println("\n*** Программа завершена ***");
+        System.out.println("-----------------------------");
 
 //        Task taskF1 = new Task("ТаскФФФ1", "-"); //1
 //        f.create(taskF1);
@@ -80,7 +84,7 @@ public class Main {
 //        f.create(subTaskF2);
 //        SubTask subTaskF3 = new SubTask("СабФФФ3", "-",3); //6
 //        f.create(subTaskF3);
-        System.out.println("\n*** Имитируем второй запуск программы ***\n");
+        System.out.println("\n*** ИМИТИРУЕМ ВТОРОЙ ЗАПУСК ПРОГРАММЫ ***");
         FileBackedTasksManager f2 = Managers.getDefaultFileBacked();
         System.out.println("*** Проверяем восстановление истории ***");
 //        f.getTaskByID(taskF2.getID());
@@ -94,8 +98,9 @@ public class Main {
         f2.create(task6);
         f2.getTaskByID(task6.getID());
         System.out.println("\n*** Программа завершена ***");
+        System.out.println("-----------------------------");
 
-        System.out.println("\n*** Имитируем третий запуск программы ***\n");
+        System.out.println("\n*** ИМИТИРУЕМ ТРЕТИЙ ЗАПУСК ПРОГРАММЫ ***");
         FileBackedTasksManager f3 = Managers.getDefaultFileBacked();
         System.out.println("*** Проверяем восстановление истории ***");
         System.out.println("\nОжидаем порядок id 4 - 5 - 3 - 2 - 6");
