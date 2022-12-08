@@ -6,6 +6,7 @@ import ru.yandex.practicum.utils.TaskConverter;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -22,6 +23,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 		//считали из файла все строки
 		String[] rows = readFile(file);
 		//начинаем с 1 чтобы пропустить шапку
+		List <Integer> history = Collections.emptyList();
 		for (int i = 1; i < rows.length; i++) {
 			//если строка пустая, значит следующая строка истории
 			String line = rows[i];
@@ -30,18 +32,17 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 				//прибавили к индексу 1, чтобы получить следующую строку (историю)
 				//сконвертировали строку истории в список ID
 				line = rows[i + 1];
-				List<Integer> history = TaskConverter.historyFromString(line);
-				//ищет задачу в мапах по ID и записываем в историю
-				for (Integer ID : history) {
-					task = backedManager.getTask(ID);
-					histManager.add(task);
-				}
-				//если строка не пустая значит мы работаем со строками-задачами
-			} else {
-				task = TaskConverter.taskFromString(line);
-				backedManager.updateGeneratorID(task);
-				backedManager.addTask(task);
+				history = TaskConverter.historyFromString(line);
+				break;
 			}
+			//если строка не пустая значит мы работаем со строками-задачами
+			task = TaskConverter.taskFromString(line);
+			backedManager.updateGeneratorID(task);
+			backedManager.addTask(task);
+		}
+		//ищет задачу в мапах по ID и записываем в историю
+		for (Integer ID : history) {
+			histManager.add(backedManager.getTask(ID));
 		}
 		return backedManager;
 	}
