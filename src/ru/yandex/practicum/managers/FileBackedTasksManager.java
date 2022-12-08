@@ -55,7 +55,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 			fileData = Files.readString(file.toPath());
 			rows = fileData.split(TaskConverter.LINE_SEPARATOR);
 		} catch (IOException exception) {
-			throw new ManagerSaveException("Ошибка -> Чтение файла невозможно");
+			throw new ManagerSaveException("Ошибка -> Невозможно прочитать " + file.getName());
 		}
 		return rows;
 	}
