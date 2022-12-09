@@ -1,6 +1,0 @@
-id,type,name,status,description,epic
-1,TASK,Таск1,NEW,-,
-6,TASK,Таск6,NEW,-,
-2,EPIC,Эпик1,NEW,-,
-
-2,6
