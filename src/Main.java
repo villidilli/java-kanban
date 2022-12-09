@@ -58,7 +58,7 @@ public class Main {
 		System.out.println("\nИСТОРИЯ: " + f3.getHistory());
 		Epic epic7 = new Epic("Эпик7", "-");
 
-		System.out.println("\n*** Добавляем и дополняем историю ***\n");
+		System.out.println("\n*** Добавляем задачи и дополняем историю ***\n");
 		f3.create(epic7);
 		f3.getEpicByID(epic7.getID());
 		System.out.printf("\nИТОГО СОЗДАНО: ТАСК = %d, САБ = %d, ЭПИК = %d",
@@ -72,7 +72,7 @@ public class Main {
 		System.out.println("\nИСТОРИЯ: " + f3.getHistory());
 
 		System.out.println("\n*** Удаляем все задачи одного типа ***\n");
-		f3.deleteAllSubTasks();
+		f3.deleteAllEpics();
 		System.out.printf("\nИТОГО СОЗДАНО: ТАСК = %d, САБ = %d, ЭПИК = %d",
 				f3.getAllTasks().size(), f3.getAllSubTasks().size(), f3.getAllEpics().size());
 		System.out.println("\nИСТОРИЯ: " + f3.getHistory());

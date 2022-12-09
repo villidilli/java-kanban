@@ -11,16 +11,8 @@ public class TaskConverter {
 	public static final String LINE_SEPARATOR = "\\r?\\n";
 
 	public static String taskToString(Task task) {
-		TaskTypes taskType = task.getTaskType();
-		if (taskType != TaskTypes.SUBTASK) {
-			return task.getID() + "," +
-					taskType.name() + "," +
-					task.getName() + "," +
-					task.getStatus() + "," +
-					task.getDescription() + ",";
-		}
 		return task.getID() + "," +
-				taskType.name() + "," +
+				task.getTaskType().name() + "," +
 				task.getName() + "," +
 				task.getStatus() + "," +
 				task.getDescription() + "," +
