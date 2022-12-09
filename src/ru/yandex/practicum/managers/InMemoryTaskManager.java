@@ -14,7 +14,6 @@ public class InMemoryTaskManager implements TaskManager {
 	protected final HistoryManager historyManager = Managers.getDefaultHistory();
 	protected int generatorID = 1;
 
-	//сервисный метод, не выносим в интерфейс
 	private void reCheckEpicStatus(int epicID) {
 		int countDone = 0;
 		int countNew = 0;

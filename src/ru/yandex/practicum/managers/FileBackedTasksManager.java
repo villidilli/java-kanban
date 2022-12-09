@@ -23,7 +23,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 		//считали из файла все строки
 		String[] rows = readFile(file);
 		//начинаем с 1 чтобы пропустить шапку
-		List <Integer> history = Collections.emptyList();
+		List<Integer> history = Collections.emptyList();
 		for (int i = 1; i < rows.length; i++) {
 			//если строка пустая, значит следующая строка истории
 			String line = rows[i];
@@ -106,7 +106,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 			throw new ManagerSaveException(
 					"Ошибка -> Не удалось записать историю строкой в файл " + backupfile.getName().toUpperCase());
 		}
-}
+	}
 
 	private void writeTaskToFile(BufferedWriter bufferedWriter, Map<Integer, ? extends Task> list) {
 		//принимаем одну из мап с задачами и перебираем значения (объекты)
