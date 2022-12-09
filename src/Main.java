@@ -9,7 +9,7 @@ public class Main {
         System.out.println("*****************************************************");
         System.out.println("*** ИМИТИРУЕМ ПЕРВЫЙ ЗАПУСК ПРОГРАММЫ ***");
         System.out.println("*** Создаем задачи и наполняем историю ***\n");
-        FileBackedTasksManager f = new FileBackedTasksManager(new File("resources/Backup.csv"));
+        FileBackedTasksManager f = Managers.getDefaultFileBacked();
         Task task1 = new Task("Таск1", "-"); //1
         f.create(task1);
         Epic epic1 = new Epic("Эпик1", "-"); //2
@@ -26,7 +26,7 @@ public class Main {
         f.getSubTaskByID(subTask1.getID()); //3
         f.getEpicByID(epic1.getID()); //2
 
-        System.out.printf("\nСОЗДАНО: ТАСК = %d, САБ = %d, ЭПИК = %d",
+        System.out.printf("\nИТОГО СОЗДАНО: ТАСК = %d, САБ = %d, ЭПИК = %d",
                 f.getAllTasks().size(), f.getAllSubTasks().size(), f.getAllEpics().size());
         System.out.println("\nИСТОРИЯ: " + f.getHistory());
 
@@ -45,7 +45,7 @@ public class Main {
         f2.create(task6);
         f2.getTaskByID(task6.getID());
 
-        System.out.printf("\nСОЗДАНО: ТАСК = %d, САБ = %d, ЭПИК = %d",
+        System.out.printf("\nИТОГО СОЗДАНО: ТАСК = %d, САБ = %d, ЭПИК = %d",
                 f2.getAllTasks().size(), f2.getAllSubTasks().size(), f2.getAllEpics().size());
         System.out.println("\nИСТОРИЯ: " + f2.getHistory());
 
@@ -60,11 +60,22 @@ public class Main {
         System.out.println("\nИСТОРИЯ: " + f3.getHistory());
         Epic epic7 = new Epic("Эпик7", "-");
 
-        System.out.println("\n*** Добавляем задачи и дополняем историю ***\n");
+        System.out.println("\n*** Добавляем и дополняем историю ***\n");
         f3.create(epic7);
         f3.getEpicByID(epic7.getID());
+        System.out.printf("\nИТОГО СОЗДАНО: ТАСК = %d, САБ = %d, ЭПИК = %d",
+                f3.getAllTasks().size(), f3.getAllSubTasks().size(), f3.getAllEpics().size());
+        System.out.println("\nИСТОРИЯ: " + f3.getHistory());
 
-        System.out.printf("\nСОЗДАНО: ТАСК = %d, САБ = %d, ЭПИК = %d",
+        System.out.println("\n*** Удаляем задачу ***\n");
+        f3.deleteEpicByID(epic7.getID());
+        System.out.printf("\nИТОГО СОЗДАНО: ТАСК = %d, САБ = %d, ЭПИК = %d",
+                f3.getAllTasks().size(), f3.getAllSubTasks().size(), f3.getAllEpics().size());
+        System.out.println("\nИСТОРИЯ: " + f3.getHistory());
+
+        System.out.println("\n*** Удаляем все задачи одного типа ***\n");
+        f3.deleteAllSubTasks();
+        System.out.printf("\nИТОГО СОЗДАНО: ТАСК = %d, САБ = %d, ЭПИК = %d",
                 f3.getAllTasks().size(), f3.getAllSubTasks().size(), f3.getAllEpics().size());
         System.out.println("\nИСТОРИЯ: " + f3.getHistory());
 

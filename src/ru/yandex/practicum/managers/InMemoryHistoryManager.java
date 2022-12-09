@@ -60,6 +60,13 @@ public class InMemoryHistoryManager implements HistoryManager {
 	}
 
 	@Override
+	public void deleteAllTasksByType(Map<Integer, ? extends Task> tasks) {
+		for (Integer taskID : tasks.keySet()) {
+			removeNode(history.get(taskID));
+		}
+	}
+
+	@Override
 	public void remove(int id) {
 		removeNode(history.get(id));
 	}
