@@ -1,6 +1,8 @@
 import ru.yandex.practicum.managers.*;
 import ru.yandex.practicum.tasks.*;
 
+import java.io.File;
+
 public class Main {
 	public static void main(String[] args) {
 		System.out.println("*** ПРОВЕРКА РАБОТОСПОСОБНОСТИ FileBackedManagers ***");
@@ -12,11 +14,11 @@ public class Main {
 		f.create(task1);
 		Epic epic1 = new Epic("Эпик1", "-"); //2
 		f.create(epic1);
-		SubTask subTask1 = new SubTask("Саб1", "-", 2); //3
+		SubTask subTask1 = new SubTask("Саб1", "-", epic1.getID()); //3
 		f.create(subTask1);
-		SubTask subTask2 = new SubTask("Саб2", "-", 2); //4
+		SubTask subTask2 = new SubTask("Саб2", "-", epic1.getID()); //4
 		f.create(subTask2);
-		SubTask subTask3 = new SubTask("Саб3", "-", 2); //5
+		SubTask subTask3 = new SubTask("Саб3", "-", epic1.getID()); //5
 		f.create(subTask3);
 
 		f.getSubTaskByID(subTask2.getID()); //4

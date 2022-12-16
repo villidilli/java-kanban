@@ -2,8 +2,8 @@ package ru.yandex.practicum.tasks;
 
 public class SubTask extends Task {
 
-	private int parentEpicID;
-	private TaskTypes taskType = TaskTypes.SUBTASK;
+	private final int parentEpicID;
+	private final TaskTypes taskType = TaskTypes.SUBTASK;
 
 	public SubTask(String name, String description, int parentEpicID) {
 		super(name, description);

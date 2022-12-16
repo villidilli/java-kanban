@@ -4,7 +4,7 @@ import java.util.HashMap;
 
 public class Epic extends Task {
 	private final HashMap<Integer, SubTask> epicSubTasks = new HashMap<>();
-	private TaskTypes taskType = TaskTypes.EPIC;
+	private final TaskTypes taskType = TaskTypes.EPIC;
 
 	public Epic(String name, String description) {
 		super(name, description);
