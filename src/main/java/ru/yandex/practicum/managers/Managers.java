@@ -13,6 +13,6 @@ public class Managers {
 	}
 
 	public static FileBackedTasksManager getDefaultFileBacked() {
-		return FileBackedTasksManager.loadFromFile(new File("resources/Backup.csv"));
+		return FileBackedTasksManager.loadFromFile(new File("src/main/resources/Backup.csv"));
 	}
 }
