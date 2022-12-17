@@ -3,7 +3,6 @@ package ru.yandex.practicum.tasks;
 import java.time.*;
 import java.time.temporal.ChronoUnit;
 import java.util.Objects;
-import java.util.Optional;
 
 public class Task {
 	private int ID;
@@ -11,12 +10,18 @@ public class Task {
 	private String description;
 	private ru.yandex.practicum.tasks.Status status = Status.NEW;
 	private final TaskTypes taskType = TaskTypes.TASK;
-	private Optional<ZonedDateTime> startTime = Optional.empty();
-	private Optional<Duration> duration = Optional.empty();
+	private ZonedDateTime startTime;
+	private Duration duration;
 
 	public Task(String name, String description) {
 		this.description = description;
 		this.name = name;
+	}
+
+	public Task(int ID, String name, String description) {
+		this.ID = ID;
+		this.name = name;
+		this.description = description;
 	}
 
 	public Task(int ID, String name, String description,
@@ -25,11 +30,11 @@ public class Task {
 		this.ID = ID;
 		this.name = name;
 		this.description = description;
-		this.duration = Optional.of(Duration.of(duration, ChronoUnit.MINUTES));
-		this.startTime = Optional.of(ZonedDateTime.of(
+		this.duration = Duration.of(duration, ChronoUnit.MINUTES);
+		this.startTime = ZonedDateTime.of(
 				LocalDate.of(year, month, day),
 				LocalTime.of(hour, minutes),
-				ZoneId.systemDefault())
+				ZoneId.systemDefault()
 		);
 	}
 
@@ -47,12 +52,20 @@ public class Task {
 		this.name = name;
 		this.description = description;
 		this.status = status;
-		this.duration = Optional.of(Duration.of(duration, ChronoUnit.MINUTES));
-		this.startTime = Optional.of(ZonedDateTime.of(
+		this.duration = Duration.ofMinutes(duration);
+		this.startTime = ZonedDateTime.of(
 				LocalDate.of(year, month, day),
 				LocalTime.of(hour, minutes),
-				ZoneId.systemDefault())
+				ZoneId.systemDefault()
 		);
+	}
+
+	public ZonedDateTime getEndTime() {
+		if (startTime == null || duration == null) {
+			throw new TimeValueException("Невозможно рассчитать время окончания." +
+										"Проверьте значения операндов");
+		}
+		return startTime.plusMinutes(getDuration());
 	}
 
 	public int getID() {
@@ -93,6 +106,17 @@ public class Task {
 
 	public Integer getParentEpicID() {
 		return null;
+	}
+
+	public ZonedDateTime getStartTime() {
+		return startTime;
+	}
+
+	public int getDuration() {
+		if (duration == null || duration.isNegative()) {
+			throw new TimeValueException("Продолжительность недоступна. Значение = null или отрицательное");
+		}
+		return (int) duration.toMinutes();
 	}
 
 	@Override

@@ -4,10 +4,13 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 public class TimeConverter {
-    private static DateTimeFormatter formatter;
+    private static DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy | HH:mm | ZZZZZ");;
 
     public static String dateTimeToString(ZonedDateTime dateTime) {
-        formatter = DateTimeFormatter.ofPattern("dd-MM-yyyy | HH:mm | ZZZZZ");
         return dateTime.format(formatter);
+    }
+
+    public static ZonedDateTime dateTimeFromString(String dateTime) {
+        return ZonedDateTime.parse(dateTime, formatter);
     }
 }
