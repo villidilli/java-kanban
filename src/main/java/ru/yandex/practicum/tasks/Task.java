@@ -1,17 +1,18 @@
 package ru.yandex.practicum.tasks;
 
 import java.time.*;
-import java.time.temporal.ChronoUnit;
 import java.util.Objects;
 
 public class Task {
+	private static final ZonedDateTime UNREACHEBLE_DATE = ZonedDateTime.of(
+			9999,1,1,0,0,0,0,ZoneId.systemDefault());
 	private int ID;
 	private String name;
 	private String description;
 	private ru.yandex.practicum.tasks.Status status = Status.NEW;
 	private final TaskTypes taskType = TaskTypes.TASK;
-	private ZonedDateTime startTime;
-	private Duration duration;
+	private ZonedDateTime startTime = UNREACHEBLE_DATE;
+	private Duration duration = Duration.ZERO;
 
 	public Task(String name, String description) {
 		this.description = description;
@@ -30,7 +31,7 @@ public class Task {
 		this.ID = ID;
 		this.name = name;
 		this.description = description;
-		this.duration = Duration.of(duration, ChronoUnit.MINUTES);
+		this.duration = Duration.ofMinutes(duration);
 		this.startTime = ZonedDateTime.of(
 				LocalDate.of(year, month, day),
 				LocalTime.of(hour, minutes),
@@ -60,10 +61,31 @@ public class Task {
 		);
 	}
 
+	public ZonedDateTime getStartTime() {
+		return startTime;
+	}
+
+	public void setStartTime(ZonedDateTime dateTime) {
+		if (dateTime != UNREACHEBLE_DATE) {
+			startTime = dateTime;
+		}
+	}
+
+	public int getDuration() {
+		return (int) duration.toMinutes();
+	}
+
+	public void setDuration(int minutes) {
+		if (minutes <= 0) {
+			throw new TimeValueException("Значение продолжительности должно быть больше 0");
+		}
+		duration = Duration.ofMinutes(minutes);
+	}
+
 	public ZonedDateTime getEndTime() {
-		if (startTime == null || duration == null) {
+		if (startTime == UNREACHEBLE_DATE || duration.isZero()) {
 			throw new TimeValueException("Невозможно рассчитать время окончания." +
-										"Проверьте значения операндов");
+										"Проверьте значения стартовой даты и длительности");
 		}
 		return startTime.plusMinutes(getDuration());
 	}
@@ -106,17 +128,6 @@ public class Task {
 
 	public Integer getParentEpicID() {
 		return null;
-	}
-
-	public ZonedDateTime getStartTime() {
-		return startTime;
-	}
-
-	public int getDuration() {
-		if (duration == null || duration.isNegative()) {
-			throw new TimeValueException("Продолжительность недоступна. Значение = null или отрицательное");
-		}
-		return (int) duration.toMinutes();
 	}
 
 	@Override

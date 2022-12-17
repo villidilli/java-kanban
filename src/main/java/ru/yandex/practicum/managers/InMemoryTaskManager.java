@@ -2,10 +2,10 @@ package ru.yandex.practicum.managers;
 
 import ru.yandex.practicum.tasks.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.Duration;
+import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
 	protected final Map<Integer, Task> tasks = new HashMap<>();
@@ -14,7 +14,52 @@ public class InMemoryTaskManager implements TaskManager {
 	protected final HistoryManager historyManager = Managers.getDefaultHistory();
 	protected int generatorID = 1;
 
-	private void reCheckEpicStatus(int epicID) {
+	private void updateEpicStartTime(int epicID) {
+		HashMap<Integer, SubTask> epicSubTasks = epics.get(epicID).getEpicSubTasks();
+		if (!epicSubTasks.isEmpty()) {
+			ZonedDateTime firstStartTime = epicSubTasks.values()
+					.stream()
+					.min((o1, o2) -> {
+						if (o1.getStartTime().isBefore(o2.getStartTime())) {
+							return -1;
+						}
+						if (o1.getStartTime().isAfter(o2.getStartTime())) {
+							return 1;
+						}
+						return 0;
+					})
+					.get()
+					.getStartTime();
+			epicSubTasks.get(epicID).setStartTime(firstStartTime);
+		}
+	}
+
+	private void updateEpicDuration(int epicID) {
+		HashMap<Integer, SubTask> epicSubTasks = epics.get(epicID).getEpicSubTasks();
+		if (!epicSubTasks.isEmpty()) {
+			int sumSubTaskDurations = epicSubTasks.values()
+					.stream()
+					.mapToInt(Task::getDuration)
+					.sum();
+			epics.get(epicID).setDuration(sumSubTaskDurations);
+		}
+	}
+
+	public void setEpicDuration() {
+		if(!epicSubTasks.isEmpty()) {
+			int sum = epicSubTasks.values()
+					.stream()
+					.mapToInt(Task::getDuration)
+					.sum();
+			Duration.of(sum, ChronoUnit.MINUTES);
+		}
+	}
+
+	private void getEpicEndTime () {
+
+	}
+
+	private void updateEpicStatus(int epicID) {
 		int countDone = 0;
 		int countNew = 0;
 		HashMap<Integer, SubTask> epicSubTasks = epics.get(epicID).getEpicSubTasks();
@@ -59,7 +104,7 @@ public class InMemoryTaskManager implements TaskManager {
 				newSubTask.setID(generatorID);
 				subTasks.put(generatorID, newSubTask);
 				parentEpic.getEpicSubTasks().put(generatorID, newSubTask);
-				reCheckEpicStatus(parentEpic.getID());
+				updateEpicStatus(parentEpic.getID());
 				generatorID++;
 				System.out.println("Подзадача: [" + newSubTask.getName() + "] [ID: " + newSubTask.getID() + "] [ID эпика: " + newSubTask.getParentEpicID() + "] создана!");
 			} else {
@@ -106,7 +151,7 @@ public class InMemoryTaskManager implements TaskManager {
 					// сохраняем по ID новый объект-подзадачу
 					parentEpic.getEpicSubTasks().put(currentSubTask.getID(), newSubTask);
 					subTasks.put(currentSubTask.getID(), newSubTask);
-					reCheckEpicStatus(parentEpic.getID());
+					updateEpicStatus(parentEpic.getID());
 					System.out.println("Подзадача: [" + currentSubTask.getName() + "] " + "[ID: " + currentSubTask.getID() + "] обновлена!");
 				} else {
 					System.out.println("[Ошибка] Эпик [ID: " + currentSubTask.getParentEpicID() + "] не найден!");
@@ -125,7 +170,7 @@ public class InMemoryTaskManager implements TaskManager {
 			Epic currentEpic = epics.get(newEpic.getID());
 			if (currentEpic != null) {
 				epics.put(currentEpic.getID(), newEpic);
-				reCheckEpicStatus(currentEpic.getID());
+				updateEpicStatus(currentEpic.getID());
 				System.out.println("Задача: [" + epics.get(newEpic.getID()).getName() + " ]" + "[ID: " + newEpic.getID() + "] обновлена!");
 			} else {
 				System.out.println("Задача с ID: " + newEpic.getID() + " не найдена! Создайте новую задачу");
@@ -163,7 +208,7 @@ public class InMemoryTaskManager implements TaskManager {
 		subTasks.clear();
 		for (Epic epic : epics.values()) { // удаляем все подзадачи из мапы эпиков
 			epic.getEpicSubTasks().clear();
-			reCheckEpicStatus(epic.getID());
+			updateEpicStatus(epic.getID());
 		}
 		System.out.println("Все подзадачи удалены");
 	}
@@ -209,7 +254,7 @@ public class InMemoryTaskManager implements TaskManager {
 		HashMap<Integer, SubTask> epicSubTasks = parentEpic.getEpicSubTasks();
 		epicSubTasks.remove(ID); //удаляем из эпика
 		subTasks.remove(ID); //удаляем из менеджера
-		reCheckEpicStatus(parentEpic.getID());
+		updateEpicStatus(parentEpic.getID());
 		historyManager.remove(ID);
 		System.out.println("Подзадача с ID [" + ID + "] успешно удалена!");
 	}
