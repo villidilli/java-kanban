@@ -45,16 +45,6 @@ public class InMemoryTaskManager implements TaskManager {
 		}
 	}
 
-	public void setEpicDuration() {
-		if(!epicSubTasks.isEmpty()) {
-			int sum = epicSubTasks.values()
-					.stream()
-					.mapToInt(Task::getDuration)
-					.sum();
-			Duration.of(sum, ChronoUnit.MINUTES);
-		}
-	}
-
 	private void getEpicEndTime () {
 
 	}
