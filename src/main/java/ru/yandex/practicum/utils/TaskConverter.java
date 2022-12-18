@@ -5,7 +5,9 @@ import ru.yandex.practicum.managers.HistoryManager;
 import ru.yandex.practicum.tasks.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.TreeSet;
 
 public class TaskConverter {
 	public static final String LINE_SEPARATOR = "\\r?\\n";

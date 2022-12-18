@@ -2,17 +2,32 @@ package ru.yandex.practicum.managers;
 
 import ru.yandex.practicum.tasks.*;
 
-import java.time.Duration;
 import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 public class InMemoryTaskManager implements TaskManager {
+
 	protected final Map<Integer, Task> tasks = new HashMap<>();
 	protected final Map<Integer, SubTask> subTasks = new HashMap<>();
 	protected final Map<Integer, Epic> epics = new HashMap<>();
 	protected final HistoryManager historyManager = Managers.getDefaultHistory();
+	protected final Set<Task> prioritizedTasks = new TreeSet<>((o1, o2) -> {
+		if (o1.getStartTime().isBefore(o2.getStartTime())) {
+			return -1;
+		}
+		if (o1.getStartTime().isAfter(o2.getStartTime())) {
+			return 1;
+		}
+		return 0;
+	});
+
 	protected int generatorID = 1;
+
+	private void deleteAllTaskFromPrioritizedTasks(TaskTypes type) {
+		prioritizedTasks.stream()
+				.filter(task -> task.getTaskType() == type)
+				.forEach(prioritizedTasks::remove);
+	}
 
 	private void updateEpicStartTime(int epicID) {
 		HashMap<Integer, SubTask> epicSubTasks = epics.get(epicID).getEpicSubTasks();
@@ -80,6 +95,7 @@ public class InMemoryTaskManager implements TaskManager {
 			newTask.setID(generatorID);
 			generatorID++;
 			tasks.put(newTask.getID(), newTask);
+			prioritizedTasks.add(newTask);
 			System.out.println("Задача: [" + newTask.getName() + "] [ID: " + newTask.getID() + "] создана!");
 		}
 	}
@@ -95,6 +111,7 @@ public class InMemoryTaskManager implements TaskManager {
 				updateEpicStatus(parentEpic.getID());
 				updateEpicStartTime(parentEpic.getID());
 				updateEpicDuration(parentEpic.getID());
+				prioritizedTasks.add(newSubTask);
 				generatorID++;
 				System.out.println("Подзадача: [" + newSubTask.getName() + "] [ID: " + newSubTask.getID() + "] [ID эпика: " + newSubTask.getParentEpicID() + "] создана!");
 			} else {
@@ -123,6 +140,7 @@ public class InMemoryTaskManager implements TaskManager {
 			Task currentTask = tasks.get(newTask.getID());
 			if (currentTask != null) {
 				tasks.put(currentTask.getID(), newTask);
+				prioritizedTasks.add(newTask);
 			} else {
 				System.out.println("Задача с ID: " + newTask.getID() + " не найдена! Создайте новую задачу");
 			}
@@ -144,6 +162,7 @@ public class InMemoryTaskManager implements TaskManager {
 					updateEpicStatus(parentEpic.getID());
 					updateEpicStartTime(parentEpic.getID());
 					updateEpicDuration(parentEpic.getID());
+					prioritizedTasks.add(newSubTask);
 					System.out.println("Подзадача: [" + currentSubTask.getName() + "] " + "[ID: " + currentSubTask.getID() + "] обновлена!");
 				} else {
 					System.out.println("[Ошибка] Эпик [ID: " + currentSubTask.getParentEpicID() + "] не найден!");
@@ -193,6 +212,7 @@ public class InMemoryTaskManager implements TaskManager {
 	public void deleteAllTasks() {
 		historyManager.deleteAllTasksByType(tasks);
 		tasks.clear();
+		deleteAllTaskFromPrioritizedTasks(TaskTypes.TASK);
 		System.out.println("Все задачи удалены");
 	}
 
@@ -206,6 +226,7 @@ public class InMemoryTaskManager implements TaskManager {
 			updateEpicStartTime(epic.getID());
 			updateEpicDuration(epic.getID());
 		}
+		deleteAllTaskFromPrioritizedTasks(TaskTypes.SUBTASK);
 		System.out.println("Все подзадачи удалены");
 	}
 
@@ -238,6 +259,7 @@ public class InMemoryTaskManager implements TaskManager {
 
 	@Override
 	public void deleteTaskByID(int ID) {
+		prioritizedTasks.remove(tasks.get(ID));
 		tasks.remove(ID);
 		historyManager.remove(ID);
 		System.out.println("Задача с ID [" + ID + "] успешно удалена!");
@@ -245,10 +267,10 @@ public class InMemoryTaskManager implements TaskManager {
 
 	@Override
 	public void deleteSubTaskByID(int ID) {
-		// передается ID сабтаска, проверка есть ли объект с таким ID в мапе менеджера и в мапе эпика-родителя
 		Epic parentEpic = epics.get(subTasks.get(ID).getParentEpicID());
 		HashMap<Integer, SubTask> epicSubTasks = parentEpic.getEpicSubTasks();
 		epicSubTasks.remove(ID); //удаляем из эпика
+		prioritizedTasks.remove(subTasks.get(ID));
 		subTasks.remove(ID); //удаляем из менеджера
 		updateEpicStatus(parentEpic.getID());
 		updateEpicStartTime(parentEpic.getID());
@@ -262,6 +284,7 @@ public class InMemoryTaskManager implements TaskManager {
 		//удаляем из коллекции собтасков менеджера сабтаски, имеющие отношение к эпику
 		for (SubTask subTask : epics.get(ID).getEpicSubTasks().values()) {
 			if (subTasks.get(subTask.getID()) != null) {
+				prioritizedTasks.remove(subTask);
 				historyManager.remove(subTask.getID());
 				subTasks.remove(subTask.getID());
 			}
