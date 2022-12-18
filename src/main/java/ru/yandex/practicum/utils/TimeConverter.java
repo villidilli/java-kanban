@@ -10,7 +10,7 @@ public class TimeConverter {
 
     public static String dateTimeToString(ZonedDateTime dateTime) {
         if (dateTime == UNREACHEBLE_DATE) {
-            return "";
+            return null;
         }
         return dateTime.format(formatter);
     }

@@ -138,9 +138,9 @@ public class Task {
 				"[ID: " + getID() + "] " +
 				"[Cтатус: " + getStatus() + "] " +
 				"[Описание: " + getDescription() + "] " +
-				"[Время начала: " + TimeConverter.dateTimeToString(getStartTime()) + "]" +
-				"[Время завершения: " + TimeConverter.dateTimeToString(getEndTime()) + "]" +
-				"[Длительность: " + getDuration() + "]";
+				"[Время начала: " + printStartTime() + "]" +
+				"[Время завершения: " + printEndTime() + "]" +
+				"[Длительность: " + printDuration() + "]";
 	}
 
 	@Override
@@ -154,5 +154,26 @@ public class Task {
 	@Override
 	public int hashCode() {
 		return Objects.hash(ID);
+	}
+
+	public String printEndTime(){
+		if (startTime != UNREACHEBLE_DATE && !duration.isZero()) {
+			return TimeConverter.dateTimeToString(getEndTime());
+		}
+		return "--";
+	}
+
+	public String printDuration(){
+		if (!duration.isZero()) {
+			return duration.toString();
+		}
+		return "--";
+	}
+
+	public String printStartTime(){
+		if (startTime == UNREACHEBLE_DATE) {
+			return "--";
+		}
+		return TimeConverter.dateTimeToString(startTime);
 	}
 }

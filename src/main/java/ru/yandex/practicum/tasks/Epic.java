@@ -2,12 +2,7 @@ package ru.yandex.practicum.tasks;
 
 import ru.yandex.practicum.utils.TimeConverter;
 
-import java.time.Duration;
-import java.time.ZonedDateTime;
-import java.time.temporal.ChronoUnit;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Optional;
 
 public class Epic extends Task {
 	private final HashMap<Integer, SubTask> epicSubTasks = new HashMap<>();
@@ -43,8 +38,8 @@ public class Epic extends Task {
 				"[Cтатус: " + getStatus() + "] " +
 				"[Описание: " + getDescription() + "] " +
 				"[Подзадачи: " + getEpicSubTasks().size() + "] " +
-				"[Время начала: " + TimeConverter.dateTimeToString(getStartTime()) + "] " +
-				"[Время завершения: " + TimeConverter.dateTimeToString(getEndTime()) + "] " +
-				"[Длительность: " + getDuration() + "]";
+				"[Время начала: " + printStartTime() + "] " +
+				"[Время завершения: " + printEndTime() + "] " +
+				"[Длительность: " + printDuration() + "]";
 	}
 }

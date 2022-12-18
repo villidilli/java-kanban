@@ -1,23 +1,5 @@
 id,type,name,status,description,epic
-16,TASK,Таск1,NEW,-,null
 1,TASK,Таск1,NEW,-,null
-6,TASK,Таск1,NEW,-,null
-11,TASK,Таск1,NEW,-,null
-17,EPIC,Эпик1,NEW,-,null
-2,EPIC,Эпик1,NEW,-,null
-7,EPIC,Эпик1,NEW,-,null
-12,EPIC,Эпик1,NEW,-,null
-18,SUBTASK,Саб1,NEW,-,17
-3,SUBTASK,Саб1,NEW,-,2
-19,SUBTASK,Саб2,NEW,-,17
-4,SUBTASK,Саб2,NEW,-,2
-20,SUBTASK,Саб3,NEW,-,17
-5,SUBTASK,Саб3,NEW,-,2
-8,SUBTASK,Саб1,NEW,-,7
-9,SUBTASK,Саб2,NEW,-,7
-10,SUBTASK,Саб3,NEW,-,7
-13,SUBTASK,Саб1,NEW,-,12
-14,SUBTASK,Саб2,NEW,-,12
-15,SUBTASK,Саб3,NEW,-,12
+6,TASK,Таск6,NEW,-,null
 
-4,5,3,2,9,10,8,7,14,15,13,12,19,20,18,17
+6

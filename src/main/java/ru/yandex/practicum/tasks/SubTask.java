@@ -54,8 +54,8 @@ public class SubTask extends Task {
 				"[Cтатус: " + getStatus() + "] " +
 				"[Описание: " + getDescription() + "] " +
 				"[Эпик ID: " + getParentEpicID() + "] " +
-				"[Время начала: " + TimeConverter.dateTimeToString(getStartTime()) + "] " +
-				"[Время завершения: " + TimeConverter.dateTimeToString(getEndTime()) + "] " +
-				"[Длительность: " + getDuration() + "]";
+				"[Время начала: " + printStartTime() + "] " +
+				"[Время завершения: " + printEndTime() + "] " +
+				"[Длительность: " + printDuration() + "]";
 	}
 }
