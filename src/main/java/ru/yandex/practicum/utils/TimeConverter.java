@@ -1,5 +1,7 @@
 package ru.yandex.practicum.utils;
 
+import java.time.Duration;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -16,6 +18,16 @@ public class TimeConverter {
     }
 
     public static ZonedDateTime dateTimeFromString(String dateTime) {
+        if (dateTime.equals("null")) {
+            return UNREACHEBLE_DATE;
+        }
         return ZonedDateTime.parse(dateTime, formatter);
+    }
+
+    public static Duration durationFromString(String duration) {
+        if (duration.equals("0")) {
+            return Duration.ZERO;
+        }
+        return Duration.ofMinutes(Long.parseLong(duration));
     }
 }

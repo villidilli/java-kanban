@@ -14,11 +14,11 @@ public class Main {
 		f.create(task1);
 		Epic epic1 = new Epic("Эпик1", "-"); //2
 		f.create(epic1);
-		SubTask subTask1 = new SubTask("Саб1", "-", epic1.getID()); //3
+		SubTask subTask1 = new SubTask("Саб1", "-", epic1.getID(), 2022, 12, 19,1,34,15); //3
 		f.create(subTask1);
-		SubTask subTask2 = new SubTask("Саб2", "-", epic1.getID()); //4
+		SubTask subTask2 = new SubTask("Саб2", "-", epic1.getID(), 2022, 12,1, 5,45,45); //4
 		f.create(subTask2);
-		SubTask subTask3 = new SubTask("Саб3", "-", epic1.getID()); //5
+		SubTask subTask3 = new SubTask("Саб3", "-", epic1.getID(),2021, 1,1,0,0,30); //5
 		f.create(subTask3);
 
 		f.getSubTaskByID(subTask2.getID()); //4

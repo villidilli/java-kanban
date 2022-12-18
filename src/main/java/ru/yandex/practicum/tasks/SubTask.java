@@ -2,6 +2,9 @@ package ru.yandex.practicum.tasks;
 
 import ru.yandex.practicum.utils.TimeConverter;
 
+import java.time.Duration;
+import java.time.ZonedDateTime;
+
 public class SubTask extends Task {
 
 	private final int parentEpicID;
@@ -41,6 +44,12 @@ public class SubTask extends Task {
 				   int year, int month, int day,
 				   int hour, int minutes, int duration) {
 		super(ID, name, description, status, year, month, day, hour, minutes, duration);
+		this.parentEpicID = parentEpicID;
+	}
+
+	public SubTask(int ID, String name, String description, Status status, int parentEpicID,
+				   ZonedDateTime zonedDateTime, Duration duration) {
+		super(ID, name, description, status, zonedDateTime, duration);
 		this.parentEpicID = parentEpicID;
 	}
 

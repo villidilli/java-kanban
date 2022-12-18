@@ -123,7 +123,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 	}
 
 	private String getHeaderTasks() {
-		return "id,type,name,status,description,epic";
+		return "id,type,name,status,description,epic,start,duration";
 	}
 
 	private void save() {

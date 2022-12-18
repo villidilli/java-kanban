@@ -76,6 +76,15 @@ public class Task {
 		);
 	}
 
+	public Task(int ID, String name, String description, Status status, ZonedDateTime zonedDateTime, Duration duration) {
+		this.ID = ID;
+		this.name = name;
+		this.description = description;
+		this.status = status;
+		this.duration = duration;
+		this.startTime = zonedDateTime;
+	}
+
 	public ZonedDateTime getStartTime() {
 		return startTime;
 	}
