@@ -6,7 +6,7 @@ import java.time.*;
 import java.util.Objects;
 
 public class Task {
-	protected static final ZonedDateTime UNREACHEBLE_DATE = ZonedDateTime.of(
+	public static final ZonedDateTime UNREACHEBLE_DATE = ZonedDateTime.of(
 			9999,1,1,0,0,0,0,ZoneId.systemDefault());
 	private final TaskTypes taskType = TaskTypes.TASK;
 	private int ID;

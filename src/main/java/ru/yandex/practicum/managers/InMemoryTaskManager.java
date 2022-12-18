@@ -41,7 +41,9 @@ public class InMemoryTaskManager implements TaskManager {
 					.stream()
 					.mapToInt(Task::getDuration)
 					.sum();
-			epics.get(epicID).setDuration(sumSubTaskDurations);
+			if (sumSubTaskDurations > 0){
+				epics.get(epicID).setDuration(sumSubTaskDurations);
+			}
 		}
 	}
 
