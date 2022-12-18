@@ -21,6 +21,19 @@ public class Task {
 		this.name = name;
 	}
 
+	public Task(String name, String description,
+				int year, int month, int day,
+				int hour, int minutes, int duration) {
+		this.description = description;
+		this.name = name;
+		this.duration = Duration.ofMinutes(duration);
+		this.startTime = ZonedDateTime.of(
+				LocalDate.of(year, month, day),
+				LocalTime.of(hour, minutes),
+				ZoneId.systemDefault()
+		);
+	}
+
 	public Task(int ID, String name, String description) {
 		this.ID = ID;
 		this.name = name;

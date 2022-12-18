@@ -10,7 +10,7 @@ public class Main {
 		System.out.println("*** ИМИТИРУЕМ ПЕРВЫЙ ЗАПУСК ПРОГРАММЫ ***");
 		System.out.println("*** Создаем задачи и наполняем историю ***\n");
 		FileBackedTasksManager f = Managers.getDefaultFileBacked();
-		Task task1 = new Task("Таск1", "-"); //1
+		Task task1 = new Task("Таск1", "-", 2022, 12, 18, 4, 15, 40); //1
 		f.create(task1);
 		Epic epic1 = new Epic("Эпик1", "-"); //2
 		f.create(epic1);

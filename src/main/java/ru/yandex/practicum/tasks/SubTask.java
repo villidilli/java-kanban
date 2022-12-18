@@ -12,6 +12,13 @@ public class SubTask extends Task {
 		this.parentEpicID = parentEpicID;
 	}
 
+	public SubTask(String name, String description, int parentEpicID,
+				   int year, int month, int day,
+				   int hour, int minutes, int duration) {
+		super(name, description, year, month, day, hour, minutes, duration);
+		this.parentEpicID = parentEpicID;
+	}
+
 	//ниже конструкторы для повторных вхождений
 	public SubTask(int ID, String name, String description, int parentEpicID) {
 		super(ID, name, description);
