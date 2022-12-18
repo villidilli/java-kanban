@@ -4,6 +4,8 @@ import ru.yandex.practicum.tasks.*;
 
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.function.Function;
+import java.util.function.IntFunction;
 
 public class InMemoryTaskManager implements TaskManager {
 
@@ -303,5 +305,10 @@ public class InMemoryTaskManager implements TaskManager {
 	@Override
 	public List<Task> getHistory() {
 		return historyManager.getHistory();
+	}
+
+	@Override
+	public List<Task> getPrioritizedTasks() {
+		return new ArrayList<>(prioritizedTasks);
 	}
 }
