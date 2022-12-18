@@ -1,16 +1,18 @@
 package ru.yandex.practicum.tasks;
 
+import ru.yandex.practicum.utils.TimeConverter;
+
 import java.time.*;
 import java.util.Objects;
 
 public class Task {
-	private static final ZonedDateTime UNREACHEBLE_DATE = ZonedDateTime.of(
+	protected static final ZonedDateTime UNREACHEBLE_DATE = ZonedDateTime.of(
 			9999,1,1,0,0,0,0,ZoneId.systemDefault());
+	private final TaskTypes taskType = TaskTypes.TASK;
 	private int ID;
 	private String name;
 	private String description;
 	private ru.yandex.practicum.tasks.Status status = Status.NEW;
-	private final TaskTypes taskType = TaskTypes.TASK;
 	private ZonedDateTime startTime = UNREACHEBLE_DATE;
 	private Duration duration = Duration.ZERO;
 
@@ -132,7 +134,13 @@ public class Task {
 
 	@Override
 	public String toString() {
-		return "\n[Задача: " + getName() + "] " + "[ID: " + getID() + "] " + "[Cтатус: " + getStatus() + "] " + "[Описание: " + getDescription() + "] ";
+		return "\n[Задача: " + getName() + "] " +
+				"[ID: " + getID() + "] " +
+				"[Cтатус: " + getStatus() + "] " +
+				"[Описание: " + getDescription() + "] " +
+				"[Время начала: " + TimeConverter.dateTimeToString(getStartTime()) + "]" +
+				"[Время завершения: " + TimeConverter.dateTimeToString(getEndTime()) + "]" +
+				"[Длительность: " + getDuration() + "]";
 	}
 
 	@Override

@@ -1,5 +1,7 @@
 package ru.yandex.practicum.tasks;
 
+import ru.yandex.practicum.utils.TimeConverter;
+
 public class SubTask extends Task {
 
 	private final int parentEpicID;
@@ -50,7 +52,10 @@ public class SubTask extends Task {
 		return "\n[Подзадача: " + getName() + "] " +
 				"[ID: " + getID() + "] " +
 				"[Cтатус: " + getStatus() + "] " +
-				"[Описание: " + getDescription() + "]" +
-				"[Эпик ID: " + getParentEpicID() + "] ";
+				"[Описание: " + getDescription() + "] " +
+				"[Эпик ID: " + getParentEpicID() + "] " +
+				"[Время начала: " + TimeConverter.dateTimeToString(getStartTime()) + "] " +
+				"[Время завершения: " + TimeConverter.dateTimeToString(getEndTime()) + "] " +
+				"[Длительность: " + getDuration() + "]";
 	}
 }

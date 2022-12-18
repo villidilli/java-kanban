@@ -17,7 +17,7 @@ public class InMemoryTaskManager implements TaskManager {
 	private void updateEpicStartTime(int epicID) {
 		HashMap<Integer, SubTask> epicSubTasks = epics.get(epicID).getEpicSubTasks();
 		if (!epicSubTasks.isEmpty()) {
-			ZonedDateTime firstStartTime = epicSubTasks.values()
+			ZonedDateTime firstDateTime = epicSubTasks.values()
 					.stream()
 					.min((o1, o2) -> {
 						if (o1.getStartTime().isBefore(o2.getStartTime())) {
@@ -30,7 +30,7 @@ public class InMemoryTaskManager implements TaskManager {
 					})
 					.get()
 					.getStartTime();
-			epicSubTasks.get(epicID).setStartTime(firstStartTime);
+			epics.get(epicID).setStartTime(firstDateTime);
 		}
 	}
 
@@ -43,10 +43,6 @@ public class InMemoryTaskManager implements TaskManager {
 					.sum();
 			epics.get(epicID).setDuration(sumSubTaskDurations);
 		}
-	}
-
-	private void getEpicEndTime () {
-
 	}
 
 	private void updateEpicStatus(int epicID) {
@@ -95,6 +91,8 @@ public class InMemoryTaskManager implements TaskManager {
 				subTasks.put(generatorID, newSubTask);
 				parentEpic.getEpicSubTasks().put(generatorID, newSubTask);
 				updateEpicStatus(parentEpic.getID());
+				updateEpicStartTime(parentEpic.getID());
+				updateEpicDuration(parentEpic.getID());
 				generatorID++;
 				System.out.println("Подзадача: [" + newSubTask.getName() + "] [ID: " + newSubTask.getID() + "] [ID эпика: " + newSubTask.getParentEpicID() + "] создана!");
 			} else {
@@ -142,6 +140,8 @@ public class InMemoryTaskManager implements TaskManager {
 					parentEpic.getEpicSubTasks().put(currentSubTask.getID(), newSubTask);
 					subTasks.put(currentSubTask.getID(), newSubTask);
 					updateEpicStatus(parentEpic.getID());
+					updateEpicStartTime(parentEpic.getID());
+					updateEpicDuration(parentEpic.getID());
 					System.out.println("Подзадача: [" + currentSubTask.getName() + "] " + "[ID: " + currentSubTask.getID() + "] обновлена!");
 				} else {
 					System.out.println("[Ошибка] Эпик [ID: " + currentSubTask.getParentEpicID() + "] не найден!");
@@ -161,6 +161,8 @@ public class InMemoryTaskManager implements TaskManager {
 			if (currentEpic != null) {
 				epics.put(currentEpic.getID(), newEpic);
 				updateEpicStatus(currentEpic.getID());
+				updateEpicStartTime(currentEpic.getID());
+				updateEpicDuration(currentEpic.getID());
 				System.out.println("Задача: [" + epics.get(newEpic.getID()).getName() + " ]" + "[ID: " + newEpic.getID() + "] обновлена!");
 			} else {
 				System.out.println("Задача с ID: " + newEpic.getID() + " не найдена! Создайте новую задачу");
@@ -199,6 +201,8 @@ public class InMemoryTaskManager implements TaskManager {
 		for (Epic epic : epics.values()) { // удаляем все подзадачи из мапы эпиков
 			epic.getEpicSubTasks().clear();
 			updateEpicStatus(epic.getID());
+			updateEpicStartTime(epic.getID());
+			updateEpicDuration(epic.getID());
 		}
 		System.out.println("Все подзадачи удалены");
 	}
@@ -245,6 +249,8 @@ public class InMemoryTaskManager implements TaskManager {
 		epicSubTasks.remove(ID); //удаляем из эпика
 		subTasks.remove(ID); //удаляем из менеджера
 		updateEpicStatus(parentEpic.getID());
+		updateEpicStartTime(parentEpic.getID());
+		updateEpicDuration(parentEpic.getID());
 		historyManager.remove(ID);
 		System.out.println("Подзадача с ID [" + ID + "] успешно удалена!");
 	}
