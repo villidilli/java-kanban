@@ -10,7 +10,7 @@ import ru.yandex.practicum.tasks.SubTask;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 
-
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 public class EpicTest {
@@ -39,5 +39,8 @@ public class EpicTest {
     public void shouldReturnEpicDurationEqualsSumSubTasksDurations() {
         int expectedDuration = 90;
         assertEquals(expectedDuration, epic1.getDuration());
+        System.out.println(subTask1.getDuration());
+        System.out.println(subTask2.getDuration());
+        System.out.println(epic1.getDuration());
     }
 }
