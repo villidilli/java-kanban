@@ -42,10 +42,9 @@ public class Epic extends Task {
 		return "\n[Эпик: " + getName() + "] " +
 				"[ID: " + getID() + "] " +
 				"[Cтатус: " + getStatus() + "] " +
-				"[Описание: " + getDescription() + "] " +
 				"[Подзадачи: " + getEpicSubTasks().size() + "] " +
-				"[Время начала: " + printStartTime() + "] " +
-				"[Время завершения: " + printEndTime() + "] " +
+				"[Начало: " + printStartTime() + "] " +
+				"[Окончание: " + printEndTime() + "] " +
 				"[Длительность: " + printDuration() + "]";
 	}
 }

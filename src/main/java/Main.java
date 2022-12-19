@@ -81,32 +81,28 @@ public class Main {
 //
 //		System.out.println("\n*** Программа завершена ***");
 //		System.out.println("-----------------------------");
-		System.out.println("*************************");
-		System.out.println("***** ПЕРВЫЙ ЗАПУСК *****");
-		System.out.println("*************************");
+		System.out.println("***** ПЕРВЫЙ ЗАПУСК *****\n");
 		FileBackedTasksManager f = Managers.getDefaultFileBacked();
+
 		System.out.println("ВОССТАНОВЛЕНО ИЗ ФАЙЛА: ");
 		System.out.println("ТАСК [" + f.getAllTasks().size() +
 							"] САБ [" + f.getAllSubTasks().size() +
-							"] ЭПИК [" + f.getAllEpics().size() + "]");
+							"] ЭПИК [" + f.getAllEpics().size() + "]\n");
 
 		System.out.println("Создаем задачи");
 		Task task1 = new Task("Таск1", "-", 2022, 1, 1, 1, 0, 5);
 		f.create(task1); //1
-		System.out.println(f.getTaskByID(1));
+
 		Epic epic1 = new Epic("Эпик", "-");
 		f.create(epic1); //2
-		System.out.println(f.getEpicByID(2));
+
 		SubTask sub1 = new SubTask("Саб1", "-", 2, 2022, 3, 12, 20, 0, 10);
 		f.create(sub1); //3
-		System.out.println(f.getSubTaskByID(3));
+
 		Task task2 = new Task("Таск2", "-");
 		f.create(task2);
-		System.out.println(f.getTaskByID(4));
+
 		SubTask sub2 = new SubTask("Саб2", "-", 2);
 		f.create(sub2);
-		System.out.println(f.getSubTaskByID(5));
-
-
 	}
 }

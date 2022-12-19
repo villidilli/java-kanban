@@ -68,10 +68,9 @@ public class SubTask extends Task {
 		return "\n[Подзадача: " + getName() + "] " +
 				"[ID: " + getID() + "] " +
 				"[Cтатус: " + getStatus() + "] " +
-				"[Описание: " + getDescription() + "] " +
 				"[Эпик ID: " + getParentEpicID() + "] " +
-				"[Время начала: " + printStartTime() + "] " +
-				"[Время завершения: " + printEndTime() + "] " +
+				"[Начало: " + printStartTime() + "] " +
+				"[Окончание: " + printEndTime() + "] " +
 				"[Длительность: " + printDuration() + "]";
 	}
 }

@@ -159,9 +159,8 @@ public class Task {
 		return "\n[Задача: " + getName() + "] " +
 				"[ID: " + getID() + "] " +
 				"[Cтатус: " + getStatus() + "] " +
-				"[Описание: " + getDescription() + "] " +
-				"[Время начала: " + printStartTime() + "]" +
-				"[Время завершения: " + printEndTime() + "]" +
+				"[Начало: " + printStartTime() + "]" +
+				"[Окончание: " + printEndTime() + "]" +
 				"[Длительность: " + printDuration() + "]";
 	}
 
