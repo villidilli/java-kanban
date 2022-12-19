@@ -95,11 +95,11 @@ public class Task {
 		}
 	}
 
-	public int getDuration() {
-		return (int) duration.toMinutes();
+	public long getDuration() {
+		return duration.toMinutes();
 	}
 
-	public void setDuration(int minutes) {
+	public void setDuration(long minutes) {
 		if (minutes <= 0) {
 			throw new TimeValueException("Значение продолжительности должно быть больше 0");
 		}

@@ -2,8 +2,10 @@ package ru.yandex.practicum.managers;
 
 import ru.yandex.practicum.tasks.*;
 
+import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.function.Consumer;
 
 public class InMemoryTaskManager implements TaskManager {
 
@@ -26,8 +28,8 @@ public class InMemoryTaskManager implements TaskManager {
 	//проверка пересечений интервалов времени выполнения задач
 	private void checkIntersectionOnDateTime(Task task) {
 		//проверка нужна чтобы создать задачу без указания времени,
-		// если поля не инициализированы пользователем (= имеют системные константы)
-		if (task.getStartTime() == Task.UNREACHEBLE_DATE || task.getDuration() == 0) {
+		// если поля не инициализированы пользователем (== системные константы)
+		if (task.getStartTime() == Task.UNREACHEBLE_DATE || task.getDuration() == Duration.ZERO.toMinutes()) {
 			return;
 		}
 		//если поля инициализированы не константами (введены пользователем), проверяем пересечения
@@ -35,15 +37,15 @@ public class InMemoryTaskManager implements TaskManager {
 		ZonedDateTime checkEnd = task.getEndTime();
 
 		boolean isHaveIntersection = prioritizedTasks.stream()
-				.anyMatch(streamTask -> (
-						checkStart.isBefore(streamTask.getEndTime())
-						|| checkStart.isEqual(streamTask.getEndTime())
+				.anyMatch(atask -> (
+						checkStart.isBefore(atask.getEndTime())
+						|| checkStart.isEqual(atask.getEndTime())
 				) && (
-						checkEnd.isAfter(streamTask.getStartTime())
-						|| checkEnd.isEqual(streamTask.getStartTime())
+						checkEnd.isAfter(atask.getStartTime())
+						|| checkEnd.isEqual(atask.getStartTime())
 				));
 		if (isHaveIntersection) {
-			throw new TimeValueException("\nНевозможно создать задачу. Пересечение интервалов времени выполнения");
+			throw new TimeValueException("\nОТМЕНА СОЗДАНИЯ -> [пересечение интервалов выполнения]");
 		}
 	}
 
@@ -53,10 +55,17 @@ public class InMemoryTaskManager implements TaskManager {
 				.forEach(prioritizedTasks::remove);
 	}
 
+	private void updateEpic(int ID) {
+		updateEpicStatus(ID);
+		updateEpicStartTime(ID);
+		updateEpicDuration(ID);
+	}
+
+	// startTime эпика = наименьшему значению startTime его сабтасков
 	private void updateEpicStartTime(int epicID) {
-		HashMap<Integer, SubTask> epicSubTasks = epics.get(epicID).getEpicSubTasks();
+		Collection <SubTask> epicSubTasks = epics.get(epicID).getEpicSubTasks().values();
 		if (!epicSubTasks.isEmpty()) {
-			ZonedDateTime firstDateTime = epicSubTasks.values()
+			ZonedDateTime firstDateTime = epicSubTasks
 					.stream()
 					.min((o1, o2) -> {
 						if (o1.getStartTime().isBefore(o2.getStartTime())) {
@@ -73,12 +82,13 @@ public class InMemoryTaskManager implements TaskManager {
 		}
 	}
 
+	// duration эпика = наименьшему значению duration его сабтасков
 	private void updateEpicDuration(int epicID) {
 		HashMap<Integer, SubTask> epicSubTasks = epics.get(epicID).getEpicSubTasks();
 		if (!epicSubTasks.isEmpty()) {
-			int sumSubTaskDurations = epicSubTasks.values()
+			long sumSubTaskDurations = epicSubTasks.values()
 					.stream()
-					.mapToInt(Task::getDuration)
+					.mapToLong(Task::getDuration)
 					.sum();
 			if (sumSubTaskDurations > 0) {
 				epics.get(epicID).setDuration(sumSubTaskDurations);
@@ -114,131 +124,132 @@ public class InMemoryTaskManager implements TaskManager {
 	@Override
 	public void create(Task newTask) {
 		if (newTask == null) {
-			System.out.println("[Ошибка] Объект задачи равен *null*");
-		} else {
-			try {
-				checkIntersectionOnDateTime(newTask);
-				newTask.setID(generatorID);
-				generatorID++;
-				tasks.put(newTask.getID(), newTask);
-				prioritizedTasks.add(newTask);
-				System.out.println("Задача: [" + newTask.getName() + "] [ID: " + newTask.getID() + "] создана!");
-			} catch (TimeValueException e) {
-				System.out.println(e.getMessage());
-			}
+			System.out.println("ОТМЕНА СОЗДАНИЯ -> [объект не передан]");
+			return;
+		}
+		try {
+			checkIntersectionOnDateTime(newTask);
+			newTask.setID(generatorID);
+			generatorID++;
+			tasks.put(newTask.getID(), newTask);
+			prioritizedTasks.add(newTask);
+			System.out.println("УСПЕШНО -> [" + newTask.getName() + "] [ID: " + newTask.getID() + "]");
+		} catch (TimeValueException e) {
+			System.out.println(e.getMessage());
 		}
 	}
 
 	@Override
 	public void create(SubTask newSubTask) {
-		if (newSubTask != null) {
-			Epic parentEpic = epics.get(newSubTask.getParentEpicID());
-			if (parentEpic != null) {
-				try {
-					checkIntersectionOnDateTime(newSubTask);
-					newSubTask.setID(generatorID);
-					subTasks.put(generatorID, newSubTask);
-					parentEpic.getEpicSubTasks().put(generatorID, newSubTask);
-					updateEpicStatus(parentEpic.getID());
-					updateEpicStartTime(parentEpic.getID());
-					updateEpicDuration(parentEpic.getID());
-					prioritizedTasks.add(newSubTask);
-					generatorID++;
-					System.out.println("Подзадача: [" +
-							newSubTask.getName() + "] [ID: " +
-							newSubTask.getID() + "] [ID эпика: " +
-							newSubTask.getParentEpicID() + "] создана!");
-				} catch (TimeValueException e) {
-					System.out.println(e.getMessage());
-				}
-			} else {
-				System.out.println("Эпик с ID [" + newSubTask.getParentEpicID() + "] не найден. "
-						+ "Подзадача не может быть создана");
-			}
-		} else {
-			System.out.println("[Ошибка] Объект задачи равен *null*");
+		if (newSubTask == null) {
+			System.out.println("ОТМЕНА СОЗДАНИЯ -> [объект не передан]");
+			return;
+		}
+
+		Epic parentEpic = epics.get(newSubTask.getParentEpicID());
+		if (parentEpic == null) {
+			System.out.println("ОТМЕНА СОЗДАНИЯ -> [не найден эпик с ID: " + newSubTask.getParentEpicID() + "]");
+			return;
+		}
+
+		try {
+			checkIntersectionOnDateTime(newSubTask);
+			newSubTask.setID(generatorID);
+			subTasks.put(generatorID, newSubTask);
+			parentEpic.getEpicSubTasks().put(generatorID, newSubTask);
+			updateEpic(parentEpic.getID());
+			prioritizedTasks.add(newSubTask);
+			generatorID++;
+			System.out.println("УСПЕШНО -> [" + newSubTask.getName() + "] [ID: " + newSubTask.getID() + "]");
+		} catch (TimeValueException e) {
+			System.out.println(e.getMessage());
 		}
 	}
 
 	@Override
 	public void create(Epic newEpic) {
 		if (newEpic == null) {
-			System.out.println("[Ошибка] Объект задачи равен *null*");
-		} else {
-			newEpic.setID(generatorID);
-			generatorID++;
-			epics.put(newEpic.getID(), newEpic);
-			System.out.println("Эпик: [" + newEpic.getName() + "] [ID: " + newEpic.getID() + "] создан!");
+			System.out.println("ОТМЕНА СОЗДАНИЯ -> [объект не передан]");
+			return;
 		}
+		newEpic.setID(generatorID);
+		generatorID++;
+		epics.put(newEpic.getID(), newEpic);
+		System.out.println("УСПЕШНО -> [" + newEpic.getName() + "] [ID: " + newEpic.getID() + "]");
 	}
 
 	@Override
 	public void update(Task newTask) {
-		if (newTask != null) {
-			Task currentTask = tasks.get(newTask.getID());
-			if (currentTask != null) {
-				try {
-					checkIntersectionOnDateTime(newTask);
-					tasks.put(currentTask.getID(), newTask);
-					prioritizedTasks.add(newTask);
-				} catch (TimeValueException e) {
-					System.out.println(e.getMessage());
-				}
-			} else {
-				System.out.println("Задача с ID: " + newTask.getID() + " не найдена! Создайте новую задачу");
-			}
-		} else {
-			System.out.println("[Ошибка] Объект задачи равен *null*");
+		if (newTask == null) {
+			System.out.println("ОТМЕНА ОБНОВЛЕНИЯ -> [объект не передан]");
+			return;
+		}
+
+		Task currentTask = tasks.get(newTask.getID());
+		if (currentTask == null) {
+			System.out.println("ОТМЕНА ОБНОВЛЕНИЯ -> [предыдущая версия задачи не найдена]");
+			return;
+		}
+
+		try {
+			checkIntersectionOnDateTime(newTask);
+			tasks.put(currentTask.getID(), newTask);
+			prioritizedTasks.add(newTask);
+			System.out.println("УСПЕШНО -> [" + newTask.getName() + "] [ID: " + newTask.getID() + "]");
+		} catch (TimeValueException e) {
+			System.out.println(e.getMessage());
 		}
 	}
 
 	@Override
 	public void update(SubTask newSubTask) {
-		if (newSubTask != null) {
-			SubTask currentSubTask = subTasks.get(newSubTask.getID());
-			if (currentSubTask != null) {
-				Epic parentEpic = epics.get(currentSubTask.getParentEpicID());
-				if (parentEpic != null) {
-					try {
-						checkIntersectionOnDateTime(newSubTask);
-						// сохраняем по ID новый объект-подзадачу
-						parentEpic.getEpicSubTasks().put(currentSubTask.getID(), newSubTask);
-						subTasks.put(currentSubTask.getID(), newSubTask);
-						updateEpicStatus(parentEpic.getID());
-						updateEpicStartTime(parentEpic.getID());
-						updateEpicDuration(parentEpic.getID());
-						prioritizedTasks.add(newSubTask);
-						System.out.println("Подзадача: [" + currentSubTask.getName() + "] " + "[ID: " + currentSubTask.getID() + "] обновлена!");
-					} catch (TimeValueException e) {
-						System.out.println(e.getMessage());
-					}
-				} else {
-					System.out.println("[Ошибка] Эпик [ID: " + currentSubTask.getParentEpicID() + "] не найден!");
-				}
-			} else {
-				System.out.println("[Ошибка] Подзадача [ID: " + newSubTask.getID() + "] не найдена!");
-			}
-		} else {
-			System.out.println("[Ошибка] Объект задачи равен *null*");
+		if (newSubTask == null) {
+			System.out.println("ОТМЕНА ОБНОВЛЕНИЯ -> [объект не передан]");
+			return;
+		}
+
+		SubTask currentSubTask = subTasks.get(newSubTask.getID());
+		if (currentSubTask == null) {
+			System.out.println("ОТМЕНА ОБНОВЛЕНИЯ -> [предыдущая версия задачи не найдена]");
+			return;
+		}
+
+		Epic parentEpic = epics.get(currentSubTask.getParentEpicID());
+		if (parentEpic == null) {
+			System.out.println("ОТМЕНА ОБНОВЛЕНИЯ -> [родительский эпик не найден]");
+			return;
+		}
+
+		try {
+			checkIntersectionOnDateTime(newSubTask);
+			// сохраняем по ID новый объект-подзадачу
+			parentEpic.getEpicSubTasks().put(currentSubTask.getID(), newSubTask);
+			subTasks.put(currentSubTask.getID(), newSubTask);
+			updateEpic(parentEpic.getID());
+			prioritizedTasks.add(newSubTask);
+			System.out.println("УСПЕШНО -> [" + currentSubTask.getName() + "] " + "[ID: " + currentSubTask.getID()+"]");
+		} catch (TimeValueException e) {
+			System.out.println(e.getMessage());
 		}
 	}
 
 	@Override
 	public void update(Epic newEpic) {
-		if (newEpic != null) {
-			Epic currentEpic = epics.get(newEpic.getID());
-			if (currentEpic != null) {
-				epics.put(currentEpic.getID(), newEpic);
-				updateEpicStatus(currentEpic.getID());
-				updateEpicStartTime(currentEpic.getID());
-				updateEpicDuration(currentEpic.getID());
-				System.out.println("Задача: [" + epics.get(newEpic.getID()).getName() + " ]" + "[ID: " + newEpic.getID() + "] обновлена!");
-			} else {
-				System.out.println("Задача с ID: " + newEpic.getID() + " не найдена! Создайте новую задачу");
-			}
-		} else {
-			System.out.println("[Ошибка] Объект задачи равен *null*");
+		if (newEpic == null) {
+			System.out.println("ОТМЕНА ОБНОВЛЕНИЯ -> [объект не передан]");
+			return;
 		}
+
+		Epic currentEpic = epics.get(newEpic.getID());
+		if (currentEpic == null) {
+			System.out.println("ОТМЕНА ОБНОВЛЕНИЯ -> [предыдущая версия задачи не найдена]");
+			return;
+		}
+
+		epics.put(currentEpic.getID(), newEpic);
+		updateEpic(currentEpic.getID());
+		System.out.println("УСПЕШНО -> [" + epics.get(newEpic.getID()).getName() + " ]" +
+				"[ID: " + newEpic.getID() + "] обновлена!");
 	}
 
 	@Override
@@ -261,21 +272,20 @@ public class InMemoryTaskManager implements TaskManager {
 		historyManager.deleteAllTasksByType(tasks);
 		tasks.clear();
 		deleteAllTaskFromPrioritizedTasks(TaskTypes.TASK);
-		System.out.println("Все задачи удалены");
+		System.out.println("УСПЕШНО -> [задачи удалены]");
 	}
 
 	@Override
 	public void deleteAllSubTasks() {
 		historyManager.deleteAllTasksByType(subTasks);
 		subTasks.clear();
-		for (Epic epic : epics.values()) { // удаляем все подзадачи из мапы эпиков
-			epic.getEpicSubTasks().clear();
-			updateEpicStatus(epic.getID());
-			updateEpicStartTime(epic.getID());
-			updateEpicDuration(epic.getID());
-		}
+		epics.values() // удаляем все подзадачи из мапы эпиков
+				.forEach(epic -> {
+					epic.getEpicSubTasks().clear();
+					updateEpic(epic.getID());
+				});
 		deleteAllTaskFromPrioritizedTasks(TaskTypes.SUBTASK);
-		System.out.println("Все подзадачи удалены");
+		System.out.println("УСПЕШНО -> [подзадачи удалены]");
 	}
 
 	@Override
@@ -310,7 +320,7 @@ public class InMemoryTaskManager implements TaskManager {
 		prioritizedTasks.remove(tasks.get(ID));
 		tasks.remove(ID);
 		historyManager.remove(ID);
-		System.out.println("Задача с ID [" + ID + "] успешно удалена!");
+		System.out.println("УСПЕШНО -> [задача удалена]");
 	}
 
 	@Override
@@ -320,27 +330,27 @@ public class InMemoryTaskManager implements TaskManager {
 		epicSubTasks.remove(ID); //удаляем из эпика
 		prioritizedTasks.remove(subTasks.get(ID));
 		subTasks.remove(ID); //удаляем из менеджера
-		updateEpicStatus(parentEpic.getID());
-		updateEpicStartTime(parentEpic.getID());
-		updateEpicDuration(parentEpic.getID());
+		updateEpic(parentEpic.getID());
 		historyManager.remove(ID);
-		System.out.println("Подзадача с ID [" + ID + "] успешно удалена!");
+		System.out.println("УСПЕШНО -> [подзадача удалена]");
 	}
 
 	@Override
 	public void deleteEpicByID(int ID) {
 		//удаляем из коллекции собтасков менеджера сабтаски, имеющие отношение к эпику
-		for (SubTask subTask : epics.get(ID).getEpicSubTasks().values()) {
-			if (subTasks.get(subTask.getID()) != null) {
-				prioritizedTasks.remove(subTask);
-				historyManager.remove(subTask.getID());
-				subTasks.remove(subTask.getID());
-			}
-		}
+		epics.get(ID).getEpicSubTasks()
+				.values()
+				.forEach(subTask -> {
+					if (subTasks.get(subTask.getID()) != null) {
+						prioritizedTasks.remove(subTask);
+						historyManager.remove(subTask.getID());
+						subTasks.remove(subTask.getID());
+					}
+				});
 		//теперь удаляем сам эпик
 		historyManager.remove(ID);
 		epics.remove(ID);
-		System.out.println("Эпик с ID [" + ID + "] успешно удален!");
+		System.out.println("УСПЕШНО -> [подзадача удален]");
 	}
 
 	@Override
