@@ -187,7 +187,7 @@ public class Task {
 
 	public String printDuration(){
 		if (!duration.isZero()) {
-			return duration.toString();
+			return String.valueOf(duration.toMinutes());
 		}
 		return "--";
 	}

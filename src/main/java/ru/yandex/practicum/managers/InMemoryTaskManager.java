@@ -4,8 +4,6 @@ import ru.yandex.practicum.tasks.*;
 
 import java.time.ZonedDateTime;
 import java.util.*;
-import java.util.function.Function;
-import java.util.function.IntFunction;
 
 public class InMemoryTaskManager implements TaskManager {
 
@@ -24,6 +22,30 @@ public class InMemoryTaskManager implements TaskManager {
 	});
 
 	protected int generatorID = 1;
+
+	//проверка пересечений интервалов времени выполнения задач
+	private void checkIntersectionOnDateTime(Task task) {
+		//проверка нужна чтобы создать задачу без указания времени,
+		// если поля не инициализированы пользователем (= имеют системные константы)
+		if (task.getStartTime() == Task.UNREACHEBLE_DATE || task.getDuration() == 0) {
+			return;
+		}
+		//если поля инициализированы не константами (введены пользователем), проверяем пересечения
+		ZonedDateTime checkStart = task.getStartTime();
+		ZonedDateTime checkEnd = task.getEndTime();
+
+		boolean isHaveIntersection = prioritizedTasks.stream()
+				.anyMatch(streamTask -> (
+						checkStart.isBefore(streamTask.getEndTime())
+						|| checkStart.isEqual(streamTask.getEndTime())
+				) && (
+						checkEnd.isAfter(streamTask.getStartTime())
+						|| checkEnd.isEqual(streamTask.getStartTime())
+				));
+		if (isHaveIntersection) {
+			throw new TimeValueException("\nНевозможно создать задачу. Пересечение интервалов времени выполнения");
+		}
+	}
 
 	private void deleteAllTaskFromPrioritizedTasks(TaskTypes type) {
 		prioritizedTasks.stream()
@@ -58,7 +80,7 @@ public class InMemoryTaskManager implements TaskManager {
 					.stream()
 					.mapToInt(Task::getDuration)
 					.sum();
-			if (sumSubTaskDurations > 0){
+			if (sumSubTaskDurations > 0) {
 				epics.get(epicID).setDuration(sumSubTaskDurations);
 			}
 		}
@@ -94,11 +116,16 @@ public class InMemoryTaskManager implements TaskManager {
 		if (newTask == null) {
 			System.out.println("[Ошибка] Объект задачи равен *null*");
 		} else {
-			newTask.setID(generatorID);
-			generatorID++;
-			tasks.put(newTask.getID(), newTask);
-			prioritizedTasks.add(newTask);
-			System.out.println("Задача: [" + newTask.getName() + "] [ID: " + newTask.getID() + "] создана!");
+			try {
+				checkIntersectionOnDateTime(newTask);
+				newTask.setID(generatorID);
+				generatorID++;
+				tasks.put(newTask.getID(), newTask);
+				prioritizedTasks.add(newTask);
+				System.out.println("Задача: [" + newTask.getName() + "] [ID: " + newTask.getID() + "] создана!");
+			} catch (TimeValueException e) {
+				System.out.println(e.getMessage());
+			}
 		}
 	}
 
@@ -107,17 +134,26 @@ public class InMemoryTaskManager implements TaskManager {
 		if (newSubTask != null) {
 			Epic parentEpic = epics.get(newSubTask.getParentEpicID());
 			if (parentEpic != null) {
-				newSubTask.setID(generatorID);
-				subTasks.put(generatorID, newSubTask);
-				parentEpic.getEpicSubTasks().put(generatorID, newSubTask);
-				updateEpicStatus(parentEpic.getID());
-				updateEpicStartTime(parentEpic.getID());
-				updateEpicDuration(parentEpic.getID());
-				prioritizedTasks.add(newSubTask);
-				generatorID++;
-				System.out.println("Подзадача: [" + newSubTask.getName() + "] [ID: " + newSubTask.getID() + "] [ID эпика: " + newSubTask.getParentEpicID() + "] создана!");
+				try {
+					checkIntersectionOnDateTime(newSubTask);
+					newSubTask.setID(generatorID);
+					subTasks.put(generatorID, newSubTask);
+					parentEpic.getEpicSubTasks().put(generatorID, newSubTask);
+					updateEpicStatus(parentEpic.getID());
+					updateEpicStartTime(parentEpic.getID());
+					updateEpicDuration(parentEpic.getID());
+					prioritizedTasks.add(newSubTask);
+					generatorID++;
+					System.out.println("Подзадача: [" +
+							newSubTask.getName() + "] [ID: " +
+							newSubTask.getID() + "] [ID эпика: " +
+							newSubTask.getParentEpicID() + "] создана!");
+				} catch (TimeValueException e) {
+					System.out.println(e.getMessage());
+				}
 			} else {
-				System.out.println("Эпик с ID [" + newSubTask.getParentEpicID() + "] не найден. " + "Подзадача не может быть создана");
+				System.out.println("Эпик с ID [" + newSubTask.getParentEpicID() + "] не найден. "
+						+ "Подзадача не может быть создана");
 			}
 		} else {
 			System.out.println("[Ошибка] Объект задачи равен *null*");
@@ -141,8 +177,13 @@ public class InMemoryTaskManager implements TaskManager {
 		if (newTask != null) {
 			Task currentTask = tasks.get(newTask.getID());
 			if (currentTask != null) {
-				tasks.put(currentTask.getID(), newTask);
-				prioritizedTasks.add(newTask);
+				try {
+					checkIntersectionOnDateTime(newTask);
+					tasks.put(currentTask.getID(), newTask);
+					prioritizedTasks.add(newTask);
+				} catch (TimeValueException e) {
+					System.out.println(e.getMessage());
+				}
 			} else {
 				System.out.println("Задача с ID: " + newTask.getID() + " не найдена! Создайте новую задачу");
 			}
@@ -158,14 +199,19 @@ public class InMemoryTaskManager implements TaskManager {
 			if (currentSubTask != null) {
 				Epic parentEpic = epics.get(currentSubTask.getParentEpicID());
 				if (parentEpic != null) {
-					// сохраняем по ID новый объект-подзадачу
-					parentEpic.getEpicSubTasks().put(currentSubTask.getID(), newSubTask);
-					subTasks.put(currentSubTask.getID(), newSubTask);
-					updateEpicStatus(parentEpic.getID());
-					updateEpicStartTime(parentEpic.getID());
-					updateEpicDuration(parentEpic.getID());
-					prioritizedTasks.add(newSubTask);
-					System.out.println("Подзадача: [" + currentSubTask.getName() + "] " + "[ID: " + currentSubTask.getID() + "] обновлена!");
+					try {
+						checkIntersectionOnDateTime(newSubTask);
+						// сохраняем по ID новый объект-подзадачу
+						parentEpic.getEpicSubTasks().put(currentSubTask.getID(), newSubTask);
+						subTasks.put(currentSubTask.getID(), newSubTask);
+						updateEpicStatus(parentEpic.getID());
+						updateEpicStartTime(parentEpic.getID());
+						updateEpicDuration(parentEpic.getID());
+						prioritizedTasks.add(newSubTask);
+						System.out.println("Подзадача: [" + currentSubTask.getName() + "] " + "[ID: " + currentSubTask.getID() + "] обновлена!");
+					} catch (TimeValueException e) {
+						System.out.println(e.getMessage());
+					}
 				} else {
 					System.out.println("[Ошибка] Эпик [ID: " + currentSubTask.getParentEpicID() + "] не найден!");
 				}
