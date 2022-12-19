@@ -7,8 +7,10 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
 	private final File backupfile;
@@ -41,9 +43,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 			backedManager.addTask(task);
 		}
 		//ищет задачу в мапах по ID и записываем в историю
-		for (Integer ID : history) {
-			histManager.add(backedManager.getTask(ID));
-		}
+		history.forEach(ID -> histManager.add(backedManager.getTask(ID)));
 		return backedManager;
 	}
 
@@ -55,7 +55,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 			fileData = Files.readString(file.toPath());
 			rows = fileData.split(TaskConverter.LINE_SEPARATOR);
 		} catch (IOException exception) {
-			throw new ManagerSaveException("Ошибка -> Невозможно прочитать " + file.getName().toUpperCase());
+			throw new ManagerSaveException("ОТМЕНА ЧТЕНИЯ ИЗ ФАЙЛА -> " + file.getName().toUpperCase());
 		}
 		return rows;
 	}
@@ -103,23 +103,21 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 		try {
 			bufferedWriter.write(history);
 		} catch (IOException exception) {
-			throw new ManagerSaveException(
-					"Ошибка -> Не удалось записать историю строкой в файл " + backupfile.getName().toUpperCase());
+			throw new ManagerSaveException("ОТМЕНА ЗАПИСИ В ФАЙЛ -> " + backupfile.getName().toUpperCase());
 		}
 	}
 
 	private void writeTaskToFile(BufferedWriter bufferedWriter, Map<Integer, ? extends Task> list) {
 		//принимаем одну из мап с задачами и перебираем значения (объекты)
-		try {
-			for (Task task : list.values()) {
+		list.values().forEach(task -> {
+			try {
 				//пишем в файл полученную в строчном представлении задачу
 				bufferedWriter.write(TaskConverter.taskToString(task));
 				bufferedWriter.newLine();
+			} catch (IOException exception) {
+				throw new ManagerSaveException("ОТМЕНА ЗАПИСИ В ФАЙЛ -> " + backupfile.getName().toUpperCase());
 			}
-		} catch (IOException exception) {
-			throw new ManagerSaveException(
-					"Ошибка -> Не удалось записать задачу строкой в файл " + backupfile.getName().toUpperCase());
-		}
+		});
 	}
 
 	private String getHeaderTasks() {
