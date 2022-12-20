@@ -1,7 +1,4 @@
 id,type,name,status,description,epic,start,duration
-3,TASK,Таск1,NEW,-,null,null,0
-4,TASK,Таск2,NEW,-,null,null,0
-5,TASK,Таск3,NEW,-,null,null,0
 1,EPIC,Эпик1,NEW,-,null,null,0
 2,SUBTASK,Саб1,NEW,-,1,null,0
 6,SUBTASK,Саб2,NEW,-,1,null,0
