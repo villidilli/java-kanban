@@ -12,7 +12,7 @@ public class Task {
 	private int ID;
 	private String name;
 	private String description;
-	private ru.yandex.practicum.tasks.Status status = Status.NEW;
+	private Status status = Status.NEW;
 	private ZonedDateTime startTime = UNREACHEBLE_DATE;
 	private Duration duration = Duration.ZERO;
 
