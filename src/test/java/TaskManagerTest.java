@@ -1,22 +1,24 @@
 import org.junit.jupiter.api.*;
+
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import ru.yandex.practicum.managers.FileBackedTasksManager;
-import ru.yandex.practicum.managers.Managers;
 import ru.yandex.practicum.managers.TaskManager;
-import ru.yandex.practicum.tasks.Epic;
-import ru.yandex.practicum.tasks.Status;
-import ru.yandex.practicum.tasks.SubTask;
-import ru.yandex.practicum.tasks.Task;
+import ru.yandex.practicum.tasks.*;
 
 import java.io.File;
+
 
 public abstract class TaskManagerTest<T extends TaskManager> {
     TaskManager backedManager;
     Task task1;
+    Task task2;
+    Task task3;
     Epic epic1;
     SubTask subTask1;
     SubTask subTask2;
+
 
     @BeforeEach
     public void beforeEach() {
@@ -27,10 +29,17 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         backedManager.create(subTask1); //2
         task1 = new Task("Таск1", "-");
         backedManager.create(task1); //3
+        task2 = new Task("Таск2", "-");
+        backedManager.create(task2); //4
+        task3 = new Task("Таск3", "-");
+        backedManager.create(task3); //5
+        subTask2 = new SubTask("Саб2", "-", epic1.getID()); //6
+        backedManager.create(subTask2);
+
     }
 
     @Test
-    public void shouldReturnCreatedTask() {
+    public void createTest() {
         Task expectedTask = task1;
         SubTask expectedSubTask = subTask1;
         Epic expectedEpic = epic1;
@@ -41,7 +50,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     }
 
     @Test
-    public void shouldReturnUpdatedTask() {
+    public void updateTest() {
         String newName = "Новый Эпик1";
         Status newStatus = Status.IN_PROGRESS;
         String newDescription = "Новое описание";
@@ -59,5 +68,42 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(newDescription, backedManager.getTaskByID(3).getDescription());
     }
 
+    @Test
+    public void getAllTypeTasksTest() {
+        Task[] expectedArrayOfTasks = {task1, task2, task3};
+        SubTask[] expectedArrayOfSubTasks = {subTask1, subTask2};
+        Epic[] expectedArrayOfEpics = {epic1};
+
+        assertEquals(expectedArrayOfTasks.length, backedManager.getAllTasks().size());
+        assertArrayEquals(expectedArrayOfTasks, backedManager.getAllTasks().toArray());
+
+        assertEquals(expectedArrayOfSubTasks.length, backedManager.getAllSubTasks().size());
+        assertArrayEquals(expectedArrayOfSubTasks, backedManager.getAllSubTasks().toArray());
+
+        assertEquals(expectedArrayOfEpics.length, backedManager.getAllEpics().size());
+        assertArrayEquals(expectedArrayOfEpics, backedManager.getAllEpics().toArray());
+    }
+
+    @Test
+    public void deleteAllTypeTasksTest() {
+        int expectedTasksListSize = 0;
+        int expectedSubTasksListSize = 0;
+        int expectedEpicsListSize = 0;
+
+        backedManager.deleteAllTasks();
+        backedManager.deleteAllEpics();
+
+        assertEquals(expectedTasksListSize, backedManager.getAllTasks().size());
+        assertEquals(expectedTasksListSize, backedManager.getAllSubTasks().size());
+        assertEquals(expectedTasksListSize, backedManager.getAllEpics().size());
+    }
+
+    @Test
+    public void deleteTypeTaskByID() {
+        String expectedMessage = "ОТМЕНА УДАЛЕНИЯ -> [задача с указанным ID не найдена]";
+
+
+        backedManager.deleteTaskByID(111);
+    }
 }
 

@@ -122,10 +122,9 @@ public class InMemoryTaskManager implements TaskManager {
 	}
 
 	@Override
-	public void create(Task newTask) {
+	public boolean create(Task newTask) {
 		if (newTask == null) {
-			System.out.println("ОТМЕНА СОЗДАНИЯ -> [объект не передан]");
-			return;
+			throw new ManagerNotFoundException("\nERROR -> [объект не передан]");
 		}
 		try {
 			checkIntersectionOnDateTime(newTask);
@@ -133,23 +132,21 @@ public class InMemoryTaskManager implements TaskManager {
 			generatorID++;
 			tasks.put(newTask.getID(), newTask);
 			prioritizedTasks.add(newTask);
-			System.out.println("УСПЕШНО -> [" + newTask.getName() + "] [ID: " + newTask.getID() + "]");
 		} catch (TimeValueException e) {
 			System.out.println(e.getMessage());
 		}
+		return true;
 	}
 
 	@Override
-	public void create(SubTask newSubTask) {
+	public boolean create(SubTask newSubTask) {
 		if (newSubTask == null) {
-			System.out.println("ОТМЕНА СОЗДАНИЯ -> [объект не передан]");
-			return;
+			throw new ManagerNotFoundException("\nERROR -> [объект не передан]");
 		}
 
 		Epic parentEpic = epics.get(newSubTask.getParentEpicID());
 		if (parentEpic == null) {
-			System.out.println("ОТМЕНА СОЗДАНИЯ -> [не найден эпик с ID: " + newSubTask.getParentEpicID() + "]");
-			return;
+			throw new ManagerNotFoundException("\nERROR -> [не найден эпик с указанным ID]");
 		}
 
 		try {
@@ -160,64 +157,58 @@ public class InMemoryTaskManager implements TaskManager {
 			updateEpic(parentEpic.getID());
 			prioritizedTasks.add(newSubTask);
 			generatorID++;
-			System.out.println("УСПЕШНО -> [" + newSubTask.getName() + "] [ID: " + newSubTask.getID() + "]");
 		} catch (TimeValueException e) {
 			System.out.println(e.getMessage());
 		}
+		return true;
 	}
 
 	@Override
-	public void create(Epic newEpic) {
+	public boolean create(Epic newEpic) {
 		if (newEpic == null) {
-			System.out.println("ОТМЕНА СОЗДАНИЯ -> [объект не передан]");
-			return;
+			throw new ManagerNotFoundException("\nERROR -> [объект не передан]");
 		}
 		newEpic.setID(generatorID);
 		generatorID++;
 		epics.put(newEpic.getID(), newEpic);
-		System.out.println("УСПЕШНО -> [" + newEpic.getName() + "] [ID: " + newEpic.getID() + "]");
+		return true;
 	}
 
 	@Override
-	public void update(Task newTask) {
+	public boolean update(Task newTask) {
 		if (newTask == null) {
-			System.out.println("ОТМЕНА ОБНОВЛЕНИЯ -> [объект не передан]");
-			return;
+			throw new ManagerNotFoundException("\nERROR -> [объект не передан]");
 		}
 
 		Task currentTask = tasks.get(newTask.getID());
 		if (currentTask == null) {
-			System.out.println("ОТМЕНА ОБНОВЛЕНИЯ -> [предыдущая версия задачи не найдена]");
-			return;
+			throw new ManagerNotFoundException("\nERROR -> [предыдущая версия задачи не найдена]");
 		}
 
 		try {
 			checkIntersectionOnDateTime(newTask);
 			tasks.put(currentTask.getID(), newTask);
 			prioritizedTasks.add(newTask);
-			System.out.println("УСПЕШНО -> [" + newTask.getName() + "] [ID: " + newTask.getID() + "]");
 		} catch (TimeValueException e) {
 			System.out.println(e.getMessage());
 		}
+		return true;
 	}
 
 	@Override
-	public void update(SubTask newSubTask) {
+	public boolean update(SubTask newSubTask) {
 		if (newSubTask == null) {
-			System.out.println("ОТМЕНА ОБНОВЛЕНИЯ -> [объект не передан]");
-			return;
+			throw new ManagerNotFoundException("\nERROR -> [объект не передан]");
 		}
 
 		SubTask currentSubTask = subTasks.get(newSubTask.getID());
 		if (currentSubTask == null) {
-			System.out.println("ОТМЕНА ОБНОВЛЕНИЯ -> [предыдущая версия задачи не найдена]");
-			return;
+			throw new ManagerNotFoundException("\nERROR -> [предыдущая версия задачи не найдена]");
 		}
 
 		Epic parentEpic = epics.get(currentSubTask.getParentEpicID());
 		if (parentEpic == null) {
-			System.out.println("ОТМЕНА ОБНОВЛЕНИЯ -> [родительский эпик не найден]");
-			return;
+			throw new ManagerNotFoundException("\nERROR -> [родительский эпик не найден]");
 		}
 
 		try {
@@ -227,29 +218,26 @@ public class InMemoryTaskManager implements TaskManager {
 			subTasks.put(currentSubTask.getID(), newSubTask);
 			updateEpic(parentEpic.getID());
 			prioritizedTasks.add(newSubTask);
-			System.out.println("УСПЕШНО -> [" + currentSubTask.getName() + "] " + "[ID: " + currentSubTask.getID()+"]");
 		} catch (TimeValueException e) {
 			System.out.println(e.getMessage());
 		}
+		return true;
 	}
 
 	@Override
-	public void update(Epic newEpic) {
+	public boolean update(Epic newEpic) {
 		if (newEpic == null) {
-			System.out.println("ОТМЕНА ОБНОВЛЕНИЯ -> [объект не передан]");
-			return;
+			throw new ManagerNotFoundException("\nERROR -> [объект не передан]");
 		}
 
 		Epic currentEpic = epics.get(newEpic.getID());
 		if (currentEpic == null) {
-			System.out.println("ОТМЕНА ОБНОВЛЕНИЯ -> [предыдущая версия задачи не найдена]");
-			return;
+			throw new ManagerNotFoundException("\nERROR -> [предыдущая версия задачи не найдена]");
 		}
 
 		epics.put(currentEpic.getID(), newEpic);
 		updateEpic(currentEpic.getID());
-		System.out.println("УСПЕШНО -> [" + epics.get(newEpic.getID()).getName() + " ]" +
-				"[ID: " + newEpic.getID() + "] обновлена!");
+		return true;
 	}
 
 	@Override
@@ -268,15 +256,15 @@ public class InMemoryTaskManager implements TaskManager {
 	}
 
 	@Override
-	public void deleteAllTasks() {
+	public boolean deleteAllTasks() {
 		historyManager.deleteAllTasksByType(tasks);
 		tasks.clear();
 		deleteAllTaskFromPrioritizedTasks(TaskTypes.TASK);
-		System.out.println("УСПЕШНО -> [задачи удалены]");
+		return true;
 	}
 
 	@Override
-	public void deleteAllSubTasks() {
+	public boolean deleteAllSubTasks() {
 		historyManager.deleteAllTasksByType(subTasks);
 		subTasks.clear();
 		epics.values() // удаляем все подзадачи из мапы эпиков
@@ -285,58 +273,80 @@ public class InMemoryTaskManager implements TaskManager {
 					updateEpic(epic.getID());
 				});
 		deleteAllTaskFromPrioritizedTasks(TaskTypes.SUBTASK);
-		System.out.println("УСПЕШНО -> [подзадачи удалены]");
+		return true;
 	}
 
 	@Override
-	public void deleteAllEpics() {
+	public boolean deleteAllEpics() {
 		historyManager.deleteAllTasksByType(epics);
 		historyManager.deleteAllTasksByType(subTasks);
 		epics.clear();
 		subTasks.clear(); // удаляем все подзадачи, т.к. они не являются самостоятельной сущностью программы
-		System.out.println("Все эпики удалены");
+		return true;
 	}
 
 	@Override
 	public Task getTaskByID(int ID) {
+		if (tasks.get(ID) == null) {
+			throw new ManagerNotFoundException("\nERROR -> [задача с указанным ID не найдена]");
+		}
 		historyManager.add(tasks.get(ID));
 		return tasks.get(ID);
 	}
 
 	@Override
 	public SubTask getSubTaskByID(int ID) {
+		if (subTasks.get(ID) == null) {
+			throw new ManagerNotFoundException("\nERROR -> [подзадача с указанным ID не найдена]");
+		}
 		historyManager.add(subTasks.get(ID));
 		return subTasks.get(ID);
 	}
 
 	@Override
 	public Epic getEpicByID(int ID) {
+		if (epics.get(ID) == null) {
+			throw new ManagerNotFoundException("\nERROR -> [эпик с указанным ID не найден]");
+		}
 		historyManager.add(epics.get(ID));
 		return epics.get(ID);
 	}
 
 	@Override
-	public void deleteTaskByID(int ID) {
+	public boolean deleteTaskByID(int ID) {
+		if(tasks.get(ID) == null) {
+			throw new ManagerNotFoundException("\nERROR -> [задача с указанным ID не найдена]");
+		}
 		prioritizedTasks.remove(tasks.get(ID));
 		tasks.remove(ID);
 		historyManager.remove(ID);
-		System.out.println("УСПЕШНО -> [задача удалена]");
+		return true;
 	}
 
 	@Override
-	public void deleteSubTaskByID(int ID) {
+	public boolean deleteSubTaskByID(int ID) {
+		if(subTasks.get(ID) == null) {
+			throw new ManagerNotFoundException("\nERROR -> [подзадача с указанным ID не найдена]");
+		}
+
 		Epic parentEpic = epics.get(subTasks.get(ID).getParentEpicID());
+		if (parentEpic == null) {
+			throw new ManagerNotFoundException("\nERROR -> [эпик с указанным ID не найден]");
+		}
 		HashMap<Integer, SubTask> epicSubTasks = parentEpic.getEpicSubTasks();
 		epicSubTasks.remove(ID); //удаляем из эпика
 		prioritizedTasks.remove(subTasks.get(ID));
 		subTasks.remove(ID); //удаляем из менеджера
 		updateEpic(parentEpic.getID());
 		historyManager.remove(ID);
-		System.out.println("УСПЕШНО -> [подзадача удалена]");
+		return true;
 	}
 
 	@Override
-	public void deleteEpicByID(int ID) {
+	public boolean deleteEpicByID(int ID) {
+		if(epics.get(ID) == null) {
+			throw new ManagerNotFoundException("\nERROR -> [эпик с указанным ID не найден]");
+		}
 		//удаляем из коллекции собтасков менеджера сабтаски, имеющие отношение к эпику
 		epics.get(ID).getEpicSubTasks()
 				.values()
@@ -350,11 +360,14 @@ public class InMemoryTaskManager implements TaskManager {
 		//теперь удаляем сам эпик
 		historyManager.remove(ID);
 		epics.remove(ID);
-		System.out.println("УСПЕШНО -> [подзадача удален]");
+		return true;
 	}
 
 	@Override
 	public List<SubTask> getAllSubTasksByEpic(int ID) {
+		if(epics.get(ID) == null) {
+			throw new ManagerNotFoundException("\nERROR -> [эпик с указанным ID не найден]");
+		}
 		return new ArrayList<>(epics.get(ID).getEpicSubTasks().values());
 	}
 
