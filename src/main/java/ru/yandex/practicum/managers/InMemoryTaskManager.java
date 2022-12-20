@@ -20,7 +20,7 @@ public class InMemoryTaskManager implements TaskManager {
 		if (o1.getStartTime().isAfter(o2.getStartTime())) {
 			return 1;
 		}
-		return 0;
+		return 1;
 	});
 
 	protected int generatorID = 1;

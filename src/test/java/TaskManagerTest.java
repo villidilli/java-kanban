@@ -1,13 +1,12 @@
 import org.junit.jupiter.api.*;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import ru.yandex.practicum.managers.FileBackedTasksManager;
 import ru.yandex.practicum.managers.TaskManager;
 import ru.yandex.practicum.tasks.*;
 
 import java.io.File;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public abstract class TaskManagerTest<T extends TaskManager> {
@@ -74,36 +73,27 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         SubTask[] expectedArrayOfSubTasks = {subTask1, subTask2};
         Epic[] expectedArrayOfEpics = {epic1};
 
-        assertEquals(expectedArrayOfTasks.length, backedManager.getAllTasks().size());
         assertArrayEquals(expectedArrayOfTasks, backedManager.getAllTasks().toArray());
-
-        assertEquals(expectedArrayOfSubTasks.length, backedManager.getAllSubTasks().size());
         assertArrayEquals(expectedArrayOfSubTasks, backedManager.getAllSubTasks().toArray());
-
-        assertEquals(expectedArrayOfEpics.length, backedManager.getAllEpics().size());
         assertArrayEquals(expectedArrayOfEpics, backedManager.getAllEpics().toArray());
     }
 
     @Test
-    public void deleteAllTypeTasksTest() {
+    public void deleteAllTasksTest() {
         int expectedTasksListSize = 0;
-        int expectedSubTasksListSize = 0;
-        int expectedEpicsListSize = 0;
-
         backedManager.deleteAllTasks();
-        backedManager.deleteAllEpics();
-
         assertEquals(expectedTasksListSize, backedManager.getAllTasks().size());
-        assertEquals(expectedTasksListSize, backedManager.getAllSubTasks().size());
-        assertEquals(expectedTasksListSize, backedManager.getAllEpics().size());
+        assertTrue(backedManager.deleteAllTasks());
+
+
     }
 
     @Test
-    public void deleteTypeTaskByID() {
-        String expectedMessage = "ОТМЕНА УДАЛЕНИЯ -> [задача с указанным ID не найдена]";
-
-
-        backedManager.deleteTaskByID(111);
+    public void deleteAllSubTasksTest() {
+        System.out.println(subTask1.equals(task1));
+        System.out.println(backedManager.getPrioritizedTasks());
     }
+
+
 }
 
