@@ -12,13 +12,23 @@ public class InMemoryTaskManager implements TaskManager {
 	protected final Map<Integer, SubTask> subTasks = new HashMap<>();
 	protected final Map<Integer, Epic> epics = new HashMap<>();
 	protected final HistoryManager historyManager = Managers.getDefaultHistory();
-	protected final Set<Task> prioritizedTasks = new TreeSet<>((o1, o2) -> {
-		if (o1.getID() == o2.getID()) {
-			return 0;
-		} else if (o1.getStartTime().isBefore(o2.getStartTime())) {
+
+	protected final Map<ZonedDateTime, Task> prioritizedTasksMap = new TreeMap<>((o1, o2) -> {
+		if (o1.isBefore(o2)) {
 			return -1;
-		} else return 1;
+		}
+		if (o1.isAfter(o2)) {
+			return 1;
+		}
+		return 0;
 	});
+//	protected final Set<Task> prioritizedTasks = new TreeSet<>((o1, o2) -> {
+//		if (o1.getID() == o2.getID()) {
+//			return 0;
+//		} else if (o1.getStartTime().isBefore(o2.getStartTime())) {
+//			return -1;
+//		} else return 1;
+//	});
 
 	protected int generatorID = 1;
 
@@ -26,9 +36,9 @@ public class InMemoryTaskManager implements TaskManager {
 	private void checkIntersectionOnDateTime(Task task) {
 		//проверка нужна чтобы создать задачу без указания времени,
 		// если поля не инициализированы пользователем (== системные константы)
-		if (task.getStartTime() == Task.UNREACHEBLE_DATE || task.getDuration() == Duration.ZERO.toMinutes()) {
-			return;
-		}
+//		if (task.getStartTime() == Task.UNREACHEBLE_DATE || task.getDuration() == Duration.ZERO.toMinutes()) {
+//			return;
+//		}
 		//если поля инициализированы не константами (введены пользователем), проверяем пересечения
 		ZonedDateTime checkStart = task.getStartTime();
 		ZonedDateTime checkEnd = task.getEndTime();
