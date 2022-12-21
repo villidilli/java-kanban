@@ -103,6 +103,12 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         backedManager.create(subTask1); //2
         task1 = new Task("Таск1", "-");
         backedManager.create(task1); //3
+        task2 = new Task("Таск2", "-");
+        backedManager.create(task2); //4
+        task3 = new Task("Таск3", "-");
+        backedManager.create(task3); //5
+        subTask2 = new SubTask("Саб2", "-", epic1.getID()); //6
+        backedManager.create(subTask2);
         System.out.println("ДО ОБНОВЛЕНИЯ");
         System.out.println(backedManager.getPrioritizedTasks());
         subTask1 = new SubTask(subTask1.getID(), subTask1.getName(), subTask1.getDescription(), subTask1.getParentEpicID());
@@ -115,7 +121,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
         subTask1 = new SubTask(subTask1.getID(), subTask1.getName(), subTask1.getDescription(), subTask1.getParentEpicID());
         subTask1.setStartTime(ZonedDateTime.of(
-                5000,1,1,0,0,0,0,ZoneId.systemDefault()));
+                3000,1,1,0,0,0,0,ZoneId.systemDefault()));
 
         backedManager.update(subTask1);
         System.out.println("ПОСЛЕ ОБНОВЛЕНИЯ2");

@@ -5,6 +5,7 @@ import ru.yandex.practicum.tasks.*;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.function.Consumer;
 
 public class InMemoryTaskManager implements TaskManager {
 
@@ -12,6 +13,7 @@ public class InMemoryTaskManager implements TaskManager {
 	protected final Map<Integer, SubTask> subTasks = new HashMap<>();
 	protected final Map<Integer, Epic> epics = new HashMap<>();
 	protected final HistoryManager historyManager = Managers.getDefaultHistory();
+
 	protected final Set<Task> prioritizedTasks = new TreeSet<>((o1, o2) -> {
 		if (o1.getID() == o2.getID()) {
 			return 0;
@@ -24,8 +26,9 @@ public class InMemoryTaskManager implements TaskManager {
 
 	//проверка пересечений интервалов времени выполнения задач
 	private void checkIntersectionOnDateTime(Task task) {
-		//проверка нужна чтобы создать задачу без указания времени,
-		// если поля не инициализированы пользователем (== системные константы)
+
+//		проверка нужна чтобы создать задачу без указания времени,
+//		 если поля не инициализированы пользователем (== системные константы)
 		if (task.getStartTime() == Task.UNREACHEBLE_DATE || task.getDuration() == Duration.ZERO.toMinutes()) {
 			return;
 		}
@@ -42,7 +45,7 @@ public class InMemoryTaskManager implements TaskManager {
 						|| checkEnd.isEqual(atask.getStartTime())
 				));
 		if (isHaveIntersection) {
-			throw new TimeValueException("\nОТМЕНА СОЗДАНИЯ -> [пересечение интервалов выполнения]");
+			throw new TimeValueException("\nERROR -> [пересечение интервалов выполнения]");
 		}
 	}
 
