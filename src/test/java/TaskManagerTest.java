@@ -24,23 +24,23 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     SubTask subTask2;
 
 
-//    @BeforeEach
-//    public void beforeEach() {
-//        backedManager = new FileBackedTasksManager(new File("src/main/resources/Backup.csv"));
-//        epic1 = new Epic("Эпик1", "-");
+    @BeforeEach
+    public void beforeEach() {
+        backedManager = new FileBackedTasksManager(new File("src/main/resources/Backup.csv"));
+        epic1 = new Epic("Эпик1", "-");
 //        backedManager.create(epic1); //1
-//        subTask1 = new SubTask("Саб1", "-",epic1.getID());
+        subTask1 = new SubTask("Саб1", "-",1,2023, 1, 1, 0, 5, 5);
 //        backedManager.create(subTask1); //2
-//        task1 = new Task("Таск1", "-");
+        task1 = new Task("Таск1", "-");
 //        backedManager.create(task1); //3
-//        task2 = new Task("Таск2", "-");
+        task2 = new Task("Таск2", "-", 2022, 1, 1, 0, 5, 5);
 //        backedManager.create(task2); //4
-//        task3 = new Task("Таск3", "-");
+        task3 = new Task("Таск3", "-", 2024, 1, 1, 23, 58, 1);
 //        backedManager.create(task3); //5
-//        subTask2 = new SubTask("Саб2", "-", epic1.getID()); //6
+        subTask2 = new SubTask("Саб2", "-", 1, 15000, 1, 1, 0, 5, 5); //6
 //        backedManager.create(subTask2);
 //
-//    }
+    }
 //
 //    @Test
 //    public void createTest() {
@@ -95,32 +95,39 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     public void deleteAllSubTasksTest() {
-        backedManager = new FileBackedTasksManager(new File("src/main/resources/Backup.csv"));
+//        backedManager = new FileBackedTasksManager(new File("src/main/resources/Backup.csv"));
+//
+//        epic1 = new Epic("Эпик1", "-");
+//        backedManager.create(epic1); //1
+//        subTask1 = new SubTask("Саб1", "-",epic1.getID()); // тут инициализировалось поле датой с годом 9999
+//        backedManager.create(subTask1); //2
+//        task1 = new Task("Таск1", "-");
+//        backedManager.create(task1); //3
+//        System.out.println("ДО ОБНОВЛЕНИЯ");
+//        System.out.println(backedManager.getPrioritizedTasks());
+//        subTask1 = new SubTask(subTask1.getID(), subTask1.getName(), subTask1.getDescription(), subTask1.getParentEpicID());
+//        subTask1.setStartTime(ZonedDateTime.of(
+//                10000,1,1,0,0,0,0,ZoneId.systemDefault()));
+//
+//        backedManager.update(subTask1);
+//        System.out.println("ПОСЛЕ ОБНОВЛЕНИЯ");
+//        System.out.println(backedManager.getPrioritizedTasks());
+//
+//        subTask1 = new SubTask(subTask1.getID(), subTask1.getName(), subTask1.getDescription(), subTask1.getParentEpicID());
+//        subTask1.setStartTime(ZonedDateTime.of(
+//                5000,1,1,0,0,0,0,ZoneId.systemDefault()));
+//
+//        backedManager.update(subTask1);
+//        System.out.println("ПОСЛЕ ОБНОВЛЕНИЯ2");
+//        System.out.println(backedManager.getPrioritizedTasks());
+        backedManager.create(epic1);
+        backedManager.create(task1);
+        backedManager.create(task2);
+        backedManager.create(task3);
+        backedManager.create(subTask1);
+        backedManager.create(subTask2);
 
-        epic1 = new Epic("Эпик1", "-");
-        backedManager.create(epic1); //1
-        subTask1 = new SubTask("Саб1", "-",epic1.getID()); // тут инициализировалось поле датой с годом 9999
-        backedManager.create(subTask1); //2
-        task1 = new Task("Таск1", "-");
-        backedManager.create(task1); //3
-        System.out.println("ДО ОБНОВЛЕНИЯ");
         System.out.println(backedManager.getPrioritizedTasks());
-        subTask1 = new SubTask(subTask1.getID(), subTask1.getName(), subTask1.getDescription(), subTask1.getParentEpicID());
-        subTask1.setStartTime(ZonedDateTime.of(
-                10000,1,1,0,0,0,0,ZoneId.systemDefault()));
-
-        backedManager.update(subTask1);
-        System.out.println("ПОСЛЕ ОБНОВЛЕНИЯ");
-        System.out.println(backedManager.getPrioritizedTasks());
-
-        subTask1 = new SubTask(subTask1.getID(), subTask1.getName(), subTask1.getDescription(), subTask1.getParentEpicID());
-        subTask1.setStartTime(ZonedDateTime.of(
-                5000,1,1,0,0,0,0,ZoneId.systemDefault()));
-
-        backedManager.update(subTask1);
-        System.out.println("ПОСЛЕ ОБНОВЛЕНИЯ2");
-        System.out.println(backedManager.getPrioritizedTasks());
-
     }
 
 }

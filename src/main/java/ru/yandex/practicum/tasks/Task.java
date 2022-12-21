@@ -106,11 +106,11 @@ public class Task /*implements Comparable<Task>*/ {
 		duration = Duration.ofMinutes(minutes);
 	}
 
-	public ZonedDateTime getEndTime() {
-		if (startTime == UNREACHEBLE_DATE || duration.isZero()) {
-			throw new TimeValueException("Невозможно рассчитать время окончания." +
-										"Проверьте значения стартовой даты и длительности");
-		}
+	public ZonedDateTime getEndTime() { //TODO
+//		if (startTime == UNREACHEBLE_DATE || duration.isZero()) {
+//			throw new TimeValueException("Невозможно рассчитать время окончания." +
+//										"Проверьте значения стартовой даты и длительности");
+//		}
 		return startTime.plusMinutes(getDuration());
 	}
 
