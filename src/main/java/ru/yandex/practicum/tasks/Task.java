@@ -5,7 +5,7 @@ import ru.yandex.practicum.utils.TimeConverter;
 import java.time.*;
 import java.util.Objects;
 
-public class Task {
+public class Task /*implements Comparable<Task>*/ {
 	public static final ZonedDateTime UNREACHEBLE_DATE = ZonedDateTime.of(
 			9999,1,1,0,0,0,0,ZoneId.systemDefault());
 	private final TaskTypes taskType = TaskTypes.TASK;
@@ -197,4 +197,23 @@ public class Task {
 		}
 		return TimeConverter.dateTimeToString(startTime);
 	}
+
+//	@Override
+//	public int compareTo(Task o) {
+//		if (this.getID() == o.getID()) {
+//			return 0;
+//		} else if (this.getStartTime().isBefore(o.getStartTime())) {
+//			return -1;
+//		} else
+//			return 1;
+// 	}
 }
+
+/*
+if (this.getID() == o.getID()) {
+			return 0;
+		} else if (this.getStartTime().isBefore(o.getStartTime())) {
+			return -1;
+		} else
+			return 1;
+ */

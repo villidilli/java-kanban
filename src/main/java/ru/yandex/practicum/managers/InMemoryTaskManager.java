@@ -12,23 +12,18 @@ public class InMemoryTaskManager implements TaskManager {
 	protected final Map<Integer, SubTask> subTasks = new HashMap<>();
 	protected final Map<Integer, Epic> epics = new HashMap<>();
 	protected final HistoryManager historyManager = Managers.getDefaultHistory();
-	protected final Set<Task> prioritizedTasks = new TreeSet<>((o1, o2) -> {
-		if (o1.getStartTime().isBefore(o2.getStartTime())) {
-			return -1;
+	protected final Set<Task> prioritizedTasks = new TreeSet<>(new Comparator<Task>() {
+		@Override
+		public int compare(Task o1, Task o2) {
+			if (o1.equals(o2)) {
+				return 0;
+			} else if (o1.getStartTime().isBefore(o2.getStartTime())) {
+				return -1;
+			} else return 1;
 		}
-		if (o1.getStartTime().isAfter(o2.getStartTime())) {
-			return 1;
-		}
-
-		return 1;
-
 	});
 
 	protected int generatorID = 1;
-
-	private void addTaskWithSort(Task task) {
-
-	}
 
 	//проверка пересечений интервалов времени выполнения задач
 	private void checkIntersectionOnDateTime(Task task) {
@@ -221,6 +216,7 @@ public class InMemoryTaskManager implements TaskManager {
 			// сохраняем по ID новый объект-подзадачу
 			parentEpic.getEpicSubTasks().put(currentSubTask.getID(), newSubTask);
 			subTasks.put(currentSubTask.getID(), newSubTask);
+			prioritizedTasks.remove(currentSubTask);
 			updateEpic(parentEpic.getID());
 			prioritizedTasks.add(newSubTask);
 		} catch (TimeValueException e) {
