@@ -12,15 +12,12 @@ public class InMemoryTaskManager implements TaskManager {
 	protected final Map<Integer, SubTask> subTasks = new HashMap<>();
 	protected final Map<Integer, Epic> epics = new HashMap<>();
 	protected final HistoryManager historyManager = Managers.getDefaultHistory();
-	protected final Set<Task> prioritizedTasks = new TreeSet<>(new Comparator<Task>() {
-		@Override
-		public int compare(Task o1, Task o2) {
-			if (o1.equals(o2)) {
-				return 0;
-			} else if (o1.getStartTime().isBefore(o2.getStartTime())) {
-				return -1;
-			} else return 1;
-		}
+	protected final Set<Task> prioritizedTasks = new TreeSet<>((o1, o2) -> {
+		if (o1.getID() == o2.getID()) {
+			return 0;
+		} else if (o1.getStartTime().isBefore(o2.getStartTime())) {
+			return -1;
+		} else return 1;
 	});
 
 	protected int generatorID = 1;
@@ -217,8 +214,8 @@ public class InMemoryTaskManager implements TaskManager {
 			parentEpic.getEpicSubTasks().put(currentSubTask.getID(), newSubTask);
 			subTasks.put(currentSubTask.getID(), newSubTask);
 			prioritizedTasks.remove(currentSubTask);
-			updateEpic(parentEpic.getID());
 			prioritizedTasks.add(newSubTask);
+			updateEpic(parentEpic.getID());
 		} catch (TimeValueException e) {
 			System.out.println(e.getMessage());
 		}
