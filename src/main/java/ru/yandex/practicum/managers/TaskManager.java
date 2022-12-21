@@ -6,17 +6,17 @@ import java.util.List;
 
 public interface TaskManager {
 
-	void create(Task newTask);
+	boolean create(Task newTask);
 
-	void create(SubTask newSubTask);
+	boolean create(SubTask newSubTask);
 
-	void create(Epic newEpic);
+	boolean create(Epic newEpic);
 
-	void update(Task newTask);
+	boolean update(Task newTask);
 
-	void update(SubTask newSubTask);
+	boolean update(SubTask newSubTask);
 
-	void update(Epic newEpic);
+	boolean update(Epic newEpic);
 
 	List<Task> getAllTasks();
 
@@ -24,11 +24,11 @@ public interface TaskManager {
 
 	List<Epic> getAllEpics();
 
-	void deleteAllTasks();
+	boolean deleteAllTasks();
 
-	void deleteAllSubTasks();
+	boolean deleteAllSubTasks();
 
-	void deleteAllEpics();
+	boolean deleteAllEpics();
 
 	Task getTaskByID(int ID);
 
@@ -36,13 +36,15 @@ public interface TaskManager {
 
 	Epic getEpicByID(int ID);
 
-	void deleteTaskByID(int ID);
+	boolean deleteTaskByID(int ID);
 
-	void deleteSubTaskByID(int ID);
+	boolean deleteSubTaskByID(int ID);
 
-	void deleteEpicByID(int ID);
+	boolean deleteEpicByID(int ID);
 
 	List<SubTask> getAllSubTasksByEpic(int ID);
 
 	List<Task> getHistory();
+
+	List<Task> getPrioritizedTasks();
 }

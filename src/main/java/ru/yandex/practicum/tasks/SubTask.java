@@ -1,12 +1,24 @@
 package ru.yandex.practicum.tasks;
 
+import ru.yandex.practicum.utils.TimeConverter;
+
+import java.time.Duration;
+import java.time.ZonedDateTime;
+
 public class SubTask extends Task {
 
-	private int parentEpicID;
-	private TaskTypes taskType = TaskTypes.SUBTASK;
+	private final int parentEpicID;
+	private final TaskTypes taskType = TaskTypes.SUBTASK;
 
 	public SubTask(String name, String description, int parentEpicID) {
 		super(name, description);
+		this.parentEpicID = parentEpicID;
+	}
+
+	public SubTask(String name, String description, int parentEpicID,
+				   int year, int month, int day,
+				   int hour, int minutes, int duration) {
+		super(name, description, year, month, day, hour, minutes, duration);
 		this.parentEpicID = parentEpicID;
 	}
 
@@ -16,10 +28,31 @@ public class SubTask extends Task {
 		this.parentEpicID = parentEpicID;
 	}
 
+	public SubTask(int ID, String name, String description, int parentEpicID,
+				   int year, int month, int day,
+				   int hour, int minutes, int duration) {
+		super(ID, name, description, year, month, day, hour, minutes, duration);
+		this.parentEpicID = parentEpicID;
+	}
+
 	public SubTask(int ID, String name, String description, Status status, int parentEpicID) {
 		super(ID, name, description, status);
 		this.parentEpicID = parentEpicID;
 	}
+
+	public SubTask(int ID, String name, String description, Status status, int parentEpicID,
+				   int year, int month, int day,
+				   int hour, int minutes, int duration) {
+		super(ID, name, description, status, year, month, day, hour, minutes, duration);
+		this.parentEpicID = parentEpicID;
+	}
+
+	public SubTask(int ID, String name, String description, Status status, int parentEpicID,
+				   ZonedDateTime zonedDateTime, Duration duration) {
+		super(ID, name, description, status, zonedDateTime, duration);
+		this.parentEpicID = parentEpicID;
+	}
+
 
 	@Override
 	public Integer getParentEpicID() {
@@ -36,7 +69,9 @@ public class SubTask extends Task {
 		return "\n[Подзадача: " + getName() + "] " +
 				"[ID: " + getID() + "] " +
 				"[Cтатус: " + getStatus() + "] " +
-				"[Описание: " + getDescription() + "]" +
-				"[Эпик ID: " + getParentEpicID() + "] ";
+				"[Эпик ID: " + getParentEpicID() + "] " +
+				"[Начало: " + printStartTime() + "] " +
+				"[Окончание: " + printEndTime() + "] " +
+				"[Длительность: " + printDuration() + "]";
 	}
 }

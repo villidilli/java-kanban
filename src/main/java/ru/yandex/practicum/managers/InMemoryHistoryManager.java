@@ -1,11 +1,13 @@
 package ru.yandex.practicum.managers;
 
 import ru.yandex.practicum.tasks.Task;
+import ru.yandex.practicum.tasks.TaskTypes;
 
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.function.Consumer;
 
 public class InMemoryHistoryManager implements HistoryManager {
 	private final Map<Integer, Node<Task>> history = new HashMap<>();
@@ -43,8 +45,6 @@ public class InMemoryHistoryManager implements HistoryManager {
 				node.next.prev = node.prev;
 			}
 			history.remove(node.task.getID()); // удаляем саму ноду
-		} else {
-			return;
 		}
 	}
 
@@ -61,9 +61,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
 	@Override
 	public void deleteAllTasksByType(Map<Integer, ? extends Task> tasks) {
-		for (Integer taskID : tasks.keySet()) {
-			removeNode(history.get(taskID));
-		}
+		tasks.keySet().forEach(taskID -> removeNode(history.get(taskID)));
 	}
 
 	@Override
@@ -73,14 +71,12 @@ public class InMemoryHistoryManager implements HistoryManager {
 
 	@Override
 	public void add(Task task) {
-		if (task != null) {
-			//перенёс удаление из linkLast, чтобы linkLast выполнял только 1 функцию - создавать хвост
-			remove(task.getID()); //удаляет старую ноду, чтобы в связке не было дублей-ссылок
-			linkLast(task);
-			history.put(task.getID(), historyTail);
-		} else {
-			System.out.println("[Ошибка] Входящий объект = null");
+		if (task == null) {
+			System.out.println("ОТМЕНА ДОБАВЛЕНИЯ -> [объект не передан]");
 		}
+		remove(task.getID()); //удаляет старую ноду, чтобы в связке не было дублей-ссылок
+		linkLast(task);
+		history.put(task.getID(), historyTail);
 	}
 
 	@Override

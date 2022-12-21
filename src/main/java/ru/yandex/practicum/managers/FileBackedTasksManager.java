@@ -7,8 +7,10 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Consumer;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
 	private final File backupfile;
@@ -41,9 +43,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 			backedManager.addTask(task);
 		}
 		//ищет задачу в мапах по ID и записываем в историю
-		for (Integer ID : history) {
-			histManager.add(backedManager.getTask(ID));
-		}
+		history.forEach(ID -> histManager.add(backedManager.getTask(ID)));
 		return backedManager;
 	}
 
@@ -55,12 +55,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 			fileData = Files.readString(file.toPath());
 			rows = fileData.split(TaskConverter.LINE_SEPARATOR);
 		} catch (IOException exception) {
-			throw new ManagerSaveException("Ошибка -> Невозможно прочитать " + file.getName().toUpperCase());
+			throw new ManagerSaveException("ОТМЕНА ЧТЕНИЯ ИЗ ФАЙЛА -> " + file.getName().toUpperCase());
 		}
 		return rows;
 	}
 
-	private void addTask(Task task) {
+	private boolean addTask(Task task) {
+		if (task == null) {
+			throw new ManagerNotFoundException("\nERROR -> [объект не передан]");
+		}
 		int ID = task.getID();
 		switch (task.getTaskType()) {
 			case TASK:
@@ -73,11 +76,16 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 			case EPIC:
 				epics.put(ID, (Epic) task);
 		}
+		return true;
 	}
 
-	private void addSubTaskToEpic(SubTask subTask) {
+	private boolean addSubTaskToEpic(SubTask subTask) {
+		if (subTask == null) {
+			throw new ManagerNotFoundException("\nERROR -> [объект не передан]");
+		}
 		Epic epic = (Epic) getTask(subTask.getParentEpicID());
 		epic.getEpicSubTasks().put(subTask.getID(), subTask);
+		return true;
 	}
 
 	private Task getTask(int ID) {
@@ -92,6 +100,9 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 	}
 
 	private void updateGeneratorID(Task task) {
+		if (task == null) {
+			throw new ManagerNotFoundException("\nERROR -> [объект не передан]");
+		}
 		if (generatorID <= task.getID()) {
 			generatorID = task.getID() + 1;
 		}
@@ -103,30 +114,28 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 		try {
 			bufferedWriter.write(history);
 		} catch (IOException exception) {
-			throw new ManagerSaveException(
-					"Ошибка -> Не удалось записать историю строкой в файл " + backupfile.getName().toUpperCase());
+			throw new ManagerSaveException("ОТМЕНА ЗАПИСИ В ФАЙЛ -> " + backupfile.getName().toUpperCase());
 		}
 	}
 
 	private void writeTaskToFile(BufferedWriter bufferedWriter, Map<Integer, ? extends Task> list) {
 		//принимаем одну из мап с задачами и перебираем значения (объекты)
-		try {
-			for (Task task : list.values()) {
+		list.values().forEach(task -> {
+			try {
 				//пишем в файл полученную в строчном представлении задачу
 				bufferedWriter.write(TaskConverter.taskToString(task));
 				bufferedWriter.newLine();
+			} catch (IOException exception) {
+				throw new ManagerSaveException("ОТМЕНА ЗАПИСИ В ФАЙЛ -> " + backupfile.getName().toUpperCase());
 			}
-		} catch (IOException exception) {
-			throw new ManagerSaveException(
-					"Ошибка -> Не удалось записать задачу строкой в файл " + backupfile.getName().toUpperCase());
-		}
+		});
 	}
 
 	private String getHeaderTasks() {
-		return "id,type,name,status,description,epic";
+		return "id,type,name,status,description,epic,start,duration";
 	}
 
-	private void save() {
+	private boolean save() {
 		try (BufferedWriter bufferedWriter =
 					 new BufferedWriter(new FileWriter(backupfile, StandardCharsets.UTF_8))) {
 			//записали шапку
@@ -142,60 +151,61 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 			throw new ManagerSaveException(
 					"Ошибка -> Не удалось сохранить объекты в файл" + backupfile.getName().toUpperCase());
 		}
+		return true;
 	}
 
 	@Override
-	public void create(Task newTask) {
+	public boolean create(Task newTask) {
 		super.create(newTask);
-		save();
+		return save();
 	}
 
 	@Override
-	public void create(SubTask newSubTask) {
+	public boolean create(SubTask newSubTask) {
 		super.create(newSubTask);
-		save();
+		return save();
 	}
 
 	@Override
-	public void create(Epic newEpic) {
+	public boolean create(Epic newEpic) {
 		super.create(newEpic);
-		save();
+		return save();
 	}
 
 	@Override
-	public void update(Task newTask) {
+	public boolean update(Task newTask) {
 		super.update(newTask);
-		save();
+		return save();
 	}
 
 	@Override
-	public void update(SubTask newSubTask) {
+	public boolean update(SubTask newSubTask) {
 		super.update(newSubTask);
-		save();
+		return save();
 	}
 
 	@Override
-	public void update(Epic newEpic) {
+	public boolean update(Epic newEpic) {
 		super.update(newEpic);
-		save();
+		return save();
 	}
 
 	@Override
-	public void deleteAllTasks() {
+	public boolean deleteAllTasks() {
 		super.deleteAllTasks();
-		save();
+		return save();
 	}
 
 	@Override
-	public void deleteAllSubTasks() {
+	public boolean deleteAllSubTasks() {
 		super.deleteAllSubTasks();
-		save();
+		return save();
 	}
 
 	@Override
-	public void deleteAllEpics() {
+	public boolean deleteAllEpics() {
 		super.deleteAllEpics();
-		save();
+		return save();
 	}
 
 	@Override
@@ -220,20 +230,20 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 	}
 
 	@Override
-	public void deleteTaskByID(int ID) {
+	public boolean deleteTaskByID(int ID) {
 		super.deleteTaskByID(ID);
-		save();
+		return save();
 	}
 
 	@Override
-	public void deleteSubTaskByID(int ID) {
+	public boolean deleteSubTaskByID(int ID) {
 		super.deleteSubTaskByID(ID);
-		save();
+		return save();
 	}
 
 	@Override
-	public void deleteEpicByID(int ID) {
+	public boolean deleteEpicByID(int ID) {
 		super.deleteEpicByID(ID);
-		save();
+		return save();
 	}
 }

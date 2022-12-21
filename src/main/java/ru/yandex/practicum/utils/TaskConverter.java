@@ -4,8 +4,9 @@ import ru.yandex.practicum.managers.HistoryManager;
 
 import ru.yandex.practicum.tasks.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.time.Duration;
+import java.time.ZonedDateTime;
+import java.util.*;
 
 public class TaskConverter {
 	public static final String LINE_SEPARATOR = "\\r?\\n";
@@ -16,7 +17,9 @@ public class TaskConverter {
 				task.getName() + "," +
 				task.getStatus() + "," +
 				task.getDescription() + "," +
-				task.getParentEpicID();
+				task.getParentEpicID() + "," +
+				TimeConverter.dateTimeToString(task.getStartTime()) + "," +
+				task.getDuration();
 	}
 
 	public static String historyToString(HistoryManager historyManager) {
@@ -42,15 +45,17 @@ public class TaskConverter {
 		String name = fields[2];
 		Status status = Status.valueOf(fields[3]);
 		String description = fields[4];
+		ZonedDateTime startTime = TimeConverter.dateTimeFromString(fields[6]);
+		Duration duration = TimeConverter.durationFromString(fields[7]);
 
 		switch (type) {
 			case TASK:
-				return new Task(ID, name, description, status);
+				return new Task(ID, name, description, status, startTime, duration);
 			case SUBTASK:
 				int parentEpicID = Integer.parseInt(fields[5]);
-				return new SubTask(ID, name, description, status, parentEpicID);
+				return new SubTask(ID, name, description, status, parentEpicID, startTime, duration);
 		}
-		return new Epic(ID, name, description, status);
+		return new Epic(ID, name, description, status, startTime, duration);
 	}
 
 	public static List<Integer> historyFromString(String value) {
