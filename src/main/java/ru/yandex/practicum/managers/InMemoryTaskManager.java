@@ -5,7 +5,6 @@ import ru.yandex.practicum.tasks.*;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.*;
-import java.util.function.Consumer;
 
 public class InMemoryTaskManager implements TaskManager {
 
@@ -20,10 +19,16 @@ public class InMemoryTaskManager implements TaskManager {
 		if (o1.getStartTime().isAfter(o2.getStartTime())) {
 			return 1;
 		}
+
 		return 1;
+
 	});
 
 	protected int generatorID = 1;
+
+	private void addTaskWithSort(Task task) {
+
+	}
 
 	//проверка пересечений интервалов времени выполнения задач
 	private void checkIntersectionOnDateTime(Task task) {

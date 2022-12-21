@@ -1,12 +1,17 @@
 import org.junit.jupiter.api.*;
 
 import ru.yandex.practicum.managers.FileBackedTasksManager;
+import ru.yandex.practicum.managers.InMemoryTaskManager;
 import ru.yandex.practicum.managers.TaskManager;
 import ru.yandex.practicum.tasks.*;
 
 import java.io.File;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static ru.yandex.practicum.tasks.Task.UNREACHEBLE_DATE;
 
 
 public abstract class TaskManagerTest<T extends TaskManager> {
@@ -90,10 +95,16 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @Test
     public void deleteAllSubTasksTest() {
-        System.out.println(subTask1.equals(task1));
-        System.out.println(backedManager.getPrioritizedTasks());
-    }
 
+
+        System.out.println(backedManager.getPrioritizedTasks());
+        subTask1.setStartTime(ZonedDateTime.of(
+                9999,1,1,0,0,0,0,ZoneId.systemDefault()));
+
+        backedManager.update(subTask1);
+        System.out.println(backedManager.getPrioritizedTasks());
+
+    }
 
 }
 

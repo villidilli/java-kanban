@@ -6,10 +6,7 @@ import ru.yandex.practicum.tasks.*;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.TreeSet;
+import java.util.*;
 
 public class TaskConverter {
 	public static final String LINE_SEPARATOR = "\\r?\\n";
