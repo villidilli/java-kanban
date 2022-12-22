@@ -6,7 +6,7 @@ import ru.yandex.practicum.tasks.*;
 
 import java.io.File;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 
 public abstract class TaskManagerTest<T extends TaskManager> {
@@ -24,27 +24,41 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         backedManager = new FileBackedTasksManager(new File("src/main/resources/Backup.csv"));
     }
 
-    @Test
-    public void shouldReturnTaskIdAfterCreated() {
-        int expectedID = 1;
+    @Test // create(Task)
+    public void shouldReturnSameTaskAfterCreate() {
+         task1 = new Task("Таск1", "-",
+                                        2022, 1, 1, 0,0,1);
+         Task expectedValue = task1;
+         backedManager.create(task1);
 
-        task1 = new Task("Таск1", "-", 2022, 1, 1, 0,0,1);
-        backedManager.create(task1);
-
-        assertEquals(expectedID, backedManager.getAllTasks().get(0).getID());
+        assertEquals(expectedValue, backedManager.getTaskByID(task1.getID()));
     }
 
-    @Test
-    public void shouldReturnSubTaskIdAfterCreated() {
-        int expectedID = 2;
-
-        epic1 = new Epic("Эпик1", "");
+    @Test // create(SubTask)
+    public void shouldReturnSameSubTaskAfterCreate() {
+        epic1 = new Epic("Эпик1", "-");
         backedManager.create(epic1);
-        subTask1 = new SubTask("СабТаск1", "-", 1, 2022, 1, 1, 0,0,1);
+        subTask1 = new SubTask("СабТаск1", "-", 1,
+                2022, 1, 1, 0,0,1);
         backedManager.create(subTask1);
+        SubTask expectedValue = subTask1;
 
-        assertEquals(expectedID, backedManager.getAllSubTasks().get(0).getID());
+        assertEquals(expectedValue, backedManager.getSubTaskByID(subTask1.getID()));
     }
+
+    @Test // create(Epic)
+    public void shouldReturnSameEpicAfterCreate() {
+        epic1 = new Epic("Эпик1", "-");
+        backedManager.create(epic1);
+
+        Epic expectedValue = epic1;
+
+        assertEquals(expectedValue, backedManager.getEpicByID(epic1.getID()));
+    }
+
+
+
+
 
 //    @Test
 //    public void deleteAllSubTasksTest() {
