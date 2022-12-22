@@ -41,10 +41,10 @@ public class InMemoryTaskManager implements TaskManager {
 
 		for (Iterator<Map.Entry<ZonedDateTime,Task>> it = prioritizedTasksMap.entrySet().iterator(); it.hasNext();) {
 			Map.Entry<ZonedDateTime, Task> entry = it.next();
-			if (prioritizedTasksMap.get(task.getStartTime()) != null) {
-				System.out.println("Пересечение с ключем");
-				throw new TimeValueException("Искючение");
-			}
+//			if (prioritizedTasksMap.get(task.getStartTime()) != null) {
+//				System.out.println("Пересечение с ключем");
+//				throw new TimeValueException("Искючение");
+//			}
 			if (!(checkEnd.isBefore(entry.getValue().getStartTime())
 				|| checkStart.isAfter(entry.getValue().getEndTime()))){
 				throw new TimeValueException("ERROR -> Пересечение интервалов выполнения");

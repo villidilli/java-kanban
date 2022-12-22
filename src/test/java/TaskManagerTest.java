@@ -55,8 +55,8 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 task2.getID(),
                 task2.getName(),
                 task2.getDescription(),
-                2022, 1, 1, 2, 0,1);
-
+                2022, 1, 1, 2, 0,3);
+        System.out.println(task2.getName() + " Интервал: " + task2.getStartTime().toLocalTime() + " - " + task2.getEndTime().toLocalTime());
         backedManager.update(task2);
 
         System.out.println(backedManager.getPrioritizedTasks());
