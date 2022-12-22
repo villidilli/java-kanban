@@ -28,7 +28,6 @@ public class InMemoryTaskManager implements TaskManager {
 		for (Iterator<Map.Entry<ZonedDateTime, Task>> it = prioritizedTasksMap.entrySet().iterator(); it.hasNext(); ) {
 			Map.Entry<ZonedDateTime, Task> entry = it.next();
 				if (entry.getValue().getID() == task.getID()) {
-					System.out.println("Удаляем старую версию задачи");
 					it.remove();
 				}
 		}
