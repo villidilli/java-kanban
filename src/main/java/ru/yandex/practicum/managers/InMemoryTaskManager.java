@@ -2,7 +2,6 @@ package ru.yandex.practicum.managers;
 
 import ru.yandex.practicum.tasks.*;
 
-import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.*;
 
@@ -22,39 +21,53 @@ public class InMemoryTaskManager implements TaskManager {
 		}
 		return 0;
 	});
-//	protected final Set<Task> prioritizedTasks = new TreeSet<>((o1, o2) -> {
-//		if (o1.getID() == o2.getID()) {
-//			return 0;
-//		} else if (o1.getStartTime().isBefore(o2.getStartTime())) {
-//			return -1;
-//		} else return 1;
-//	});
 
 	protected int generatorID = 1;
 
 	//проверка пересечений интервалов времени выполнения задач
-	private void checkIntersectionOnDateTime(Task task) {
-		//проверка нужна чтобы создать задачу без указания времени,
-		// если поля не инициализированы пользователем (== системные константы)
-//		if (task.getStartTime() == Task.UNREACHEBLE_DATE || task.getDuration() == Duration.ZERO.toMinutes()) {
-//			return;
-//		}
-		//если поля инициализированы не константами (введены пользователем), проверяем пересечения
+	private boolean checkIntersectionOnDateTime(Task task) {
 		ZonedDateTime checkStart = task.getStartTime();
 		ZonedDateTime checkEnd = task.getEndTime();
 
-		boolean isHaveIntersection = prioritizedTasksMap.values().stream()
-				.anyMatch(atask -> (
-						checkStart.isBefore(atask.getEndTime())
-						|| checkStart.isEqual(atask.getEndTime())
-				) && (
-						checkEnd.isAfter(atask.getStartTime())
-						|| checkEnd.isEqual(atask.getStartTime())
-				));
-		if (isHaveIntersection) {
-			throw new TimeValueException("\nОТМЕНА СОЗДАНИЯ -> [пересечение интервалов выполнения]");
-		}
+		// блок удаления
+		Collection<Map.Entry<ZonedDateTime, Task>> entries = prioritizedTasksMap.entrySet();
+		for (Map.Entry<ZonedDateTime, Task> pair : entries) {
+			if (prioritizedTasksMap.get(task.getStartTime()) != null) {
+				System.out.println("Дата-ключ УЖЕ ЕСТЬ. ПЕРЕСЕЧЕНИЕ ПО ПЕРИОДУ. НЕ ДОБАВЛЯЕМ");
+				return false;
+			}
+			// нет пересечений
+			if (checkEnd.isBefore(pair.getValue().getStartTime()) || checkStart.isAfter(pair.getValue().getEndTime())) {
+				System.out.println("Нет пересечений со периодами выполнений. ДОБАВИТЬ ЗАДАЧУ");
+			} else
+			if (pair.getValue() == task) {
+				System.out.println("Одинаковые ссылки. НУЖНО УДАЛИТЬ СТАРУЮ");
+//				prioritizedTasksMap.remove(pair.getKey());
+			}
+ 		}
+		return true;
 	}
+//prioritizedTasksMap.remove(pair.getKey());
+//
+//		for (Task atask : prioritizedTasksMap.values()) {
+//			if (checkStart.isBefore(atask.getEndTime())
+//				&& checkStart.isAfter(atask.getStartTime())) {
+//				throw new TimeValueException("\nERROR -> [пересечение интервалов выполнения]");
+//			}
+//		}
+
+//		boolean isHaveIntersection = prioritizedTasksMap.values().stream()
+//				.anyMatch(atask -> (
+//						checkStart.isBefore(atask.getEndTime())
+//						|| checkStart.isEqual(atask.getEndTime())
+//				) && (
+//						checkEnd.isAfter(atask.getStartTime())
+//						|| checkEnd.isEqual(atask.getStartTime())
+//				));
+//		if (isHaveIntersection) {
+//			throw new TimeValueException("\nОТМЕНА СОЗДАНИЯ -> [пересечение интервалов выполнения]");
+//		}
+//	}
 
 	private void deleteAllTaskFromPrioritizedTasks(TaskTypes type) { //todo
 //		prioritizedTasks.stream()
@@ -133,16 +146,14 @@ public class InMemoryTaskManager implements TaskManager {
 		if (newTask == null) {
 			throw new ManagerNotFoundException("\nERROR -> [объект не передан]");
 		}
-		try {
-			checkIntersectionOnDateTime(newTask);
+		if (checkIntersectionOnDateTime(newTask)) {
 			newTask.setID(generatorID);
 			generatorID++;
 			tasks.put(newTask.getID(), newTask);
 			prioritizedTasksMap.put(newTask.getStartTime(), newTask);
-		} catch (TimeValueException e) {
-			System.out.println(e.getMessage());
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	@Override
@@ -390,5 +401,10 @@ public class InMemoryTaskManager implements TaskManager {
 	public List<Task> getPrioritizedTasks() { //todo
 		return new ArrayList<>(prioritizedTasksMap.values());
 
+	}
+
+	@Override
+	public Map<ZonedDateTime, Task> getMap() {
+		return prioritizedTasksMap;
 	}
 }

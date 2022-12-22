@@ -4,14 +4,13 @@ import ru.yandex.practicum.managers.FileBackedTasksManager;
 import ru.yandex.practicum.managers.InMemoryTaskManager;
 import ru.yandex.practicum.managers.TaskManager;
 import ru.yandex.practicum.tasks.*;
+import ru.yandex.practicum.utils.TimeConverter;
 
 import java.io.File;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static ru.yandex.practicum.tasks.Task.UNREACHEBLE_DATE;
 
 
 public abstract class TaskManagerTest<T extends TaskManager> {
@@ -27,19 +26,19 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @BeforeEach
     public void beforeEach() {
         backedManager = new FileBackedTasksManager(new File("src/main/resources/Backup.csv"));
-        epic1 = new Epic("Эпик1", "-");
-//        backedManager.create(epic1); //1
-        subTask1 = new SubTask("Саб1", "-",1,2023, 1, 1, 0, 5, 5);
-//        backedManager.create(subTask1); //2
-        task1 = new Task("Таск1", "-");
-//        backedManager.create(task1); //3
-        task2 = new Task("Таск2", "-", 2022, 1, 1, 0, 5, 5);
-//        backedManager.create(task2); //4
-        task3 = new Task("Таск3", "-", 2024, 1, 1, 23, 58, 1);
-//        backedManager.create(task3); //5
-        subTask2 = new SubTask("Саб2", "-", 1, 15000, 1, 1, 0, 5, 5); //6
-//        backedManager.create(subTask2);
-//
+//        epic1 = new Epic("Эпик1", "-");
+////        backedManager.create(epic1); //1
+//        subTask1 = new SubTask("Саб1", "-",1,2022, 1, 1, 1, 1, 1);
+////        backedManager.create(subTask1); //2
+//        task1 = new Task("Таск1", "-");
+////        backedManager.create(task1); //3
+//        task2 = new Task("Таск2", "-", 2023, 1, 1, 1, 1, 1);
+////        backedManager.create(task2); //4
+//        task3 = new Task("Таск3", "-", 2024, 1, 1, 1, 1, 1);
+////        backedManager.create(task3); //5
+//        subTask2 = new SubTask("Саб2", "-", 1, 2025, 1, 1, 1, 1, 1); //6
+////        backedManager.create(subTask2);
+////
     }
 //
 //    @Test
@@ -120,14 +119,23 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 //        backedManager.update(subTask1);
 //        System.out.println("ПОСЛЕ ОБНОВЛЕНИЯ2");
 //        System.out.println(backedManager.getPrioritizedTasks());
-        backedManager.create(epic1);
+        task1 = new Task("Таск1", "-", 2024, 1, 1, 1, 1, 1);
+        task2 = new Task("Таск2", "-", 2023, 1, 1, 1, 1, 1);
         backedManager.create(task1);
         backedManager.create(task2);
-        backedManager.create(task3);
-        backedManager.create(subTask1);
-        backedManager.create(subTask2);
 
-        System.out.println(backedManager.getPrioritizedTasks());
+
+//        System.out.println(backedManager.getMap());
+
+
+       task1.setStartTime(ZonedDateTime.of(LocalDate.of(2023,1,1), LocalTime.of(1,1), ZoneId.systemDefault()));
+        backedManager.update(task1);
+////
+        System.out.println(backedManager.getMap());
+//
+//
+
+       // System.out.println(backedManager.getPrioritizedTasks());
     }
 
 }
