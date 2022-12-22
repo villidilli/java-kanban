@@ -52,21 +52,6 @@ public class InMemoryTaskManager implements TaskManager {
 		}
 	}
 
-//		Collection<Map.Entry<ZonedDateTime, Task>> entries = prioritizedTasksMap.entrySet();
-//		for (Map.Entry<ZonedDateTime, Task> pair : entries) {
-//			if (prioritizedTasksMap.get(task.getStartTime()) != null) {
-//				throw new TimeValueException("Ключ-дата уже есть в мапе");
-//			}
-//			if (pair.getValue().getID() == task.getID()) {
-//					System.out.println("Одинаковые ссылки. НУЖНО УДАЛИТЬ СТАРУЮ");
-//					prioritizedTasksMap.remove(pair.getKey());
-//			}
-//			// нет пересечений
-//			if (checkEnd.isBefore(pair.getValue().getStartTime()) || checkStart.isAfter(pair.getValue().getEndTime())) {
-//					System.out.println("Нет пересечений со периодами выполнений. ДОБАВИТЬ ЗАДАЧУ");
-//			}
-
-
 
 	private void deleteAllTaskFromPrioritizedTasks(TaskTypes type) { //todo
 //		prioritizedTasks.stream()
@@ -232,6 +217,7 @@ public class InMemoryTaskManager implements TaskManager {
 
 		try {
 			checkTimeIntersections(newSubTask);
+			checkDuplicate(newSubTask);
 			// сохраняем по ID новый объект-подзадачу
 			parentEpic.getEpicSubTasks().put(currentSubTask.getID(), newSubTask);
 			subTasks.put(currentSubTask.getID(), newSubTask);

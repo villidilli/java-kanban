@@ -1,4 +1,5 @@
 id,type,name,status,description,epic,start,duration
-1,TASK,Таск1,NEW,-,null,01-01-2022 | 02:00 | +03:00,1
-2,TASK,Таск2,NEW,-,null,01-01-2022 | 03:00 | +03:00,1
+1,SUBTASK,Таск1,NEW,-,1,01-01-2022 | 02:00 | +03:00,1
+2,SUBTASK,Таск2,NEW,-,1,01-01-2022 | 03:00 | +03:00,1
+3,TASK,Таск3,NEW,-,null,01-01-2022 | 02:30 | +03:00,1
 
