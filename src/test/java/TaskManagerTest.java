@@ -90,13 +90,6 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals(Status.NEW, taskManager.getEpicByID(epic1.getID()).getStatus());
     }
 
-    @Test // boolean create(Epic newEpic);
-    public void shouldReturnEpicStatusNewWhenEpicCreatedAndHisSubTaskStatusNew() {
-        taskManager.create(epic1);
-        taskManager.create(subTask1);
-        assertEquals(Status.NEW, taskManager.getEpicByID(epic1.getID()).getStatus());
-    }
-
     @Test // boolean update(Task newTask);
     public void shouldReturnUpdateFieldWhenTaskWasUpdate() {
         taskManager.create(task1);
@@ -115,7 +108,34 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals("\nERROR -> [объект не передан]", actualException.getMessage());
     }
 
+    @Test // boolean update(Task newSubTask);
+    public void shouldReturnUpdateFieldWhenSubTaskWasUpdate() {
+        taskManager.create(epic1);
+        taskManager.create(subTask1);
+        String newName = "Updated name";
+        subTask1 = new SubTask(subTask1.getID(), newName, subTask1.getDescription(), subTask1.getParentEpicID());
+        taskManager.update(subTask1);
+        assertEquals(newName, taskManager.getSubTaskByID(subTask1.getID()).getName());
+    }
 
+    @Test // boolean update(Task newSubTask);
+    public void shouldThrowExceptionBeforeUpdateWhenEpicNull() {
+        taskManager.create(epic1);
+        taskManager.create(subTask1);
+        subTask1 = null;
+        ManagerNotFoundException actualException = assertThrows(ManagerNotFoundException.class,
+                () -> taskManager.update(subTask1));
+        assertEquals("\nERROR -> [объект не передан]", actualException.getMessage());
+    }
+
+    @Test // boolean update(Task newSubTask);
+    public void shouldReturnEpicStatusInProgressWhenHisSubTaskInProgress() {
+        taskManager.create(epic1);
+        taskManager.create(subTask1);
+        subTask1.setStatus(Status.IN_PROGRESS);
+        taskManager.update(subTask1);
+        assertEquals(Status.IN_PROGRESS, taskManager.getSubTaskByID(subTask1.getID()));
+    }
 
 
 
