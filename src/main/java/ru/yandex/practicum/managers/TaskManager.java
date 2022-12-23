@@ -2,7 +2,9 @@ package ru.yandex.practicum.managers;
 
 import ru.yandex.practicum.tasks.*;
 
+import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.Map;
 
 public interface TaskManager {
 
@@ -47,4 +49,6 @@ public interface TaskManager {
 	List<Task> getHistory();
 
 	List<Task> getPrioritizedTasks();
+
+	public Map<ZonedDateTime, Task> getMap ();
 }

@@ -1,72 +1,101 @@
 import org.junit.jupiter.api.*;
 
-import ru.yandex.practicum.managers.Managers;
+import ru.yandex.practicum.managers.FileBackedTasksManager;
 import ru.yandex.practicum.managers.TaskManager;
 
-import ru.yandex.practicum.tasks.Epic;
-import ru.yandex.practicum.tasks.Status;
-import ru.yandex.practicum.tasks.SubTask;
+import ru.yandex.practicum.tasks.*;
+
+import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
 public class EpicTest {
-    TaskManager manager;
+    TaskManager backedManager;
     Epic epic1;
     SubTask subTask1;
     SubTask subTask2;
 
     @BeforeEach
     public void beforeEach() {
-        manager = Managers.getDefault();
+        backedManager = new FileBackedTasksManager(new File("src/main/resources/Backup.csv"));
+    }
+
+    @Test
+    public void shouldReturnEpicNewWhenEpicNotHaveSubtasks() {
+        Status expectedValue = Status.NEW;
+
         epic1 = new Epic("Эпик1", "-");
-        manager.create(epic1);
-        subTask1 = new SubTask("Саб1", "-",epic1.getID());
-        manager.create(subTask1);
-        subTask2 = new SubTask("Саб2", "-",epic1.getID());
-        manager.create(subTask2);
+        backedManager.create(epic1);
+
+        assertEquals(expectedValue, backedManager.getEpicByID(epic1.getID()).getStatus());
     }
 
     @Test
-    public void shouldReturnStatusNewWhenEpicsListOfSubtaskIsEmpty() {
-        Status expectedStatus = Status.NEW;
-        assertEquals(expectedStatus, epic1.getStatus());
+    public void shouldReturnEpicNewWhenHimSubTasksNew() {
+        Status expectedValue = Status.NEW;
+
+        epic1 = new Epic("Эпик1", "-");
+        backedManager.create(epic1);
+        subTask1 = new SubTask("Саб1", "-",epic1.getID(),
+                2022, 1, 1, 0, 0 ,1);
+        backedManager.create(subTask1);
+        subTask2 = new SubTask("Саб2", "-",epic1.getID(),
+                2022, 1, 1, 1, 0 ,1);
+        backedManager.create(subTask2);
+
+        assertEquals(expectedValue, backedManager.getEpicByID(epic1.getID()).getStatus());
     }
 
     @Test
-    public void shouldReturnStatusNewWhenEpicsListOfSubtaskHaveStatusNew() {
-        Status expectedStatus = Status.NEW;
-        assertEquals(expectedStatus, epic1.getStatus());
-    }
+    public void shouldReturnEpicDoneWhenHimSubTasksDone() {
+        Status expectedValue = Status.DONE;
 
-    @Test
-    public void shouldReturnStatusDONEWhenEpicsListOfSubtaskHaveStatusDONE() {
+        epic1 = new Epic("Эпик1", "-");
+        backedManager.create(epic1);
+        subTask1 = new SubTask("Саб1", "-", epic1.getID(),
+                2022, 1, 1, 0, 0 ,1);
         subTask1.setStatus(Status.DONE);
-        manager.update(subTask1);
+        backedManager.create(subTask1);
+        subTask2 = new SubTask("Саб2", "-",epic1.getID(),
+                2022, 1, 1, 1, 0 ,1);
         subTask2.setStatus(Status.DONE);
-        manager.update(subTask2);
+        backedManager.create(subTask2);
 
-        Status expectedStatus = Status.DONE;
-        assertEquals(expectedStatus, epic1.getStatus());
+        assertEquals(expectedValue, backedManager.getEpicByID(epic1.getID()).getStatus());
     }
 
     @Test
-    public void shouldReturnStatusDONEWhenEpicsListOfSubtaskHaveStatusNEWandDONE() {
-        subTask2.setStatus(Status.DONE);
-        manager.update(subTask2);
+    public void shouldReturnEpicInProgressWhenHimSubtasksIsNewAndDone() {
+        Status expectedValue = Status.IN_PROGRESS;
 
-        Status expectedStatus = Status.IN_PROGRESS;
-        assertEquals(expectedStatus, epic1.getStatus());
+        epic1 = new Epic("Эпик1", "-");
+        backedManager.create(epic1);
+        subTask1 = new SubTask("Саб1", "-", epic1.getID(),
+                2022, 1, 1, 0, 0 ,1);
+        backedManager.create(subTask1);
+        subTask2 = new SubTask("Саб2", "-",epic1.getID(),
+                2022, 1, 1, 1, 0 ,1);
+        subTask2.setStatus(Status.DONE);
+        backedManager.create(subTask2);
+
+        assertEquals(expectedValue, backedManager.getEpicByID(epic1.getID()).getStatus());
     }
 
     @Test
-    public void shouldReturnStatusDONEWhenEpicsListOfSubtaskHaveStatusInProgress() {
+    public void shouldReturnEpicInProgressWhenHimSubTasksInProgress() {
+        Status expectedValue = Status.IN_PROGRESS;
+
+        epic1 = new Epic("Эпик1", "-");
+        backedManager.create(epic1);
+        subTask1 = new SubTask("Саб1", "-", epic1.getID(),
+                2022, 1, 1, 0, 0 ,1);
         subTask1.setStatus(Status.IN_PROGRESS);
-        manager.update(subTask1);
+        backedManager.create(subTask1);
+        subTask2 = new SubTask("Саб2", "-",epic1.getID(),
+                2022, 1, 1, 1, 0 ,1);
         subTask2.setStatus(Status.IN_PROGRESS);
-        manager.update(subTask2);
+        backedManager.create(subTask2);
 
-        Status expectedStatus = Status.IN_PROGRESS;
-        assertEquals(expectedStatus, epic1.getStatus());
+        assertEquals(expectedValue, backedManager.getEpicByID(epic1.getID()).getStatus());
     }
 }
