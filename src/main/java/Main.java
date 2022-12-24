@@ -6,6 +6,7 @@ import java.io.File;
 public class Main {
 	public static void main(String[] args) {
 		TaskManager manager = new FileBackedTasksManager(new File("src/main/resources/Backup.csv"));
+//		TaskManager manager = Managers.getDefaultFileBacked();
 		Task task1 = new Task("task1", "", 10000,1,1,0,0,1);
 		Task task2 = new Task("task2","", 2022, 1,1,0,0,1);
 		Task task3 = new Task("task3","");
@@ -59,6 +60,9 @@ public class Main {
 		manager.update(task2);
 
 
+		System.out.println(manager.getPrioritizedTasks());
+
+		manager.deleteAllTasks();
 		System.out.println(manager.getPrioritizedTasks());
 	}
 //		System.out.println("*** ПРОВЕРКА РАБОТОСПОСОБНОСТИ FileBackedManagers ***");

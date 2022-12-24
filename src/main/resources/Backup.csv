@@ -1,7 +1,2 @@
 id,type,name,status,description,epic,start,duration
-1,TASK,task1,NEW,,null,01-01-+10000 | 00:00 | +03:00,1
-2,TASK,task2,NEW,,null,31-12-2021 | 22:59 | +03:00,0
-3,TASK,task3,NEW,,null,null,0
-4,TASK,НОВОЕ ИМЯ,NEW,,null,31-12-2021 | 23:59 | +03:00,0
-5,TASK,Имя 6,NEW,,null,null,0
 
