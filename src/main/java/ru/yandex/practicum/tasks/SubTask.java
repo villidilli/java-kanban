@@ -17,7 +17,7 @@ public class SubTask extends Task {
 
 	public SubTask(String name, String description, int parentEpicID,
 				   int year, int month, int day,
-				   int hour, int minutes, int duration) {
+				   int hour, int minutes, long duration) {
 		super(name, description, year, month, day, hour, minutes, duration);
 		this.parentEpicID = parentEpicID;
 	}
@@ -30,7 +30,7 @@ public class SubTask extends Task {
 
 	public SubTask(int ID, String name, String description, int parentEpicID,
 				   int year, int month, int day,
-				   int hour, int minutes, int duration) {
+				   int hour, int minutes, long duration) {
 		super(ID, name, description, year, month, day, hour, minutes, duration);
 		this.parentEpicID = parentEpicID;
 	}
@@ -42,13 +42,13 @@ public class SubTask extends Task {
 
 	public SubTask(int ID, String name, String description, Status status, int parentEpicID,
 				   int year, int month, int day,
-				   int hour, int minutes, int duration) {
+				   int hour, int minutes, long duration) {
 		super(ID, name, description, status, year, month, day, hour, minutes, duration);
 		this.parentEpicID = parentEpicID;
 	}
 
 	public SubTask(int ID, String name, String description, Status status, int parentEpicID,
-				   ZonedDateTime zonedDateTime, Duration duration) {
+				   ZonedDateTime zonedDateTime, long duration) {
 		super(ID, name, description, status, zonedDateTime, duration);
 		this.parentEpicID = parentEpicID;
 	}
