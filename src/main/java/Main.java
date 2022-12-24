@@ -5,7 +5,7 @@ import java.io.File;
 
 public class Main {
 	public static void main(String[] args) {
-		TaskManager manager = Managers.getDefault();
+		TaskManager manager = new FileBackedTasksManager(new File("src/main/resources/Backup.csv"));
 		Task task1 = new Task("task1", "", 10000,1,1,0,0,1);
 		Task task2 = new Task("task2","", 2022, 1,1,0,0,1);
 		Task task3 = new Task("task3","");
@@ -55,7 +55,7 @@ public class Main {
 				task2.getID(),
 				task2.getName(),
 				task2.getDescription(),
-				2021, 12, 31, 23, 59, 0);
+				2021, 12, 31, 22, 59, 0);
 		manager.update(task2);
 
 
