@@ -8,62 +8,65 @@ public class Main {
 		TaskManager manager = new FileBackedTasksManager(new File("src/main/resources/Backup.csv"));
 //		TaskManager manager = Managers.getDefaultFileBacked();
 		Task task1 = new Task("task1", "", 10000,1,1,0,0,1);
-		Task task2 = new Task("task2","", 2022, 1,1,0,0,1);
-		Task task3 = new Task("task3","");
-		Task task4 = new Task("task4","", 2021, 12,31,23,59,0);
-		Task task5 = new Task("task5","");
-		Task task6 = new Task(task5.getID(),"task6","");
-
+//		Task task2 = new Task("task2","", 2022, 1,1,0,0,1);
+//		Task task3 = new Task("task3","");
+//		Task task4 = new Task("task4","", 2021, 12,31,23,59,0);
+//		Task task5 = new Task("task5","");
+//		Task task6 = new Task(5,"task6","");
+//
+//		manager.create(task1);
+//		manager.create(task2);
+//		manager.create(task3);
+//		manager.create(task4);
+//		manager.create(task5);
+//		task4 = new Task(
+//				task4.getID(),
+//				"Новое имя".toUpperCase(),
+//				task4.getDescription(),
+//				task4.getStatus(),
+//				task4.getStartTime(),
+//				task4.getDuration());
+//		manager.update(task4);
+//				task2 = new Task(
+//				task2.getID(),
+//				task2.getName(),
+//				task2.getDescription(),
+//				task2.getStatus(),
+//				1500, 6, 15, 12,0,
+//				task2.getDuration());
+//		manager.update(task2);
+//		task6 = new Task(
+//				5,
+//				"Имя 6",
+//				task6.getDescription());
+//		manager.update(task6);
+//		task2 = new Task(
+//				task2.getID(),
+//				task2.getName(),
+//				task2.getDescription());
+//		manager.update(task2);
+//
+//		task2 = new Task(
+//				task2.getID(),
+//				task2.getName(),
+//				task2.getDescription(),
+//				15000, 1, 1, 15, 30, 1);
+//		manager.update(task2);
+//		task2 = new Task(
+//				task2.getID(),
+//				task2.getName(),
+//				task2.getDescription(),
+//				2021, 12, 31, 22, 59, 0);
+//		manager.update(task2);
+//
+//
+//		System.out.println(manager.getPrioritizedTasks());
+//
+//		manager.deleteAllTasks();
+//		System.out.println(manager.getPrioritizedTasks());
 		manager.create(task1);
-		manager.create(task2);
-		manager.create(task3);
-		manager.create(task4);
-		manager.create(task5);
-		task4 = new Task(
-				task4.getID(),
-				"Новое имя".toUpperCase(),
-				task4.getDescription(),
-				task4.getStatus(),
-				task4.getStartTime(),
-				task4.getDuration());
-		manager.update(task4);
-				task2 = new Task(
-				task2.getID(),
-				task2.getName(),
-				task2.getDescription(),
-				task2.getStatus(),
-				1500, 6, 15, 12,0,
-				task2.getDuration());
-		manager.update(task2);
-		task6 = new Task(
-				5,
-				"Имя 6",
-				task6.getDescription());
-		manager.update(task6);
-		task2 = new Task(
-				task2.getID(),
-				task2.getName(),
-				task2.getDescription());
-		manager.update(task2);
-
-		task2 = new Task(
-				task2.getID(),
-				task2.getName(),
-				task2.getDescription(),
-				15000, 1, 1, 15, 30, 1);
-		manager.update(task2);
-		task2 = new Task(
-				task2.getID(),
-				task2.getName(),
-				task2.getDescription(),
-				2021, 12, 31, 22, 59, 0);
-		manager.update(task2);
-
-
-		System.out.println(manager.getPrioritizedTasks());
-
-		manager.deleteAllTasks();
-		System.out.println(manager.getPrioritizedTasks());
+		manager.deleteTaskByID(task1.getID());
+		manager.getTaskByID(task1.getID());
 	}
 //		System.out.println("*** ПРОВЕРКА РАБОТОСПОСОБНОСТИ FileBackedManagers ***");
 //		System.out.println("*****************************************************");
