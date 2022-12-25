@@ -1,11 +1,9 @@
 import org.junit.jupiter.api.*;
-import ru.yandex.practicum.managers.HistoryManager;
-import ru.yandex.practicum.managers.InMemoryHistoryManager;
-import ru.yandex.practicum.managers.Managers;
-import ru.yandex.practicum.managers.TaskManager;
-import ru.yandex.practicum.tasks.Epic;
-import ru.yandex.practicum.tasks.SubTask;
-import ru.yandex.practicum.tasks.Task;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import ru.yandex.practicum.managers.*;
+import ru.yandex.practicum.tasks.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -65,9 +63,24 @@ public class InMemoryHistoryManagerTest {
 
     //void add(Task task)
     @Test
-    public void returnThrowExceptionWhenIncomingTaskIsNull() {
-        manager.add(task1);
+    public void returnThrowExceptionWhenTaskIsNull() {
+        task1 = null;
+        ManagerNotFoundException exception = assertThrows(ManagerNotFoundException.class,
+                () -> manager.add(task1));
+        assertEquals("ERROR -> [объект не передан]", exception.getMessage());
+    }
 
+    @Test
+    public void returnSameTaskFromHistoryAfterTaskAdded() {
+        manager.add(task1);
+        assertEquals(task1, manager.getHistory().get(task1.getID()));
+    }
+
+    @Test
+    public void shouldReturnNumberOfTasksInHistoryWhenAddedDuplicateTasks() {
+        manager.add(task1);
+        manager.add(task1);
+        assertEquals(1, manager.getHistory().size());
     }
 
 
