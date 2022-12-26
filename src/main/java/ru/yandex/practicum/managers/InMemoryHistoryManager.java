@@ -61,6 +61,9 @@ public class InMemoryHistoryManager implements HistoryManager {
 
 	@Override
 	public void deleteAllTasksByType(Map<Integer, ? extends Task> tasks) {
+		if (tasks == null) {
+			throw new ManagerNotFoundException("\nERROR -> [объект не передан]");
+		}
 		tasks.keySet().forEach(taskID -> removeNode(history.get(taskID)));
 	}
 
