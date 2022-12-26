@@ -45,17 +45,17 @@ public abstract class TaskManagerTest<T extends TaskManager> {
                 2022, 1, 1, 0, 0, 1);
         startTime1 = ZonedDateTime.of(
                 LocalDate.of(2021, 12, 12),
-                LocalTime.of(0,0),
+                LocalTime.of(0, 0),
                 ZoneId.systemDefault()
         );
         startTime2 = ZonedDateTime.of(
                 LocalDate.of(2022, 6, 6),
-                LocalTime.of(12,0),
+                LocalTime.of(12, 0),
                 ZoneId.systemDefault()
         );
         startTime3 = ZonedDateTime.of(
                 LocalDate.of(2023, 1, 1),
-                LocalTime.of(23,59),
+                LocalTime.of(23, 59),
                 ZoneId.systemDefault()
         );
         duration1 = 30L;
@@ -63,25 +63,27 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         duration3 = 20L;
     }
 
-    @Test //  create(Task newTask);
+    //create(Task newTask);
+    @Test
     public void shouldReturnSameTaskFromTasksListAfterCreate() {
         manager.create(task1);
         assertEquals(task1, manager.getAllTasks().get(0));
     }
 
-    @Test //  create(Task newTask);
+    @Test
     public void shouldReturnSameTaskFromPrioritizedListAfterCreate() {
         manager.create(task1);
         assertEquals(task1, manager.getPrioritizedTasks().get(0));
     }
 
-    @Test //create(Task newTask);
+    @Test
     public void shouldReturnIdAfterCreatedTask() {
         manager.create(task1);
         assertEquals(1, manager.getTaskByID(task1.getID()).getID());
     }
 
-    @Test //  create(Task newTask); null
+    //  create(Task newTask)
+    @Test
     public void shouldThrowExceptionWhenCreateTaskNull() {
         task1 = null;
         ManagerNotFoundException actualException = assertThrows(ManagerNotFoundException.class,
@@ -89,28 +91,28 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         assertEquals("\nERROR -> [объект не передан]", actualException.getMessage());
     }
 
-    @Test //  create(Task newSubTask); normal
+    @Test
     public void shouldReturnSameSubTaskFromSubtasksListAfterCreate() {
         manager.create(epic1);
         manager.create(subTask1);
         assertEquals(subTask1, manager.getAllSubTasks().get(0));
     }
 
-    @Test //  create(Task newSubtask);
+    @Test
     public void shouldReturnSameSubtaskFromPrioritizedListAfterCreate() {
         manager.create(epic1);
         manager.create(subTask1);
         assertEquals(subTask1, manager.getPrioritizedTasks().get(0));
     }
 
-    @Test //create(Task newSubtask);
+    @Test
     public void shouldReturnIdAfterCreatedSubtask() {
         manager.create(epic1);
         manager.create(subTask1);
         assertEquals(2, manager.getAllSubTasks().get(0).getID());
     }
 
-    @Test //  create(Task newSubTask); null
+    @Test
     public void shouldThrowExceptionWhenCreateSubtaskNull() {
         subTask1 = null;
         ManagerNotFoundException actualException = assertThrows(ManagerNotFoundException.class,
@@ -121,30 +123,30 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @Test
     public void shouldThrowExceptionWhenNotCreateEpicBeforeCreateSubtask() {
         ManagerNotFoundException exception = assertThrows(ManagerNotFoundException.class,
-                                                        () -> manager.create(subTask1));
+                () -> manager.create(subTask1));
         assertEquals("\nERROR -> [не найден родительский объект с указанным ID]", exception.getMessage());
     }
 
-    @Test //  create(Task newSubTask); availability parentEpic
+    @Test
     public void shouldReturnEpicIdWhenSubTaskCreated() {
         manager.create(epic1);
         manager.create(subTask1);
         assertEquals(epic1.getID(), manager.getSubTaskByID(subTask1.getID()).getParentEpicID());
     }
 
-    @Test // create(Epic newEpic); normal
+    // create(Epic newEpic)
+    @Test
     public void shouldReturnSameEpicFromEpicListAfterCreate() {
         manager.create(epic1);
         assertEquals(epic1, manager.getAllEpics().get(0));
     }
 
-    @Test //create(Task newSubtask);
+    @Test
     public void shouldReturnIdAfterCreatedEpic() {
         manager.create(epic1);
         assertEquals(1, manager.getAllEpics().get(0).getID());
     }
 
-    //create(Epic newEpic)
     @Test
     public void shouldThrowExceptionWhenCreateEpicNull() {
         epic1 = null;
@@ -226,6 +228,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         manager.create(subTask1);
         assertEquals(subTask1, manager.getPrioritizedTasks().get(0));
     }
+
     @Test
     public void shouldReturnUpdateFieldWhenSubtaskUpdate() {
         manager.create(epic1);
@@ -268,6 +271,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         manager.create(epic1);
         assertEquals(epic1, manager.getAllEpics().get(0));
     }
+
     @Test
     public void shouldReturnUpdateFieldWhenEpicWasUpdate() {
         manager.create(epic1);
@@ -411,8 +415,8 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         manager.create(task2);
         manager.deleteAllTasks();
         long actualValue = manager.getPrioritizedTasks().stream()
-                        .filter(task -> task.getTaskType() == TaskTypes.TASK)
-                        .count();
+                .filter(task -> task.getTaskType() == TaskTypes.TASK)
+                .count();
         assertEquals(0, actualValue);
     }
 
@@ -428,7 +432,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         long actualValue = manager.getPrioritizedTasks().stream()
                 .filter(task -> task.getTaskType() == TaskTypes.TASK)
                 .count();
-        assertEquals(0,actualValue);
+        assertEquals(0, actualValue);
     }
 
     // deleteAllSubTasks()
@@ -465,7 +469,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         long actualValue = manager.getPrioritizedTasks().stream()
                 .filter(subtask -> subtask.getTaskType() == TaskTypes.SUBTASK)
                 .count();
-        assertEquals(0,actualValue);
+        assertEquals(0, actualValue);
     }
 
     @Test
@@ -699,7 +703,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         manager.create(subTask1);
         manager.deleteEpicByID(epic1.getID());
         ManagerNotFoundException exception = assertThrows(ManagerNotFoundException.class,
-                                        () -> manager.getSubTaskByID(subTask1.getID()));
+                () -> manager.getSubTaskByID(subTask1.getID()));
         assertEquals("\nERROR -> [объект с указанным ID не найден]", exception.getMessage());
     }
 
@@ -718,7 +722,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         manager.create(subTask1);
         manager.create(subTask2);
         ManagerNotFoundException exception = assertThrows(ManagerNotFoundException.class,
-                                                         () -> manager.getAllSubTasksByEpic(55555));
+                () -> manager.getAllSubTasksByEpic(55555));
         assertEquals("\nERROR -> [объект с указанным ID не найден]", exception.getMessage());
     }
 

@@ -45,7 +45,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 		return backedManager;
 	}
 
-	private static String[] readFile(File file) {
+	protected static String[] readFile(File file) {
 		String fileData;
 		String[] rows;
 		//вначале считали файл целиком в String, потом рассплитили по строкам в массив
@@ -241,6 +241,4 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 		super.deleteEpicByID(ID);
 		save();
 	}
-
-
 }

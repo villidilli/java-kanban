@@ -50,24 +50,6 @@ public class InMemoryHistoryManagerTest {
 		subTask3 = new SubTask(7, "СабТаск3", "-", 1);
 		subTask4 = new SubTask(8, "СабТаск4", "-", 1,
 				2022, 1, 1, 0, 0, 1);
-		startTime1 = ZonedDateTime.of(
-				LocalDate.of(2021, 12, 12),
-				LocalTime.of(0, 0),
-				ZoneId.systemDefault()
-		);
-		startTime2 = ZonedDateTime.of(
-				LocalDate.of(2022, 6, 6),
-				LocalTime.of(12, 0),
-				ZoneId.systemDefault()
-		);
-		startTime3 = ZonedDateTime.of(
-				LocalDate.of(2023, 1, 1),
-				LocalTime.of(23, 59),
-				ZoneId.systemDefault()
-		);
-		duration1 = 30L;
-		duration2 = 10L;
-		duration3 = 20L;
 		tasks = new HashMap<>();
 		subTasks = new HashMap<>();
 		epics = new HashMap<>();
