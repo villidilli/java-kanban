@@ -3,7 +3,11 @@ package ru.yandex.practicum.managers;
 import ru.yandex.practicum.tasks.*;
 
 import java.time.ZonedDateTime;
+
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static ru.yandex.practicum.tasks.Task.UNREACHEBLE_DATE;
 
 public class InMemoryTaskManager implements TaskManager {
 
@@ -12,50 +16,55 @@ public class InMemoryTaskManager implements TaskManager {
 	protected final Map<Integer, Epic> epics = new HashMap<>();
 	protected final HistoryManager historyManager = Managers.getDefaultHistory();
 
-	protected final Map<ZonedDateTime, Task> prioritizedTasksMap = new TreeMap<>((o1, o2) -> {
-		if (o1.isBefore(o2)) {
-			return -1;
-		}
-		if (o1.isAfter(o2)) {
-			return 1;
-		}
-		return 0;
-	});
+	protected final Set<Task> prioritizedTasks = new TreeSet<>(Comparator.comparing(Task::getStartTime)
+			.thenComparing(Task::getID));
 
 	protected int generatorID = 1;
 
-	private void checkDuplicate(Task task) {
-		for (Iterator<Map.Entry<ZonedDateTime, Task>> it = prioritizedTasksMap.entrySet().iterator(); it.hasNext(); ) {
-			Map.Entry<ZonedDateTime, Task> entry = it.next();
-				if (entry.getValue().getID() == task.getID()) {
+	private void checkDuplicateAndIntersections(Task task) {
+		//UNREACHEBLE_DATE - эквивалентна отсутствию даты старта
+		Task taskToRemove = null;
+		for (Iterator<Task> it = prioritizedTasks.iterator(); it.hasNext();) {
+			Task entry = it.next();
+			//Условие нужно когда попытка добавить новый объект с тем же айди
+			if (entry.getID() == task.getID()) {
+				// и без даты, то проверка на пересечение не требуется, т.к. по ТЗ без даты добав.в конец
+				if (task.getStartTime().isEqual(UNREACHEBLE_DATE)) {
 					it.remove();
+					return;
+				} else {
+					/*
+					 * когда дата введена != UNREACHEBLE_DATE, нужно удалить старую версию, иначе бросит исключение
+					 * по пересечению с самим собой
+					 * НО! по новому времени может быть пересечение с другими задачами,
+					 * тогда нужно перед удалением убедиться,
+					 * что новый объект не пересекается с другими задачами (иначе старый будет удалён,
+					 * а новый не добавлен, если пересечение есть, поэтому старый объект пока не удаляем,
+					 * а сохраняем в переменную и переходим к сравнению к другой задачей
+					 */
+					taskToRemove = entry;
+					continue;
 				}
-		}
-	}
-
-	//проверка пересечений интервалов времени выполнения задач
-	private void checkTimeIntersections(Task task) {
-		ZonedDateTime checkStart = task.getStartTime();
-		ZonedDateTime checkEnd = task.getEndTime();
-
-		for (Iterator<Map.Entry<ZonedDateTime,Task>> it = prioritizedTasksMap.entrySet().iterator(); it.hasNext();) {
-			Map.Entry<ZonedDateTime, Task> entry = it.next();
-//			if (prioritizedTasksMap.get(task.getStartTime()) != null) {
-//				System.out.println("Пересечение с ключем");
-//				throw new TimeValueException("Искючение");
-//			}
-			if (!(checkEnd.isBefore(entry.getValue().getStartTime())
-				|| checkStart.isAfter(entry.getValue().getEndTime()))){
-				throw new TimeValueException("ERROR -> Пересечение интервалов выполнения");
+				// если у задач в сравнении разные id и дата старта введена,
+			} if (!task.getStartTime().isEqual(UNREACHEBLE_DATE)) {
+				// проверяем на пересечения
+				if (!(task.getEndTime().isBefore(entry.getStartTime())
+						|| task.getStartTime().isAfter(entry.getEndTime()))) {
+					throw new TimeValueException("\nERROR -> [Пересечение интервалов выполнения]");
+				}
 			}
 		}
+		// после окончания итерации по сету taskToRemove != null, значит удаляем этот объект
+		if (taskToRemove != null) {
+			prioritizedTasks.remove(taskToRemove);
+		}
 	}
 
-
-	private void deleteAllTaskFromPrioritizedTasks(TaskTypes type) { //todo
-//		prioritizedTasks.stream()
-//				.filter(task -> task.getTaskType() == type)
-//				.forEach(prioritizedTasks::remove);
+	private void deleteAllTaskFromPrioritizedTasks(TaskTypes type) {
+		prioritizedTasks.stream()
+				.filter(task -> task.getTaskType() == type)
+				.collect(Collectors.toList())
+				.forEach(prioritizedTasks::remove);
 	}
 
 	private void updateEpic(int ID) {
@@ -64,21 +73,12 @@ public class InMemoryTaskManager implements TaskManager {
 		updateEpicDuration(ID);
 	}
 
-	// startTime эпика = наименьшему значению startTime его сабтасков
 	private void updateEpicStartTime(int epicID) {
+		// startTime эпика = наименьшему значению startTime его сабтасков
 		Collection <SubTask> epicSubTasks = epics.get(epicID).getEpicSubTasks().values();
 		if (!epicSubTasks.isEmpty()) {
-			ZonedDateTime firstDateTime = epicSubTasks
-					.stream()
-					.min((o1, o2) -> {
-						if (o1.getStartTime().isBefore(o2.getStartTime())) {
-							return -1;
-						}
-						if (o1.getStartTime().isAfter(o2.getStartTime())) {
-							return 1;
-						}
-						return 0;
-					})
+			ZonedDateTime firstDateTime = epicSubTasks.stream()
+					.min(Comparator.comparing(Task::getStartTime))
 					.get()
 					.getStartTime();
 			epics.get(epicID).setStartTime(firstDateTime);
@@ -125,56 +125,53 @@ public class InMemoryTaskManager implements TaskManager {
 	}
 
 	@Override
-	public boolean create(Task newTask) {
+	public void create(Task newTask) {
 		if (newTask == null) {
 			throw new ManagerNotFoundException("\nERROR -> [объект не передан]");
 		}
-			checkTimeIntersections(newTask);
+			checkDuplicateAndIntersections(newTask);
 			newTask.setID(generatorID);
 			generatorID++;
 			tasks.put(newTask.getID(), newTask);
-			prioritizedTasksMap.put(newTask.getStartTime(), newTask);
-			return true;
+			prioritizedTasks.add(newTask);
 	}
 
 	@Override
-	public boolean create(SubTask newSubTask) {
+	public void create(SubTask newSubTask) {
 		if (newSubTask == null) {
 			throw new ManagerNotFoundException("\nERROR -> [объект не передан]");
 		}
 
 		Epic parentEpic = epics.get(newSubTask.getParentEpicID());
 		if (parentEpic == null) {
-			throw new ManagerNotFoundException("\nERROR -> [не найден эпик с указанным ID]");
+			throw new ManagerNotFoundException("\nERROR -> [не найден родительский объект с указанным ID]");
 		}
 
 		try {
-			checkTimeIntersections(newSubTask);
+			checkDuplicateAndIntersections(newSubTask);
 			newSubTask.setID(generatorID);
 			subTasks.put(generatorID, newSubTask);
 			parentEpic.getEpicSubTasks().put(generatorID, newSubTask);
 			updateEpic(parentEpic.getID());
-			prioritizedTasksMap.put(newSubTask.getStartTime(), newSubTask);
+			prioritizedTasks.add(newSubTask);
 			generatorID++;
 		} catch (TimeValueException e) {
-			System.out.println(e.getMessage());
+			throw new TimeValueException("\nERROR -> [Пересечение интервалов выполнения]");
 		}
-		return true;
 	}
 
 	@Override
-	public boolean create(Epic newEpic) {
+	public void create(Epic newEpic) {
 		if (newEpic == null) {
 			throw new ManagerNotFoundException("\nERROR -> [объект не передан]");
 		}
 		newEpic.setID(generatorID);
 		generatorID++;
 		epics.put(newEpic.getID(), newEpic);
-		return true;
 	}
 
 	@Override
-	public boolean update(Task newTask) {
+	public void update(Task newTask) {
 		if (newTask == null) {
 			throw new ManagerNotFoundException("\nERROR -> [объект не передан]");
 		}
@@ -185,21 +182,16 @@ public class InMemoryTaskManager implements TaskManager {
 		}
 
 		try {
-			//checkTimeIntersections - проверяет пересечения пересечения времени, бросает exception
-			checkTimeIntersections(newTask);
-			//chechDuplicate - удаляет старую версию задачи. Запускается когда пересечений интервалов не найдено
-			//т.е. checkTimeIntersection - не выбросил исключения, значит мы можем добавлять задачу
-			checkDuplicate(newTask);
+			checkDuplicateAndIntersections(newTask);
 			tasks.put(currentTask.getID(), newTask);
-			prioritizedTasksMap.put(newTask.getStartTime(), newTask);
+			prioritizedTasks.add(newTask);
 		} catch (TimeValueException e) {
 			System.out.println(e.getMessage());
 		}
-		return true;
 	}
 
 	@Override
-	public boolean update(SubTask newSubTask) {
+	public void update(SubTask newSubTask) {
 		if (newSubTask == null) {
 			throw new ManagerNotFoundException("\nERROR -> [объект не передан]");
 		}
@@ -215,21 +207,18 @@ public class InMemoryTaskManager implements TaskManager {
 		}
 
 		try {
-			checkTimeIntersections(newSubTask);
-			checkDuplicate(newSubTask);
-			// сохраняем по ID новый объект-подзадачу
+			checkDuplicateAndIntersections(newSubTask);
 			parentEpic.getEpicSubTasks().put(currentSubTask.getID(), newSubTask);
 			subTasks.put(currentSubTask.getID(), newSubTask);
-			prioritizedTasksMap.put(newSubTask.getStartTime(), newSubTask);
+			prioritizedTasks.add(newSubTask);
 			updateEpic(parentEpic.getID());
 		} catch (TimeValueException e) {
 			System.out.println(e.getMessage());
 		}
-		return true;
 	}
 
 	@Override
-	public boolean update(Epic newEpic) {
+	public void update(Epic newEpic) {
 		if (newEpic == null) {
 			throw new ManagerNotFoundException("\nERROR -> [объект не передан]");
 		}
@@ -241,7 +230,6 @@ public class InMemoryTaskManager implements TaskManager {
 
 		epics.put(currentEpic.getID(), newEpic);
 		updateEpic(currentEpic.getID());
-		return true;
 	}
 
 	@Override
@@ -260,15 +248,14 @@ public class InMemoryTaskManager implements TaskManager {
 	}
 
 	@Override
-	public boolean deleteAllTasks() {
+	public void deleteAllTasks() {
 		historyManager.deleteAllTasksByType(tasks);
 		tasks.clear();
 		deleteAllTaskFromPrioritizedTasks(TaskTypes.TASK);
-		return true;
 	}
 
 	@Override
-	public boolean deleteAllSubTasks() {
+	public void deleteAllSubTasks() {
 		historyManager.deleteAllTasksByType(subTasks);
 		subTasks.clear();
 		epics.values() // удаляем все подзадачи из мапы эпиков
@@ -277,22 +264,21 @@ public class InMemoryTaskManager implements TaskManager {
 					updateEpic(epic.getID());
 				});
 		deleteAllTaskFromPrioritizedTasks(TaskTypes.SUBTASK);
-		return true;
 	}
 
 	@Override
-	public boolean deleteAllEpics() {
+	public void deleteAllEpics() {
 		historyManager.deleteAllTasksByType(epics);
 		historyManager.deleteAllTasksByType(subTasks);
 		epics.clear();
 		subTasks.clear(); // удаляем все подзадачи, т.к. они не являются самостоятельной сущностью программы
-		return true;
+		deleteAllTaskFromPrioritizedTasks(TaskTypes.SUBTASK);
 	}
 
 	@Override
 	public Task getTaskByID(int ID) {
 		if (tasks.get(ID) == null) {
-			throw new ManagerNotFoundException("\nERROR -> [задача с указанным ID не найдена]");
+			throw new ManagerNotFoundException("\nERROR -> [объект с указанным ID не найден]");
 		}
 		historyManager.add(tasks.get(ID));
 		return tasks.get(ID);
@@ -301,7 +287,7 @@ public class InMemoryTaskManager implements TaskManager {
 	@Override
 	public SubTask getSubTaskByID(int ID) {
 		if (subTasks.get(ID) == null) {
-			throw new ManagerNotFoundException("\nERROR -> [подзадача с указанным ID не найдена]");
+			throw new ManagerNotFoundException("\nERROR -> [объект с указанным ID не найден]");
 		}
 		historyManager.add(subTasks.get(ID));
 		return subTasks.get(ID);
@@ -310,56 +296,54 @@ public class InMemoryTaskManager implements TaskManager {
 	@Override
 	public Epic getEpicByID(int ID) {
 		if (epics.get(ID) == null) {
-			throw new ManagerNotFoundException("\nERROR -> [эпик с указанным ID не найден]");
+			throw new ManagerNotFoundException("\nERROR -> [объект с указанным ID не найден]");
 		}
 		historyManager.add(epics.get(ID));
 		return epics.get(ID);
 	}
 
 	@Override
-	public boolean deleteTaskByID(int ID) {
+	public void deleteTaskByID(int ID) {
 		Task task = tasks.get(ID);
 		if(task == null) {
-			throw new ManagerNotFoundException("\nERROR -> [задача с указанным ID не найдена]");
+			throw new ManagerNotFoundException("\nERROR -> [объект с указанным ID не найден]");
 		}
-		prioritizedTasksMap.remove(task.getStartTime());
+		prioritizedTasks.remove(task);
 		tasks.remove(ID);
 		historyManager.remove(ID);
-		return true;
 	}
 
 	@Override
-	public boolean deleteSubTaskByID(int ID) {
+	public void deleteSubTaskByID(int ID) {
 		SubTask subTask = subTasks.get(ID);
 		if(subTask == null) {
-			throw new ManagerNotFoundException("\nERROR -> [подзадача с указанным ID не найдена]");
+			throw new ManagerNotFoundException("\nERROR -> [объект с указанным ID не найден]");
 		}
 
 		Epic parentEpic = epics.get(subTask.getParentEpicID());
 		if (parentEpic == null) {
-			throw new ManagerNotFoundException("\nERROR -> [эпик с указанным ID не найден]");
+			throw new ManagerNotFoundException("\nERROR -> [родительский объект с указанным ID не найден]");
 		}
 		HashMap<Integer, SubTask> epicSubTasks = parentEpic.getEpicSubTasks();
 		epicSubTasks.remove(ID); //удаляем из эпика
-		prioritizedTasksMap.remove(subTask.getStartTime());
+		prioritizedTasks.remove(subTask);
 		subTasks.remove(ID); //удаляем из менеджера
 		updateEpic(parentEpic.getID());
 		historyManager.remove(ID);
-		return true;
 	}
 
 	@Override
-	public boolean deleteEpicByID(int ID) {
+	public void deleteEpicByID(int ID) {
 		Epic epic = epics.get(ID);
 		if(epic == null) {
-			throw new ManagerNotFoundException("\nERROR -> [эпик с указанным ID не найден]");
+			throw new ManagerNotFoundException("\nERROR -> [объект с указанным ID не найден]");
 		}
 		//удаляем из коллекции собтасков менеджера сабтаски, имеющие отношение к эпику
 		epic.getEpicSubTasks()
 				.values()
 				.forEach(subTask -> {
 					if (subTasks.get(subTask.getID()) != null) {
-						prioritizedTasksMap.remove(subTask.getStartTime());
+						prioritizedTasks.remove(subTask);
 						historyManager.remove(subTask.getID());
 						subTasks.remove(subTask.getID());
 					}
@@ -367,13 +351,12 @@ public class InMemoryTaskManager implements TaskManager {
 		//теперь удаляем сам эпик
 		historyManager.remove(ID);
 		epics.remove(ID);
-		return true;
 	}
 
 	@Override
 	public List<SubTask> getAllSubTasksByEpic(int ID) {
 		if(epics.get(ID) == null) {
-			throw new ManagerNotFoundException("\nERROR -> [эпик с указанным ID не найден]");
+			throw new ManagerNotFoundException("\nERROR -> [объект с указанным ID не найден]");
 		}
 		return new ArrayList<>(epics.get(ID).getEpicSubTasks().values());
 	}
@@ -384,13 +367,8 @@ public class InMemoryTaskManager implements TaskManager {
 	}
 
 	@Override
-	public List<Task> getPrioritizedTasks() { //todo
-		return new ArrayList<>(prioritizedTasksMap.values());
+	public List<Task> getPrioritizedTasks() {
+		return new ArrayList<>(prioritizedTasks);
 
-	}
-
-	@Override
-	public Map<ZonedDateTime, Task> getMap() {
-		return prioritizedTasksMap;
 	}
 }

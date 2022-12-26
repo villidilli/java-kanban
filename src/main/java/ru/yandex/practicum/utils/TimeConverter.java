@@ -24,10 +24,10 @@ public class TimeConverter {
         return ZonedDateTime.parse(dateTime, formatter);
     }
 
-    public static Duration durationFromString(String duration) {
-        if (duration.equals("0")) {
-            return Duration.ZERO;
-        }
-        return Duration.ofMinutes(Long.parseLong(duration));
+    public static long durationFromString(String duration) {
+//        if (duration.equals("0")) {
+//            return Duration.ZERO;
+//        }
+        return Long.parseLong(duration);
     }
 }

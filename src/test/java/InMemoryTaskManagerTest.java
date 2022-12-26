@@ -1,6 +1,5 @@
-import ru.yandex.practicum.managers.TaskManager;
+import ru.yandex.practicum.managers.InMemoryTaskManager;
 
-public class InMemoryTaskManagerTest extends TaskManagerTest{
-
+public class InMemoryTaskManagerTest extends TaskManagerTest <InMemoryTaskManager> {
 
 }

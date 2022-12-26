@@ -46,7 +46,7 @@ public class TaskConverter {
 		Status status = Status.valueOf(fields[3]);
 		String description = fields[4];
 		ZonedDateTime startTime = TimeConverter.dateTimeFromString(fields[6]);
-		Duration duration = TimeConverter.durationFromString(fields[7]);
+		long duration = TimeConverter.durationFromString(fields[7]);
 
 		switch (type) {
 			case TASK:

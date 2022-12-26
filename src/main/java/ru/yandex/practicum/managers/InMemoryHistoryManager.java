@@ -72,7 +72,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 	@Override
 	public void add(Task task) {
 		if (task == null) {
-			System.out.println("ОТМЕНА ДОБАВЛЕНИЯ -> [объект не передан]");
+			throw new ManagerNotFoundException("\nERROR -> [объект не передан]");
 		}
 		remove(task.getID()); //удаляет старую ноду, чтобы в связке не было дублей-ссылок
 		linkLast(task);

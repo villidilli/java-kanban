@@ -2,23 +2,21 @@ package ru.yandex.practicum.managers;
 
 import ru.yandex.practicum.tasks.*;
 
-import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.Map;
 
 public interface TaskManager {
 
-	boolean create(Task newTask);
+	void create(Task newTask);
 
-	boolean create(SubTask newSubTask);
+	void create(SubTask newSubTask);
 
-	boolean create(Epic newEpic);
+	void create(Epic newEpic);
 
-	boolean update(Task newTask);
+	void update(Task newTask);
 
-	boolean update(SubTask newSubTask);
+	void update(SubTask newSubTask);
 
-	boolean update(Epic newEpic);
+	void update(Epic newEpic);
 
 	List<Task> getAllTasks();
 
@@ -26,11 +24,11 @@ public interface TaskManager {
 
 	List<Epic> getAllEpics();
 
-	boolean deleteAllTasks();
+	void deleteAllTasks();
 
-	boolean deleteAllSubTasks();
+	void deleteAllSubTasks();
 
-	boolean deleteAllEpics();
+	void deleteAllEpics();
 
 	Task getTaskByID(int ID);
 
@@ -38,17 +36,15 @@ public interface TaskManager {
 
 	Epic getEpicByID(int ID);
 
-	boolean deleteTaskByID(int ID);
+	void deleteTaskByID(int ID);
 
-	boolean deleteSubTaskByID(int ID);
+	void deleteSubTaskByID(int ID);
 
-	boolean deleteEpicByID(int ID);
+	void deleteEpicByID(int ID);
 
 	List<SubTask> getAllSubTasksByEpic(int ID);
 
 	List<Task> getHistory();
 
 	List<Task> getPrioritizedTasks();
-
-	public Map<ZonedDateTime, Task> getMap ();
 }

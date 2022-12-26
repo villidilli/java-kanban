@@ -6,12 +6,9 @@ import ru.yandex.practicum.utils.TaskConverter;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.time.ZonedDateTime;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
 	private final File backupfile;
@@ -61,7 +58,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 		return rows;
 	}
 
-	private boolean addTask(Task task) {
+	private void addTask(Task task) {
 		if (task == null) {
 			throw new ManagerNotFoundException("\nERROR -> [объект не передан]");
 		}
@@ -77,16 +74,14 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 			case EPIC:
 				epics.put(ID, (Epic) task);
 		}
-		return true;
 	}
 
-	private boolean addSubTaskToEpic(SubTask subTask) {
+	private void addSubTaskToEpic(SubTask subTask) {
 		if (subTask == null) {
 			throw new ManagerNotFoundException("\nERROR -> [объект не передан]");
 		}
 		Epic epic = (Epic) getTask(subTask.getParentEpicID());
 		epic.getEpicSubTasks().put(subTask.getID(), subTask);
-		return true;
 	}
 
 	private Task getTask(int ID) {
@@ -136,7 +131,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 		return "id,type,name,status,description,epic,start,duration";
 	}
 
-	private boolean save() {
+	private void save() {
 		try (BufferedWriter bufferedWriter =
 					 new BufferedWriter(new FileWriter(backupfile, StandardCharsets.UTF_8))) {
 			//записали шапку
@@ -152,61 +147,60 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 			throw new ManagerSaveException(
 					"Ошибка -> Не удалось сохранить объекты в файл" + backupfile.getName().toUpperCase());
 		}
-		return true;
 	}
 
 	@Override
-	public boolean create(Task newTask) {
+	public void create(Task newTask) {
 		super.create(newTask);
-		return save();
+		save();
 	}
 
 	@Override
-	public boolean create(SubTask newSubTask) {
+	public void create(SubTask newSubTask) {
 		super.create(newSubTask);
-		return save();
+		save();
 	}
 
 	@Override
-	public boolean create(Epic newEpic) {
+	public void create(Epic newEpic) {
 		super.create(newEpic);
-		return save();
+		save();
 	}
 
 	@Override
-	public boolean update(Task newTask) {
+	public void update(Task newTask) {
 		super.update(newTask);
-		return save();
+		save();
 	}
 
 	@Override
-	public boolean update(SubTask newSubTask) {
+	public void update(SubTask newSubTask) {
 		super.update(newSubTask);
-		return save();
+		save();
 	}
 
 	@Override
-	public boolean update(Epic newEpic) {
+	public void update(Epic newEpic) {
 		super.update(newEpic);
-		return save();
+		save();
 	}
 
 	@Override
-	public boolean deleteAllTasks() {
+	public void deleteAllTasks() {
 		super.deleteAllTasks();
-		return save();
+		save();
 	}
 
 	@Override
-	public boolean deleteAllSubTasks() {
+	public void deleteAllSubTasks() {
 		super.deleteAllSubTasks();
-		return save();
+		save();
 	}
 
 	@Override
-	public boolean deleteAllEpics() {
+	public void deleteAllEpics() {
 		super.deleteAllEpics();
-		return save();
+		save();
 	}
 
 	@Override
@@ -231,21 +225,21 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 	}
 
 	@Override
-	public boolean deleteTaskByID(int ID) {
+	public void deleteTaskByID(int ID) {
 		super.deleteTaskByID(ID);
-		return save();
+		save();
 	}
 
 	@Override
-	public boolean deleteSubTaskByID(int ID) {
+	public void deleteSubTaskByID(int ID) {
 		super.deleteSubTaskByID(ID);
-		return save();
+		save();
 	}
 
 	@Override
-	public boolean deleteEpicByID(int ID) {
+	public void deleteEpicByID(int ID) {
 		super.deleteEpicByID(ID);
-		return save();
+		save();
 	}
 
 
