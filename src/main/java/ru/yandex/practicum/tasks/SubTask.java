@@ -1,8 +1,5 @@
 package ru.yandex.practicum.tasks;
 
-import ru.yandex.practicum.utils.TimeConverter;
-
-import java.time.Duration;
 import java.time.ZonedDateTime;
 
 public class SubTask extends Task {

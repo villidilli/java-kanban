@@ -1,13 +1,11 @@
 package ru.yandex.practicum.managers;
 
 import ru.yandex.practicum.tasks.Task;
-import ru.yandex.practicum.tasks.TaskTypes;
 
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.function.Consumer;
 
 public class InMemoryHistoryManager implements HistoryManager {
 	private final Map<Integer, Node<Task>> history = new HashMap<>();
