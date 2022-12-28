@@ -23,12 +23,16 @@ public class InMemoryTaskManager implements TaskManager {
     private void checkDuplicateAndIntersections(Task task) {
         //UNREACHEBLE_DATE - эквивалентна отсутствию даты старта
         Task taskToRemove = null;
+        ZonedDateTime incomingStartTime = task.getStartTime();
+        ZonedDateTime incomingEndTime = task.getEndTime();
         for (Iterator<Task> it = prioritizedTasks.iterator(); it.hasNext(); ) {
             Task entry = it.next();
+            ZonedDateTime existingStartTime = entry.getStartTime();
+            ZonedDateTime existingEndTime = entry.getEndTime();
             //Условие нужно когда попытка добавить новый объект с тем же айди
             if (entry.getID() == task.getID()) {
                 // и без даты, то проверка на пересечение не требуется, т.к. по ТЗ без даты добав.в конец
-                if (task.getStartTime().isEqual(UNREACHEBLE_DATE)) {
+                if (incomingStartTime.isEqual(UNREACHEBLE_DATE)) {
                     it.remove();
                     return;
                 } else {
@@ -46,10 +50,10 @@ public class InMemoryTaskManager implements TaskManager {
                 }
                 // если у задач в сравнении разные id и дата старта введена,
             }
-            if (!task.getStartTime().isEqual(UNREACHEBLE_DATE)) {
+            if (!incomingStartTime.isEqual(UNREACHEBLE_DATE)) {
                 // проверяем на пересечения
-                if (!(task.getEndTime().isBefore(entry.getStartTime())
-                        || task.getStartTime().isAfter(entry.getEndTime()))) {
+                if (!(incomingEndTime.isBefore(existingStartTime)
+                        || incomingStartTime.isAfter(existingEndTime))) {
                     throw new TimeValueException("\nERROR -> [Пересечение интервалов выполнения]");
                 }
             }
