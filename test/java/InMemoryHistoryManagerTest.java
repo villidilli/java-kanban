@@ -1,15 +1,21 @@
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.managers.HistoryManager;
+import ru.yandex.practicum.managers.ManagerNotFoundException;
+import ru.yandex.practicum.managers.Managers;
+import ru.yandex.practicum.tasks.Epic;
+import ru.yandex.practicum.tasks.SubTask;
+import ru.yandex.practicum.tasks.Task;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import ru.yandex.practicum.managers.*;
-import ru.yandex.practicum.tasks.*;
-
-import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.*;
+
 public class InMemoryHistoryManagerTest {
+    private static Map<Integer, Task> tasks;
+    private static Map<Integer, SubTask> subTasks;
+    private static Map<Integer, Epic> epics;
     HistoryManager manager;
     private Task task1;
     private Task task2;
@@ -19,9 +25,6 @@ public class InMemoryHistoryManagerTest {
     private SubTask subTask2;
     private SubTask subTask3;
     private SubTask subTask4;
-    private static Map<Integer, Task> tasks;
-    private static Map<Integer, SubTask> subTasks;
-    private static Map<Integer, Epic> epics;
 
     @BeforeEach
     public void beforeEach() {

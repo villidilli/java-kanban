@@ -3,7 +3,6 @@ package ru.yandex.practicum.managers;
 import ru.yandex.practicum.tasks.*;
 
 import java.time.ZonedDateTime;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -36,8 +35,8 @@ public class InMemoryTaskManager implements TaskManager {
                     it.remove();
                     return;
                 } else {
-					taskToRemove = entry;
-					continue;
+                    taskToRemove = entry;
+                    continue;
                 }
                 /*
                  * когда дата введена != UNREACHEBLE_DATE, нужно удалить старую версию, иначе бросит исключение
