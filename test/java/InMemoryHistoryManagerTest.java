@@ -214,7 +214,7 @@ public class InMemoryHistoryManagerTest {
     }
 
     @Test
-    public void shouldReturnCorrectlyOrderWhenDeletedAllSubTasksByTypeFromHistory() {
+    public void shouldReturnCorrectlyOrderWhenDeletedSubTasksByTypeFromHistory() {
         tasks.put(task1.getID(), task1);
         tasks.put(task2.getID(), task2);
         subTasks.put(subTask1.getID(), subTask1);
