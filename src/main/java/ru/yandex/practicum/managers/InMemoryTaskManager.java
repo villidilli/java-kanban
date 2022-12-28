@@ -38,16 +38,16 @@ public class InMemoryTaskManager implements TaskManager {
                 } else {
 					taskToRemove = entry;
 					continue;
-                    /*
-                     * когда дата введена != UNREACHEBLE_DATE, нужно удалить старую версию, иначе бросит исключение
-                     * по пересечению с самим собой
-                     * НО! по новому времени может быть пересечение с другими задачами,
-                     * тогда нужно перед удалением убедиться,
-                     * что новый объект не пересекается с другими задачами (иначе старый будет удалён,
-                     * а новый не добавлен, если пересечение есть, поэтому старый объект пока не удаляем,
-                     * а сохраняем в переменную и переходим к сравнению к другой задачей
-                     */
                 }
+                /*
+                 * когда дата введена != UNREACHEBLE_DATE, нужно удалить старую версию, иначе бросит исключение
+                 * по пересечению с самим собой
+                 * НО! по новому времени может быть пересечение с другими задачами,
+                 * тогда нужно перед удалением убедиться,
+                 * что новый объект не пересекается с другими задачами (иначе старый будет удалён,
+                 * а новый не добавлен, если пересечение есть, поэтому старый объект пока не удаляем,
+                 * а сохраняем в переменную и переходим к сравнению к другой задачей
+                 */
                 // если у задач в сравнении разные id и дата старта введена,
             }
             if (!incomingStartTime.isEqual(UNREACHEBLE_DATE)) {
@@ -73,28 +73,20 @@ public class InMemoryTaskManager implements TaskManager {
 
     private void updateEpic(int ID) {
         updateEpicStatus(ID);
-        updateEpicStartTime(ID);
-        updateEpicDuration(ID);
+        updateEpicStartTimeAndDuration(ID);
     }
 
-    private void updateEpicStartTime(int epicID) {
-        // startTime эпика = наименьшему значению startTime его сабтасков
+    public void updateEpicStartTimeAndDuration(int epicID) {
         Collection<SubTask> epicSubTasks = epics.get(epicID).getEpicSubTasks().values();
         if (!epicSubTasks.isEmpty()) {
+            //блок обновления старттайм min
             ZonedDateTime firstDateTime = epicSubTasks.stream()
                     .min(Comparator.comparing(Task::getStartTime))
                     .get()
                     .getStartTime();
             epics.get(epicID).setStartTime(firstDateTime);
-        }
-    }
-
-    // duration эпика = наименьшему значению duration его сабтасков
-    private void updateEpicDuration(int epicID) {
-        HashMap<Integer, SubTask> epicSubTasks = epics.get(epicID).getEpicSubTasks();
-        if (!epicSubTasks.isEmpty()) {
-            long sumSubTaskDurations = epicSubTasks.values()
-                    .stream()
+            //блок обновления продолжительности sum
+            long sumSubTaskDurations = epicSubTasks.stream()
                     .mapToLong(Task::getDuration)
                     .sum();
             if (sumSubTaskDurations > 0) {
