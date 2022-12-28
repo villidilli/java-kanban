@@ -12,7 +12,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class FileBackedManagerTest extends TaskManagerTest<FileBackedTasksManager> {
-    private final File file = new File("src/test/resources/BackupTest.csv");
+    private final File file = new File("src/main/resources/Backup.csv");
 
     @BeforeEach
     public void beforeEach() {
