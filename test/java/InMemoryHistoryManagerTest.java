@@ -7,6 +7,9 @@ import ru.yandex.practicum.tasks.Epic;
 import ru.yandex.practicum.tasks.SubTask;
 import ru.yandex.practicum.tasks.Task;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -29,17 +32,18 @@ public class InMemoryHistoryManagerTest {
     @BeforeEach
     public void beforeEach() {
         manager = Managers.getDefaultHistory();
-        task1 = new Task(3, "Таск1", "-", 2022, 1, 1, 0, 0, 1);
+        task1 = new Task(3, "Таск1", "-", ZonedDateTime.of(LocalDateTime.of(
+                2022,1 ,1, 0, 0), ZoneId.systemDefault()), 1);
         task2 = new Task(4, "Таск2", "-");
         epic1 = new Epic(1, "Эпик1", "-");
         epic2 = new Epic(2, "Эпик2", "-");
-        subTask1 = new SubTask(5, "СабТаск1", "-", 1,
-                2022, 2, 2, 0, 0, 1);
-        subTask2 = new SubTask(6, "СабТаск2", "-", 1,
-                2022, 2, 2, 1, 0, 1);
-        subTask3 = new SubTask(7, "СабТаск3", "-", 1);
-        subTask4 = new SubTask(8, "СабТаск4", "-", 1,
-                2022, 1, 1, 0, 0, 1);
+        subTask1 = new SubTask(5, "Саб1", "-", 1, ZonedDateTime.of(LocalDateTime.of(
+                2022, 2, 2, 0,0 ), ZoneId.systemDefault()), 1);
+        subTask2 = new SubTask(6, "Саб2", "-", 1, ZonedDateTime.of(LocalDateTime.of(
+                2022, 2, 2, 1,0 ), ZoneId.systemDefault()), 1);
+        subTask3 = new SubTask(7, "Саб3", "-", 1);
+        subTask4 = new SubTask(8, "Саб4", "-", 1, ZonedDateTime.of(LocalDateTime.of(
+                2022, 1, 1, 0,0 ), ZoneId.systemDefault()), 1);
         tasks = new HashMap<>();
         subTasks = new HashMap<>();
         epics = new HashMap<>();

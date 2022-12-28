@@ -5,10 +5,7 @@ import ru.yandex.practicum.managers.Managers;
 import ru.yandex.practicum.managers.TaskManager;
 import ru.yandex.practicum.tasks.*;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.util.Comparator;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -34,32 +31,24 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     @BeforeEach
     public void beforeEach() {
         manager = Managers.getDefault();
-        task1 = new Task("Таск1", "-", 2022, 1, 1, 0, 0, 1);
+        task1 = new Task("Таск1", "-", ZonedDateTime.of(LocalDateTime.of(
+                2022, 1, 1, 0,0 ), ZoneId.systemDefault()), 1);
         task2 = new Task("Таск2", "-");
         epic1 = new Epic("Эпик1", "-");
         epic2 = new Epic("Эпик2", "-");
-        subTask1 = new SubTask("СабТаск1", "-", 1,
-                2022, 2, 2, 0, 0, 1);
-        subTask2 = new SubTask("СабТаск2", "-", 1,
-                2022, 2, 2, 1, 0, 1);
-        subTask3 = new SubTask("СабТаск3", "-", 1);
-        subTask4 = new SubTask("СабТаск4", "-", 1,
-                2022, 1, 1, 0, 0, 1);
+        subTask1 = new SubTask("Саб1", "-", 1, ZonedDateTime.of(LocalDateTime.of(
+                2022, 2, 2, 0,0 ), ZoneId.systemDefault()), 1);
+        subTask2 = new SubTask("Саб2", "-", 1, ZonedDateTime.of(LocalDateTime.of(
+                2022, 2, 2, 1,0 ), ZoneId.systemDefault()), 1);
+        subTask3 = new SubTask("Саб3", "-", 1);
+        subTask4 = new SubTask("Саб4", "-", 1, ZonedDateTime.of(LocalDateTime.of(
+                2022, 1, 1, 0,0 ), ZoneId.systemDefault()), 1);
         startTime1 = ZonedDateTime.of(
-                LocalDate.of(2021, 12, 12),
-                LocalTime.of(0, 0),
-                ZoneId.systemDefault()
-        );
+                LocalDateTime.of(2021, 12, 12, 0, 0), ZoneId.systemDefault());
         startTime2 = ZonedDateTime.of(
-                LocalDate.of(2022, 6, 6),
-                LocalTime.of(12, 0),
-                ZoneId.systemDefault()
-        );
+                LocalDateTime.of(2022, 6, 6, 12, 0), ZoneId.systemDefault());
         startTime3 = ZonedDateTime.of(
-                LocalDate.of(2023, 1, 1),
-                LocalTime.of(23, 59),
-                ZoneId.systemDefault()
-        );
+                LocalDateTime.of(2023, 1, 1, 23, 59), ZoneId.systemDefault());
         duration1 = 30L;
         duration2 = 10L;
         duration3 = 20L;

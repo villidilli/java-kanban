@@ -7,7 +7,8 @@ import java.util.Objects;
 
 public class Task {
     public static final ZonedDateTime UNREACHEBLE_DATE = ZonedDateTime.of(
-            9999, 1, 1, 0, 0, 0, 0, ZoneId.systemDefault());
+            LocalDateTime.of(9999, 1, 1, 0, 0),
+            ZoneId.systemDefault());
     private final TaskTypes taskType = TaskTypes.TASK;
     private int ID;
     private String name;
@@ -21,37 +22,25 @@ public class Task {
         this.name = name;
     }
 
-    public Task(String name, String description,
-                int year, int month, int day,
-                int hour, int minutes, long duration) {
-        this.description = description;
-        this.name = name;
-        this.duration = Duration.ofMinutes(duration);
-        this.startTime = ZonedDateTime.of(
-                LocalDate.of(year, month, day),
-                LocalTime.of(hour, minutes),
-                ZoneId.systemDefault()
-        );
-    }
-
     public Task(int ID, String name, String description) {
         this.ID = ID;
         this.name = name;
         this.description = description;
     }
 
-    public Task(int ID, String name, String description,
-                int year, int month, int day,
-                int hour, int minutes, long duration) {
+    public Task(String name, String description, ZonedDateTime startDateTime, long duration) {
+        this.description = description;
+        this.name = name;
+        this.duration = Duration.ofMinutes(duration);
+        this.startTime = startDateTime;
+    }
+
+    public Task(int ID, String name, String description, ZonedDateTime startDateTime, long duration) {
         this.ID = ID;
         this.name = name;
         this.description = description;
         this.duration = Duration.ofMinutes(duration);
-        this.startTime = ZonedDateTime.of(
-                LocalDate.of(year, month, day),
-                LocalTime.of(hour, minutes),
-                ZoneId.systemDefault()
-        );
+        this.startTime = startDateTime;
     }
 
     public Task(int ID, String name, String description, Status status) {
@@ -61,38 +50,22 @@ public class Task {
         this.status = status;
     }
 
-    public Task(int ID, String name, String description, Status status,
-                int year, int month, int day,
-                int hour, int minutes, long duration
-    ) {
+    public Task(int ID, String name, String description, Status status, ZonedDateTime startDateTime, long duration) {
         this.ID = ID;
         this.name = name;
         this.description = description;
         this.status = status;
         this.duration = Duration.ofMinutes(duration);
-        this.startTime = ZonedDateTime.of(
-                LocalDate.of(year, month, day),
-                LocalTime.of(hour, minutes),
-                ZoneId.systemDefault()
-        );
-    }
-
-    public Task(int ID, String name, String description, Status status, ZonedDateTime zonedDateTime, long duration) {
-        this.ID = ID;
-        this.name = name;
-        this.description = description;
-        this.status = status;
-        this.duration = Duration.ofMinutes(duration);
-        this.startTime = zonedDateTime;
+        this.startTime = startDateTime;
     }
 
     public ZonedDateTime getStartTime() {
         return startTime;
     }
 
-    public void setStartTime(ZonedDateTime dateTime) {
-        if (dateTime != UNREACHEBLE_DATE) {
-            startTime = dateTime;
+    public void setStartTime(ZonedDateTime startDateTime) {
+        if (startDateTime != UNREACHEBLE_DATE) {
+            startTime = startDateTime;
         }
     }
 

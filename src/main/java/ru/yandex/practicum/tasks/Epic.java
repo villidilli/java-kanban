@@ -20,8 +20,8 @@ public class Epic extends Task {
         super(ID, name, description, status);
     }
 
-    public Epic(int ID, String name, String description, Status status, ZonedDateTime zonedDateTime, long duration) {
-        super(ID, name, description, status, zonedDateTime, duration);
+    public Epic(int ID, String name, String description, Status status, ZonedDateTime startDateTime, long duration) {
+        super(ID, name, description, status, startDateTime, duration);
     }
 
     public HashMap<Integer, SubTask> getEpicSubTasks() {
