@@ -3,10 +3,12 @@ import org.junit.jupiter.api.Test;
 
 import ru.yandex.practicum.managers.FileBackedTasksManager;
 
+import ru.yandex.practicum.managers.Managers;
 import ru.yandex.practicum.tasks.*;
 
 import java.io.File;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -68,5 +70,32 @@ public class FileBackedManagerTest extends TaskManagerTest<FileBackedTasksManage
         manager.create(subTask2);
 
         assertTrue(manager.getHistory().isEmpty());
+    }
+
+    @Test
+    public void shouldReturnSameWhenCompareTasksInMemoryWithFromFile() {
+        manager.create(epic1);
+        manager.create(task1);
+        manager.create(subTask1);
+        List<Task> expectedTasksList = List.of(epic1, task1, subTask1);
+        manager = Managers.getDefaultFileBacked();
+        List<Task> actualList = new ArrayList<>();
+        actualList.addAll(manager.getAllEpics());
+        actualList.addAll(manager.getAllTasks());
+        actualList.addAll(manager.getAllSubTasks());
+        assertArrayEquals(expectedTasksList.toArray(), actualList.toArray());
+    }
+
+    @Test
+    public void shouldReturnSameWhenCompareHistoryInMemoryWithFromFile() {
+        manager.create(epic1);
+        manager.create(task1);
+        manager.create(subTask1);
+        manager.getTaskByID(task1.getID());
+        manager.getEpicByID(epic1.getID());
+        List<Task> expectedTasksList = List.of(task1, epic1);
+        manager = Managers.getDefaultFileBacked();
+        List<Task> actualList = manager.getHistory();
+        assertArrayEquals(expectedTasksList.toArray(), actualList.toArray());
     }
 }
