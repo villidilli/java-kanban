@@ -63,7 +63,8 @@ public class SubTask extends Task {
 
 	@Override
 	public String toString() {
-		return "\n[Подзадача: " + getName() + "] " +
+		return System.lineSeparator() +
+				"[Подзадача: " + getName() + "] " +
 				"[ID: " + getID() + "] " +
 				"[Cтатус: " + getStatus() + "] " +
 				"[Эпик ID: " + getParentEpicID() + "] " +

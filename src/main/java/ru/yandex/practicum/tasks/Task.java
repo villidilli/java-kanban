@@ -153,7 +153,8 @@ public class Task {
 
     @Override
     public String toString() {
-        return "\n[Задача: " + getName() + "] " +
+        return System.lineSeparator() +
+                "[Задача: " + getName() + "] " +
                 "[ID: " + getID() + "] " +
                 "[Cтатус: " + getStatus() + "] " +
                 "[Начало: " + printStartTime() + "]" +

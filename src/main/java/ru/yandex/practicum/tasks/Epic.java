@@ -39,7 +39,8 @@ public class Epic extends Task {
 
 	@Override
 	public String toString() {
-		return "\n[Эпик: " + getName() + "] " +
+		return System.lineSeparator() +
+				"[Эпик: " + getName() + "] " +
 				"[ID: " + getID() + "] " +
 				"[Cтатус: " + getStatus() + "] " +
 				"[Подзадачи: " + getEpicSubTasks().size() + "] " +
