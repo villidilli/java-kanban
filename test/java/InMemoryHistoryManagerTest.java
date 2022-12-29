@@ -33,17 +33,17 @@ public class InMemoryHistoryManagerTest {
     public void beforeEach() {
         manager = Managers.getDefaultHistory();
         task1 = new Task(3, "Таск1", "-", ZonedDateTime.of(LocalDateTime.of(
-                2022,1 ,1, 0, 0), ZoneId.systemDefault()), 1);
+                2022, 1, 1, 0, 0), ZoneId.systemDefault()), 1);
         task2 = new Task(4, "Таск2", "-");
         epic1 = new Epic(1, "Эпик1", "-");
         epic2 = new Epic(2, "Эпик2", "-");
         subTask1 = new SubTask(5, "Саб1", "-", 1, ZonedDateTime.of(LocalDateTime.of(
-                2022, 2, 2, 0,0 ), ZoneId.systemDefault()), 1);
+                2022, 2, 2, 0, 0), ZoneId.systemDefault()), 1);
         subTask2 = new SubTask(6, "Саб2", "-", 1, ZonedDateTime.of(LocalDateTime.of(
-                2022, 2, 2, 1,0 ), ZoneId.systemDefault()), 1);
+                2022, 2, 2, 1, 0), ZoneId.systemDefault()), 1);
         subTask3 = new SubTask(7, "Саб3", "-", 1);
         subTask4 = new SubTask(8, "Саб4", "-", 1, ZonedDateTime.of(LocalDateTime.of(
-                2022, 1, 1, 0,0 ), ZoneId.systemDefault()), 1);
+                2022, 1, 1, 0, 0), ZoneId.systemDefault()), 1);
         tasks = new HashMap<>();
         subTasks = new HashMap<>();
         epics = new HashMap<>();
@@ -55,7 +55,7 @@ public class InMemoryHistoryManagerTest {
         task1 = null;
         ManagerNotFoundException exception = assertThrows(ManagerNotFoundException.class,
                 () -> manager.add(task1));
-        assertEquals("\nERROR -> [объект не передан]", exception.getMessage());
+        assertEquals(System.lineSeparator() + "ERROR -> [объект не передан]", exception.getMessage());
     }
 
     @Test
@@ -63,7 +63,7 @@ public class InMemoryHistoryManagerTest {
         subTask1 = null;
         ManagerNotFoundException exception = assertThrows(ManagerNotFoundException.class,
                 () -> manager.add(subTask1));
-        assertEquals("\nERROR -> [объект не передан]", exception.getMessage());
+        assertEquals(System.lineSeparator() + "ERROR -> [объект не передан]", exception.getMessage());
     }
 
     @Test
@@ -71,7 +71,7 @@ public class InMemoryHistoryManagerTest {
         epic1 = null;
         ManagerNotFoundException exception = assertThrows(ManagerNotFoundException.class,
                 () -> manager.add(epic1));
-        assertEquals("\nERROR -> [объект не передан]", exception.getMessage());
+        assertEquals(System.lineSeparator() + "ERROR -> [объект не передан]", exception.getMessage());
     }
 
     @Test
@@ -189,7 +189,7 @@ public class InMemoryHistoryManagerTest {
     public void shouldThrowExceptionWhenIncomingParameterIsNull() {
         ManagerNotFoundException exception = assertThrows(ManagerNotFoundException.class,
                 () -> manager.deleteAllTasksByType(null));
-        assertEquals("\nERROR -> [объект не передан]", exception.getMessage());
+        assertEquals(System.lineSeparator() + "ERROR -> [объект не передан]", exception.getMessage());
     }
 
     @Test

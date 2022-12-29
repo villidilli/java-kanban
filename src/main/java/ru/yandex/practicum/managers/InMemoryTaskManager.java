@@ -3,7 +3,6 @@ package ru.yandex.practicum.managers;
 import ru.yandex.practicum.tasks.*;
 
 import java.time.ZonedDateTime;
-
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -47,8 +46,8 @@ public class InMemoryTaskManager implements TaskManager {
                  * что новый объект не пересекается с другими задачами (иначе старый будет удалён,
                  * а новый не добавлен, если пересечение есть, поэтому старый объект пока не удаляем,
                  * а сохраняем в переменную и переходим к сравнению к другой задачей
+                 * если у задач в сравнении разные id и дата старта введена
                  */
-                // если у задач в сравнении разные id и дата старта введена,
             }
             if (!incomingStartTime.isEqual(UNREACHEBLE_DATE)) {
                 // проверяем на пересечения
@@ -59,7 +58,6 @@ public class InMemoryTaskManager implements TaskManager {
                 }
             }
         }
-        // после окончания итерации по сету taskToRemove != null, значит удаляем этот объект
         if (taskToRemove != null) {
             prioritizedTasks.remove(taskToRemove);
         }
