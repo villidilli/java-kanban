@@ -3,6 +3,7 @@ package ru.yandex.practicum.managers;
 import ru.yandex.practicum.tasks.*;
 
 import java.time.ZonedDateTime;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -53,7 +54,8 @@ public class InMemoryTaskManager implements TaskManager {
                 // проверяем на пересечения
                 if (!(incomingEndTime.isBefore(existingStartTime)
                         || incomingStartTime.isAfter(existingEndTime))) {
-                    throw new TimeValueException("\nERROR -> [Пересечение интервалов выполнения]");
+                    throw new TimeValueException(System.lineSeparator() +
+                            "ERROR -> [Пересечение интервалов выполнения]");
                 }
             }
         }
@@ -122,7 +124,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void create(Task newTask) {
         if (newTask == null) {
-            throw new ManagerNotFoundException("\nERROR -> [объект не передан]");
+            throw new ManagerNotFoundException(System.lineSeparator() + "ERROR -> [объект не передан]");
         }
         checkDuplicateAndIntersections(newTask);
         newTask.setID(generatorID);
@@ -134,14 +136,13 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void create(SubTask newSubTask) {
         if (newSubTask == null) {
-            throw new ManagerNotFoundException("\nERROR -> [объект не передан]");
+            throw new ManagerNotFoundException(System.lineSeparator() + "ERROR -> [объект не передан]");
         }
-
         Epic parentEpic = epics.get(newSubTask.getParentEpicID());
         if (parentEpic == null) {
-            throw new ManagerNotFoundException("\nERROR -> [не найден родительский объект с указанным ID]");
+            throw new ManagerNotFoundException(System.lineSeparator() +
+                    "ERROR -> [не найден родительский объект с указанным ID]");
         }
-
         try {
             checkDuplicateAndIntersections(newSubTask);
             newSubTask.setID(generatorID);
@@ -151,14 +152,14 @@ public class InMemoryTaskManager implements TaskManager {
             prioritizedTasks.add(newSubTask);
             generatorID++;
         } catch (TimeValueException e) {
-            throw new TimeValueException("\nERROR -> [Пересечение интервалов выполнения]");
+            throw new TimeValueException(System.lineSeparator() + "ERROR -> [Пересечение интервалов выполнения]");
         }
     }
 
     @Override
     public void create(Epic newEpic) {
         if (newEpic == null) {
-            throw new ManagerNotFoundException("\nERROR -> [объект не передан]");
+            throw new ManagerNotFoundException(System.lineSeparator() + "ERROR -> [объект не передан]");
         }
         newEpic.setID(generatorID);
         generatorID++;
@@ -168,14 +169,13 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void update(Task newTask) {
         if (newTask == null) {
-            throw new ManagerNotFoundException("\nERROR -> [объект не передан]");
+            throw new ManagerNotFoundException(System.lineSeparator() + "ERROR -> [объект не передан]");
         }
-
         Task currentTask = tasks.get(newTask.getID());
         if (currentTask == null) {
-            throw new ManagerNotFoundException("\nERROR -> [предыдущая версия задачи не найдена]");
+            throw new ManagerNotFoundException(System.lineSeparator() +
+                    "ERROR -> [предыдущая версия задачи не найдена]");
         }
-
         try {
             checkDuplicateAndIntersections(newTask);
             tasks.put(currentTask.getID(), newTask);
@@ -188,19 +188,17 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void update(SubTask newSubTask) {
         if (newSubTask == null) {
-            throw new ManagerNotFoundException("\nERROR -> [объект не передан]");
+            throw new ManagerNotFoundException(System.lineSeparator() + "ERROR -> [объект не передан]");
         }
-
         SubTask currentSubTask = subTasks.get(newSubTask.getID());
         if (currentSubTask == null) {
-            throw new ManagerNotFoundException("\nERROR -> [предыдущая версия задачи не найдена]");
+            throw new ManagerNotFoundException(System.lineSeparator() +
+                    "ERROR -> [предыдущая версия задачи не найдена]");
         }
-
         Epic parentEpic = epics.get(currentSubTask.getParentEpicID());
         if (parentEpic == null) {
-            throw new ManagerNotFoundException("\nERROR -> [родительский эпик не найден]");
+            throw new ManagerNotFoundException(System.lineSeparator() + "ERROR -> [родительский эпик не найден]");
         }
-
         try {
             checkDuplicateAndIntersections(newSubTask);
             parentEpic.getEpicSubTasks().put(currentSubTask.getID(), newSubTask);
@@ -215,14 +213,13 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void update(Epic newEpic) {
         if (newEpic == null) {
-            throw new ManagerNotFoundException("\nERROR -> [объект не передан]");
+            throw new ManagerNotFoundException(System.lineSeparator() + "ERROR -> [объект не передан]");
         }
-
         Epic currentEpic = epics.get(newEpic.getID());
         if (currentEpic == null) {
-            throw new ManagerNotFoundException("\nERROR -> [предыдущая версия задачи не найдена]");
+            throw new ManagerNotFoundException(System.lineSeparator() +
+                    "ERROR -> [предыдущая версия задачи не найдена]");
         }
-
         epics.put(currentEpic.getID(), newEpic);
         updateEpic(currentEpic.getID());
     }
@@ -273,7 +270,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task getTaskByID(int ID) {
         if (tasks.get(ID) == null) {
-            throw new ManagerNotFoundException("\nERROR -> [объект с указанным ID не найден]");
+            throw new ManagerNotFoundException(System.lineSeparator() + "ERROR -> [объект с указанным ID не найден]");
         }
         historyManager.add(tasks.get(ID));
         return tasks.get(ID);
@@ -282,7 +279,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public SubTask getSubTaskByID(int ID) {
         if (subTasks.get(ID) == null) {
-            throw new ManagerNotFoundException("\nERROR -> [объект с указанным ID не найден]");
+            throw new ManagerNotFoundException(System.lineSeparator() + "ERROR -> [объект с указанным ID не найден]");
         }
         historyManager.add(subTasks.get(ID));
         return subTasks.get(ID);
@@ -291,7 +288,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Epic getEpicByID(int ID) {
         if (epics.get(ID) == null) {
-            throw new ManagerNotFoundException("\nERROR -> [объект с указанным ID не найден]");
+            throw new ManagerNotFoundException(System.lineSeparator() + "ERROR -> [объект с указанным ID не найден]");
         }
         historyManager.add(epics.get(ID));
         return epics.get(ID);
@@ -301,7 +298,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteTaskByID(int ID) {
         Task task = tasks.get(ID);
         if (task == null) {
-            throw new ManagerNotFoundException("\nERROR -> [объект с указанным ID не найден]");
+            throw new ManagerNotFoundException(System.lineSeparator() + "ERROR -> [объект с указанным ID не найден]");
         }
         prioritizedTasks.remove(task);
         tasks.remove(ID);
@@ -312,12 +309,13 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteSubTaskByID(int ID) {
         SubTask subTask = subTasks.get(ID);
         if (subTask == null) {
-            throw new ManagerNotFoundException("\nERROR -> [объект с указанным ID не найден]");
+            throw new ManagerNotFoundException(System.lineSeparator() + "ERROR -> [объект с указанным ID не найден]");
         }
 
         Epic parentEpic = epics.get(subTask.getParentEpicID());
         if (parentEpic == null) {
-            throw new ManagerNotFoundException("\nERROR -> [родительский объект с указанным ID не найден]");
+            throw new ManagerNotFoundException(System.lineSeparator() +
+                    "ERROR -> [родительский объект с указанным ID не найден]");
         }
         HashMap<Integer, SubTask> epicSubTasks = parentEpic.getEpicSubTasks();
         epicSubTasks.remove(ID); //удаляем из эпика
@@ -331,7 +329,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteEpicByID(int ID) {
         Epic epic = epics.get(ID);
         if (epic == null) {
-            throw new ManagerNotFoundException("\nERROR -> [объект с указанным ID не найден]");
+            throw new ManagerNotFoundException(System.lineSeparator() + "ERROR -> [объект с указанным ID не найден]");
         }
         //удаляем из коллекции собтасков менеджера сабтаски, имеющие отношение к эпику
         epic.getEpicSubTasks()
@@ -351,7 +349,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public List<SubTask> getAllSubTasksByEpic(int ID) {
         if (epics.get(ID) == null) {
-            throw new ManagerNotFoundException("\nERROR -> [объект с указанным ID не найден]");
+            throw new ManagerNotFoundException(System.lineSeparator() + "ERROR -> [объект с указанным ID не найден]");
         }
         return new ArrayList<>(epics.get(ID).getEpicSubTasks().values());
     }

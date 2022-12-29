@@ -2,13 +2,15 @@ package ru.yandex.practicum.tasks;
 
 import ru.yandex.practicum.utils.TimeConverter;
 
-import java.time.*;
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Objects;
 
 public class Task {
     public static final ZonedDateTime UNREACHEBLE_DATE = ZonedDateTime.of(
-            LocalDateTime.of(9999, 1, 1, 0, 0),
-            ZoneId.systemDefault());
+            LocalDateTime.of(9999, 1, 1, 0, 0), ZoneId.systemDefault());
     private final TaskTypes taskType = TaskTypes.TASK;
     private int ID;
     private String name;

@@ -58,14 +58,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             fileData = Files.readString(file.toPath());
             rows = fileData.split(TaskConverter.LINE_SEPARATOR);
         } catch (IOException exception) {
-            throw new ManagerSaveException("ОТМЕНА ЧТЕНИЯ ИЗ ФАЙЛА -> " + file.getName().toUpperCase());
+            throw new ManagerSaveException(System.lineSeparator() +
+                    "ERROR -> [файл не прочитан]" + file.getName().toUpperCase());
         }
         return rows;
     }
 
     private void addTask(Task task) {
         if (task == null) {
-            throw new ManagerNotFoundException("\nERROR -> [объект не передан]");
+            throw new ManagerNotFoundException(System.lineSeparator() + "ERROR -> [объект не передан]");
         }
         int ID = task.getID();
         switch (task.getTaskType()) {
@@ -83,7 +84,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private void addSubTaskToEpic(SubTask subTask) {
         if (subTask == null) {
-            throw new ManagerNotFoundException("\nERROR -> [объект не передан]");
+            throw new ManagerNotFoundException(System.lineSeparator() + "ERROR -> [объект не передан]");
         }
         Epic epic = (Epic) getTask(subTask.getParentEpicID());
         epic.getEpicSubTasks().put(subTask.getID(), subTask);
@@ -102,7 +103,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private void updateGeneratorID(Task task) {
         if (task == null) {
-            throw new ManagerNotFoundException("\nERROR -> [объект не передан]");
+            throw new ManagerNotFoundException(System.lineSeparator() + "ERROR -> [объект не передан]");
         }
         if (generatorID <= task.getID()) {
             generatorID = task.getID() + 1;
@@ -115,7 +116,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         try {
             bufferedWriter.write(history);
         } catch (IOException exception) {
-            throw new ManagerSaveException("ОТМЕНА ЗАПИСИ В ФАЙЛ -> " + backupfile.getName().toUpperCase());
+            throw new ManagerSaveException(System.lineSeparator() +
+                    "ERROR -> [проблема записи в файл]" + backupfile.getName().toUpperCase());
         }
     }
 
@@ -127,7 +129,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 bufferedWriter.write(TaskConverter.taskToString(task));
                 bufferedWriter.newLine();
             } catch (IOException exception) {
-                throw new ManagerSaveException("ОТМЕНА ЗАПИСИ В ФАЙЛ -> " + backupfile.getName().toUpperCase());
+                throw new ManagerSaveException(System.lineSeparator() +
+                        "ERROR -> [проблема записи в файл]" + backupfile.getName().toUpperCase());
             }
         });
     }
@@ -149,8 +152,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             writeHistoryToFile(bufferedWriter, historyManager);
             bufferedWriter.flush();
         } catch (IOException exception) {
-            throw new ManagerSaveException(
-                    "Ошибка -> Не удалось сохранить объекты в файл" + backupfile.getName().toUpperCase());
+            throw new ManagerSaveException(System.lineSeparator() +
+                    "ERROR -> [объекты не сохранены]" + backupfile.getName().toUpperCase());
         }
     }
 

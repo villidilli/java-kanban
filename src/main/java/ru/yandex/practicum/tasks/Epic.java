@@ -7,7 +7,6 @@ public class Epic extends Task {
     private final HashMap<Integer, SubTask> epicSubTasks = new HashMap<>();
     private final TaskTypes taskType = TaskTypes.EPIC;
 
-
     public Epic(String name, String description) {
         super(name, description);
     }
