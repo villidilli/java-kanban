@@ -11,6 +11,8 @@ import java.time.ZonedDateTime;
 import java.util.Comparator;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static ru.yandex.practicum.managers.ManagerNotFoundException.*;
+import static ru.yandex.practicum.tasks.TimeValueException.INTERVAL_INTERSECTION;
 
 
 public abstract class TaskManagerTest<T extends TaskManager> {
@@ -79,7 +81,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         task1 = null;
         ManagerNotFoundException actualException = assertThrows(ManagerNotFoundException.class,
                 () -> manager.create(task1));
-        assertEquals(System.lineSeparator() + "ERROR -> [объект не передан]", actualException.getMessage());
+        assertEquals(NOT_TRANSFERRED_INPUT, actualException.getMessage());
     }
 
     @Test
@@ -108,14 +110,14 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         subTask1 = null;
         ManagerNotFoundException actualException = assertThrows(ManagerNotFoundException.class,
                 () -> manager.create(subTask1));
-        assertEquals(System.lineSeparator() + "ERROR -> [объект не передан]", actualException.getMessage());
+        assertEquals(NOT_TRANSFERRED_INPUT, actualException.getMessage());
     }
 
     @Test
     public void shouldThrowExceptionWhenNotCreateEpicBeforeCreateSubtask() {
         ManagerNotFoundException exception = assertThrows(ManagerNotFoundException.class,
                 () -> manager.create(subTask1));
-        assertEquals(System.lineSeparator() + "ERROR -> [не найден родительский объект с указанным ID]",
+        assertEquals(NOT_FOUND_PARENT,
                 exception.getMessage());
     }
 
@@ -143,7 +145,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         epic1 = null;
         ManagerNotFoundException actualException = assertThrows(ManagerNotFoundException.class,
                 () -> manager.create(epic1));
-        assertEquals(System.lineSeparator() + "ERROR -> [объект не передан]", actualException.getMessage());
+        assertEquals(NOT_TRANSFERRED_INPUT, actualException.getMessage());
     }
 
     @Test
@@ -194,14 +196,14 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         task1 = null;
         ManagerNotFoundException actualException = assertThrows(ManagerNotFoundException.class,
                 () -> manager.update(task1));
-        assertEquals(System.lineSeparator() + "ERROR -> [объект не передан]", actualException.getMessage());
+        assertEquals(NOT_TRANSFERRED_INPUT, actualException.getMessage());
     }
 
     @Test
     public void shouldThrowExceptionWhenUpdateIfTaskBeforeNotCreated() {
         ManagerNotFoundException exception = assertThrows(ManagerNotFoundException.class,
                 () -> manager.update(task1));
-        assertEquals(System.lineSeparator() + "ERROR -> [предыдущая версия задачи не найдена]",
+        assertEquals(NOT_FOUND_PREV_VERSION,
                 exception.getMessage());
     }
 
@@ -236,7 +238,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         subTask1 = null;
         ManagerNotFoundException actualException = assertThrows(ManagerNotFoundException.class,
                 () -> manager.update(subTask1));
-        assertEquals(System.lineSeparator() + "ERROR -> [объект не передан]", actualException.getMessage());
+        assertEquals(NOT_TRANSFERRED_INPUT, actualException.getMessage());
     }
 
     @Test
@@ -244,8 +246,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         manager.create(epic1);
         ManagerNotFoundException actualException = assertThrows(ManagerNotFoundException.class,
                 () -> manager.update(subTask1));
-        assertEquals(System.lineSeparator() + "ERROR -> [предыдущая версия задачи не найдена]",
-                actualException.getMessage());
+        assertEquals(NOT_FOUND_PREV_VERSION, actualException.getMessage());
     }
 
     @Test
@@ -277,15 +278,14 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         epic1 = null;
         ManagerNotFoundException actualException = assertThrows(ManagerNotFoundException.class,
                 () -> manager.update(epic1));
-        assertEquals(System.lineSeparator() + "ERROR -> [объект не передан]", actualException.getMessage());
+        assertEquals(NOT_TRANSFERRED_INPUT, actualException.getMessage());
     }
 
     @Test
     public void shouldThrowExceptionWhenUpdateEpicIfBeforeIsNull() {
         ManagerNotFoundException actualException = assertThrows(ManagerNotFoundException.class,
                 () -> manager.update(epic1));
-        assertEquals(System.lineSeparator() + "ERROR -> [предыдущая версия задачи не найдена]",
-                actualException.getMessage());
+        assertEquals(NOT_FOUND_PREV_VERSION, actualException.getMessage());
     }
 
     @Test
@@ -521,8 +521,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     public void shouldThrowExceptionWhenGetTaskByIdIfTaskNotCreated() {
         ManagerNotFoundException exception = assertThrows(ManagerNotFoundException.class,
                 () -> manager.getTaskByID(task1.getID()));
-        assertEquals(System.lineSeparator() + "ERROR -> [объект с указанным ID не найден]",
-                exception.getMessage());
+        assertEquals(NOT_FOUND_BY_ID, exception.getMessage());
     }
 
     @Test
@@ -530,8 +529,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         manager.create(task1);
         ManagerNotFoundException exception = assertThrows(ManagerNotFoundException.class,
                 () -> manager.getTaskByID(55555));
-        assertEquals(System.lineSeparator() + "ERROR -> [объект с указанным ID не найден]",
-                exception.getMessage());
+        assertEquals(NOT_FOUND_BY_ID, exception.getMessage());
     }
 
     @Test
@@ -545,8 +543,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     public void shouldThrowExceptionWhenGetSubtaskByIdIfSubtaskNotCreated() {
         ManagerNotFoundException exception = assertThrows(ManagerNotFoundException.class,
                 () -> manager.getSubTaskByID(subTask1.getID()));
-        assertEquals(System.lineSeparator() + "ERROR -> [объект с указанным ID не найден]",
-                exception.getMessage());
+        assertEquals(NOT_FOUND_BY_ID, exception.getMessage());
     }
 
     @Test
@@ -555,8 +552,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         manager.create(subTask1);
         ManagerNotFoundException exception = assertThrows(ManagerNotFoundException.class,
                 () -> manager.getSubTaskByID(55555));
-        assertEquals(System.lineSeparator() + "ERROR -> [объект с указанным ID не найден]",
-                exception.getMessage());
+        assertEquals(NOT_FOUND_BY_ID, exception.getMessage());
     }
 
     @Test
@@ -569,8 +565,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     public void shouldThrowExceptionWhenGetEpicByIdIfEpicNotCreated() {
         ManagerNotFoundException exception = assertThrows(ManagerNotFoundException.class,
                 () -> manager.getEpicByID(epic1.getID()));
-        assertEquals(System.lineSeparator() + "ERROR -> [объект с указанным ID не найден]",
-                exception.getMessage());
+        assertEquals(NOT_FOUND_BY_ID, exception.getMessage());
     }
 
     @Test
@@ -578,8 +573,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         manager.create(epic1);
         ManagerNotFoundException exception = assertThrows(ManagerNotFoundException.class,
                 () -> manager.getEpicByID(55555));
-        assertEquals(System.lineSeparator() + "ERROR -> [объект с указанным ID не найден]",
-                exception.getMessage());
+        assertEquals(NOT_FOUND_BY_ID, exception.getMessage());
     }
 
     @Test
@@ -588,8 +582,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         manager.deleteTaskByID(task1.getID());
         ManagerNotFoundException exception = assertThrows(ManagerNotFoundException.class,
                 () -> manager.getTaskByID(task1.getID()));
-        assertEquals(System.lineSeparator() + "ERROR -> [объект с указанным ID не найден]",
-                exception.getMessage());
+        assertEquals(NOT_FOUND_BY_ID, exception.getMessage());
     }
 
     @Test
@@ -597,8 +590,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         manager.create(task1);
         ManagerNotFoundException exception = assertThrows(ManagerNotFoundException.class,
                 () -> manager.deleteTaskByID(55555));
-        assertEquals(System.lineSeparator() + "ERROR -> [объект с указанным ID не найден]",
-                exception.getMessage());
+        assertEquals(NOT_FOUND_BY_ID, exception.getMessage());
     }
 
     @Test
@@ -615,8 +607,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         manager.deleteSubTaskByID(subTask1.getID());
         ManagerNotFoundException exception = assertThrows(ManagerNotFoundException.class,
                 () -> manager.getSubTaskByID(subTask1.getID()));
-        assertEquals(System.lineSeparator() + "ERROR -> [объект с указанным ID не найден]",
-                exception.getMessage());
+        assertEquals(NOT_FOUND_BY_ID, exception.getMessage());
     }
 
     @Test
@@ -625,8 +616,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         manager.create(subTask1);
         ManagerNotFoundException exception = assertThrows(ManagerNotFoundException.class,
                 () -> manager.deleteTaskByID(55555));
-        assertEquals(System.lineSeparator() + "ERROR -> [объект с указанным ID не найден]",
-                exception.getMessage());
+        assertEquals(NOT_FOUND_BY_ID, exception.getMessage());
     }
 
     @Test
@@ -676,8 +666,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         manager.deleteEpicByID(epic1.getID());
         ManagerNotFoundException exception = assertThrows(ManagerNotFoundException.class,
                 () -> manager.getEpicByID(epic1.getID()));
-        assertEquals(System.lineSeparator() + "ERROR -> [объект с указанным ID не найден]",
-                exception.getMessage());
+        assertEquals(NOT_FOUND_BY_ID, exception.getMessage());
     }
 
     @Test
@@ -685,8 +674,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         manager.create(epic1);
         ManagerNotFoundException exception = assertThrows(ManagerNotFoundException.class,
                 () -> manager.deleteEpicByID(55555));
-        assertEquals(System.lineSeparator() + "ERROR -> [объект с указанным ID не найден]",
-                exception.getMessage());
+        assertEquals(NOT_FOUND_BY_ID, exception.getMessage());
     }
 
     @Test
@@ -696,8 +684,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         manager.deleteEpicByID(epic1.getID());
         ManagerNotFoundException exception = assertThrows(ManagerNotFoundException.class,
                 () -> manager.getSubTaskByID(subTask1.getID()));
-        assertEquals(System.lineSeparator() + "ERROR -> [объект с указанным ID не найден]",
-                exception.getMessage());
+        assertEquals(NOT_FOUND_BY_ID, exception.getMessage());
     }
 
     @Test
@@ -715,8 +702,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         manager.create(subTask2);
         ManagerNotFoundException exception = assertThrows(ManagerNotFoundException.class,
                 () -> manager.getAllSubTasksByEpic(55555));
-        assertEquals(System.lineSeparator() + "ERROR -> [объект с указанным ID не найден]",
-                exception.getMessage());
+        assertEquals(NOT_FOUND_BY_ID, exception.getMessage());
     }
 
     @Test
@@ -777,8 +763,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         manager.create(task1);
         TimeValueException exception = assertThrows(TimeValueException.class,
                 () -> manager.create(subTask4));
-        assertEquals(System.lineSeparator() + "ERROR -> [Пересечение интервалов выполнения]",
-                exception.getMessage());
+        assertEquals(INTERVAL_INTERSECTION, exception.getMessage());
     }
 
     @Test

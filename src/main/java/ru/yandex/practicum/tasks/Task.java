@@ -77,7 +77,7 @@ public class Task {
 
     public void setDuration(long minutes) {
         if (minutes <= 0) {
-            throw new TimeValueException("Значение продолжительности должно быть больше 0");
+            throw new TimeValueException(TimeValueException.POSITIVE_DURATION);
         }
         duration = Duration.ofMinutes(minutes);
     }

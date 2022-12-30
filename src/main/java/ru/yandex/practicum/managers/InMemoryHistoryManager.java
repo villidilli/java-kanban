@@ -60,7 +60,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     @Override
     public void deleteAllTasksByType(Map<Integer, ? extends Task> tasks) {
         if (tasks == null) {
-            throw new ManagerNotFoundException(System.lineSeparator() + "ERROR -> [объект не передан]");
+            throw new ManagerNotFoundException(ManagerNotFoundException.NOT_TRANSFERRED_INPUT);
         }
         tasks.keySet().forEach(taskID -> removeNode(history.get(taskID)));
     }
@@ -73,7 +73,7 @@ public class InMemoryHistoryManager implements HistoryManager {
     @Override
     public void add(Task task) {
         if (task == null) {
-            throw new ManagerNotFoundException(System.lineSeparator() + "ERROR -> [объект не передан]");
+            throw new ManagerNotFoundException(ManagerNotFoundException.NOT_TRANSFERRED_INPUT);
         }
         remove(task.getID()); //удаляет старую ноду, чтобы в связке не было дублей-ссылок
         linkLast(task);

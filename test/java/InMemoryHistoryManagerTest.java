@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static ru.yandex.practicum.managers.ManagerNotFoundException.NOT_TRANSFERRED_INPUT;
 
 public class InMemoryHistoryManagerTest {
     private static Map<Integer, Task> tasks;
@@ -55,7 +56,7 @@ public class InMemoryHistoryManagerTest {
         task1 = null;
         ManagerNotFoundException exception = assertThrows(ManagerNotFoundException.class,
                 () -> manager.add(task1));
-        assertEquals(System.lineSeparator() + "ERROR -> [объект не передан]", exception.getMessage());
+        assertEquals(NOT_TRANSFERRED_INPUT, exception.getMessage());
     }
 
     @Test
@@ -63,7 +64,7 @@ public class InMemoryHistoryManagerTest {
         subTask1 = null;
         ManagerNotFoundException exception = assertThrows(ManagerNotFoundException.class,
                 () -> manager.add(subTask1));
-        assertEquals(System.lineSeparator() + "ERROR -> [объект не передан]", exception.getMessage());
+        assertEquals(NOT_TRANSFERRED_INPUT, exception.getMessage());
     }
 
     @Test
@@ -71,7 +72,7 @@ public class InMemoryHistoryManagerTest {
         epic1 = null;
         ManagerNotFoundException exception = assertThrows(ManagerNotFoundException.class,
                 () -> manager.add(epic1));
-        assertEquals(System.lineSeparator() + "ERROR -> [объект не передан]", exception.getMessage());
+        assertEquals(NOT_TRANSFERRED_INPUT, exception.getMessage());
     }
 
     @Test
@@ -189,7 +190,7 @@ public class InMemoryHistoryManagerTest {
     public void shouldThrowExceptionWhenIncomingParameterIsNull() {
         ManagerNotFoundException exception = assertThrows(ManagerNotFoundException.class,
                 () -> manager.deleteAllTasksByType(null));
-        assertEquals(System.lineSeparator() + "ERROR -> [объект не передан]", exception.getMessage());
+        assertEquals(NOT_TRANSFERRED_INPUT, exception.getMessage());
     }
 
     @Test
