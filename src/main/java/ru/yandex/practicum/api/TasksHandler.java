@@ -64,7 +64,9 @@ public class TasksHandler implements HttpHandler {
             }
             throw new HttpServerException(HttpServerException.UNKNOWN_ENDPOINT);
         }
-        //todo Описать POST
+        if (method == Methods.POST && pathParts.length == 3) {
+            
+        }
         throw new HttpServerException(HttpServerException.UNKNOWN_REQUEST_METHOD);
     }
 
