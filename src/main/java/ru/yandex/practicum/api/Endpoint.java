@@ -1,4 +1,4 @@
-package ru.yandex.practicum.utils;
+package ru.yandex.practicum.api;
 
 public enum Endpoint {
     GET_ALL_TASKS,
@@ -19,5 +19,5 @@ public enum Endpoint {
     POST_TASK,
     POST_SUBTASK,
     POST_EPIC,
-    UNKNOWN;
+    UNKNOWN
 }

@@ -5,7 +5,7 @@ import java.time.ZonedDateTime;
 public class SubTask extends Task {
 
     private final int parentEpicID;
-    private final TaskTypes taskType = TaskTypes.SUBTASK;
+//    private final TaskTypes taskType = TaskTypes.SUBTASK;
 
     public SubTask(String name, String description, int parentEpicID) {
         super(name, description);
