@@ -12,7 +12,7 @@ public class Task {
     public static final ZonedDateTime UNREACHEBLE_DATE = ZonedDateTime.of(
             LocalDateTime.of(9999, 1, 1, 0, 0), ZoneId.systemDefault());
 //    private final TaskTypes taskType = TaskTypes.TASK;
-    TaskTypes taskType = TaskTypes.TASK;
+    protected TaskTypes taskType = TaskTypes.TASK;
     private int ID;
     private String name;
     private String description;
