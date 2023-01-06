@@ -16,21 +16,30 @@ public class TaskJsonDeserializer implements JsonDeserializer<Task> {
             .serializeNulls()
             .registerTypeAdapter(Status.class, new TaskStatusAdapter())
             .registerTypeAdapter(ZonedDateTime.class, new TimeConverter())
-            .registerTypeAdapter(Long.class, new DurationConverter())
+            .registerTypeAdapter(Duration.class, new DurationConverter())
             .create();
 
     @Override
     public Task deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
-
             JsonObject object = json.getAsJsonObject();
-            int ID = object.get("id").getAsInt();
-            String name = object.get("name").getAsString();
-            String description = object.get("description").getAsString();
-            Status status = gson.fromJson(object.get("status"), Status.class);
-            ZonedDateTime startDateTime = gson.fromJson(object.get("startDateTime"), ZonedDateTime.class);
-            Long duration = gson.fromJson(object.get("duration"), Long.class);
+            JsonElement id = object.get("id");
+            JsonElement name = object.get("name");
+            JsonElement description = object.get("description");
+            JsonElement status = object.get("status");
+            JsonElement startDateTime = object.get("startDateTime");
+            JsonElement duration = object.get("duration");
 
-
-        return new Task(ID, name, description, status, startDateTime, duration );
+            if (name == null || description == null) {
+                throw new JsonParseException("Необходимо установить значение name и description");
+            }
+            Task task = new Task(name.getAsString(), description.getAsString());
+            if (id != null) task.setID(id.getAsInt());
+            if (status != null) task.setStatus(gson.fromJson(status, Status.class));
+            if (startDateTime != null) task.setStartTime(gson.fromJson(startDateTime, ZonedDateTime.class));
+            if (duration.getAsLong() != 0) task.setDuration(gson.fromJson(duration, Duration.class).toMinutes());
+            return task;
     }
+
+
+
 }

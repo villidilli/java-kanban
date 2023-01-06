@@ -31,8 +31,10 @@ public class TimeConverter extends TypeAdapter<ZonedDateTime>{
 
     @Override
     public void write(final JsonWriter jsonWriter, final ZonedDateTime zonedDateTime) throws IOException {
-
-            jsonWriter.value(zonedDateTime.format(ZONED_DATE_TIME_FORMATTER));
+        if (zonedDateTime == UNREACHEBLE_DATE) {
+            jsonWriter.nullValue();
+        }
+        jsonWriter.value(zonedDateTime.format(ZONED_DATE_TIME_FORMATTER));
 
 
     }

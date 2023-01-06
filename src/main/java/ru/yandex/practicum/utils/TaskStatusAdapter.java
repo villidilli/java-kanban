@@ -27,6 +27,7 @@ public class TaskStatusAdapter extends TypeAdapter<Status> {
         if (status.equals("done")) {
             return Status.DONE;
         }
+
        return Status.NEW;
     }
 }

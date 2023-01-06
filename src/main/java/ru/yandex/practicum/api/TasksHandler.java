@@ -37,9 +37,12 @@ public class TasksHandler implements HttpHandler {
         gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .serializeNulls()
-                .registerTypeAdapter(ZonedDateTime.class, new TimeConverter())
-                .registerTypeAdapter(Duration.class, new DurationConverter())
-//                .registerTypeAdapter(Task.class, new TaskJsonDeserializer())
+//                .registerTypeAdapter(ZonedDateTime.class, new TimeConverter())
+//                .registerTypeAdapter(Duration.class, new DurationConverter())
+                .registerTypeAdapter(Task.class, new TaskJsonSerilizer())
+                .registerTypeAdapter(Task.class, new TaskJsonDeserializer())
+                .registerTypeAdapter(SubTask.class, new SubtaskJsonDeserializer())
+                .registerTypeAdapter(Epic.class, new EpicJsonDeserializer())
                 .create();
         manager = backedManager;
     }
@@ -277,11 +280,9 @@ public class TasksHandler implements HttpHandler {
         System.out.println("Запущен обработчик handleCreateTask");
         System.out.println(body);
         Task task = gson.fromJson(body, Task.class);
-        System.out.println(task);
         manager.create(task);
-
-
-
+        System.out.println(manager.getTaskByID(task.getID()));
+        writeResponse(gson.toJson(task), 200);
     }
 
     private void handleUpdateTask() throws IOException {
