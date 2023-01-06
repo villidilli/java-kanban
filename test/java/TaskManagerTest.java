@@ -403,7 +403,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         manager.create(task2);
         manager.deleteAllTasks();
         long actualValue = manager.getPrioritizedTasks().stream()
-                .filter(task -> task.getTaskType() == TaskTypes.TASK)
+                .filter(task -> task.getType() == TaskTypes.TASK)
                 .count();
         assertEquals(0, actualValue);
     }
@@ -418,7 +418,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     public void shouldReturnEmptyPrioritizedListWhenAllTasksDeletedButTasksNotCreatedBefore() {
         manager.deleteAllTasks();
         long actualValue = manager.getPrioritizedTasks().stream()
-                .filter(task -> task.getTaskType() == TaskTypes.TASK)
+                .filter(task -> task.getType() == TaskTypes.TASK)
                 .count();
         assertEquals(0, actualValue);
     }
@@ -439,7 +439,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
         manager.create(subTask2);
         manager.deleteAllSubTasks();
         long actualValue = manager.getPrioritizedTasks().stream()
-                .filter(subtask -> subtask.getTaskType() == TaskTypes.SUBTASK)
+                .filter(subtask -> subtask.getType() == TaskTypes.SUBTASK)
                 .count();
         assertEquals(0, actualValue);
     }
@@ -454,7 +454,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
     public void shouldReturnEmptyPrioritizedListWhenAllSubtasksDeletedButSubtasksNotCreatedBefore() {
         manager.deleteAllSubTasks();
         long actualValue = manager.getPrioritizedTasks().stream()
-                .filter(subtask -> subtask.getTaskType() == TaskTypes.SUBTASK)
+                .filter(subtask -> subtask.getType() == TaskTypes.SUBTASK)
                 .count();
         assertEquals(0, actualValue);
     }

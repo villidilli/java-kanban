@@ -68,7 +68,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             throw new ManagerNotFoundException(ManagerNotFoundException.NOT_TRANSFERRED_INPUT);
         }
         int ID = task.getID();
-        switch (task.getTaskType()) {
+        switch (task.getType()) {
             case TASK:
                 tasks.put(ID, task);
                 break;

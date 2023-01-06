@@ -64,7 +64,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     private void deleteAllTaskFromPrioritizedTasks(TaskTypes type) {
         prioritizedTasks.stream()
-                .filter(task -> task.getTaskType() == type)
+                .filter(task -> task.getType() == type)
                 .collect(Collectors.toList())
                 .forEach(prioritizedTasks::remove);
     }

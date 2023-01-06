@@ -12,7 +12,7 @@ public class TaskConverter {
 
     public static String taskToString(Task task) {
         return task.getID() + "," +
-                task.getTaskType().name() + "," +
+                task.getType().name() + "," +
                 task.getName() + "," +
                 task.getStatus() + "," +
                 task.getDescription() + "," +

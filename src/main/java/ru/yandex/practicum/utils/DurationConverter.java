@@ -7,22 +7,18 @@ import com.google.gson.stream.JsonWriter;
 import java.io.IOException;
 import java.time.Duration;
 
-public class DurationConverter extends TypeAdapter<Duration> {
+public class DurationConverter extends TypeAdapter<Long> {
     public static long durationFromString(String duration) {
         return Long.parseLong(duration);
     }
 
     @Override
-    public void write(JsonWriter jsonWriter, Duration duration) throws IOException {
-        jsonWriter.value(duration.toMinutes());
+    public void write(JsonWriter jsonWriter, Long duration) throws IOException {
+        jsonWriter.value(duration);
     }
 
     @Override
-    public Duration read(JsonReader jsonReader) throws IOException {
-        int duration = Integer.parseInt(jsonReader.nextString());
-        if (duration == 0) {
-            return Duration.ZERO;
-        }
-        return Duration.ofMinutes(Long.parseLong(jsonReader.nextString()));
+    public Long read(JsonReader jsonReader) throws IOException {
+        return Long.parseLong(jsonReader.nextString());
     }
 }

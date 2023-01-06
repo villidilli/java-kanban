@@ -9,22 +9,22 @@ public class Epic extends Task {
 
     public Epic(String name, String description) {
         super(name, description);
-        this.taskType = TaskTypes.EPIC;
+        this.type = TaskTypes.EPIC;
     }
 
     public Epic(int ID, String name, String description) {
         super(ID, name, description);
-        this.taskType = TaskTypes.EPIC;
+        this.type = TaskTypes.EPIC;
     }
 
     public Epic(int ID, String name, String description, Status status) {
         super(ID, name, description, status);
-        this.taskType = TaskTypes.EPIC;
+        this.type = TaskTypes.EPIC;
     }
 
     public Epic(int ID, String name, String description, Status status, ZonedDateTime startDateTime, long duration) {
         super(ID, name, description, status, startDateTime, duration);
-        this.taskType = TaskTypes.EPIC;
+        this.type = TaskTypes.EPIC;
     }
 
     public HashMap<Integer, SubTask> getEpicSubTasks() {
@@ -32,8 +32,8 @@ public class Epic extends Task {
     }
 
     @Override
-    public TaskTypes getTaskType() {
-        return taskType;
+    public TaskTypes getType() {
+        return type;
     }
 
     @Override

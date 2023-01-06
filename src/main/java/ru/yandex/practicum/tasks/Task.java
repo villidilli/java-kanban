@@ -12,7 +12,7 @@ public class Task {
     public static final ZonedDateTime UNREACHEBLE_DATE = ZonedDateTime.of(
             LocalDateTime.of(9999, 1, 1, 0, 0), ZoneId.systemDefault());
 //    private final TaskTypes taskType = TaskTypes.TASK;
-    protected TaskTypes taskType = TaskTypes.TASK;
+    protected TaskTypes type = TaskTypes.TASK;
     private int ID;
     private String name;
     private String description;
@@ -119,8 +119,8 @@ public class Task {
         this.description = description;
     }
 
-    public TaskTypes getTaskType() {
-        return taskType;
+    public TaskTypes getType() {
+        return type;
     }
 
     public Integer getParentEpicID() {
