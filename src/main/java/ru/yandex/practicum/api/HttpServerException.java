@@ -9,6 +9,7 @@ public class HttpServerException extends RuntimeException {
     public static final String IO_PROBLEM = "ERROR -> Проблема IO";
     public static final String ERROR404 = "ERROR -> 404 Запрашиваемый объект не найден";
     public static final String ERROR500 = "ERROR -> 500 Внутренняя ошибка сервера";
+    public static final String BODY_NULL_400 = "ERROR -> 400 Тело запроса пустое";
     public HttpServerException(String message) {
         super(message);
     }

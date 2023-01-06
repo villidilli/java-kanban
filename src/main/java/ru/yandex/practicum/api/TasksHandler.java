@@ -5,23 +5,20 @@ import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import ru.yandex.practicum.managers.ManagerNotFoundException;
 import ru.yandex.practicum.managers.TaskManager;
-import ru.yandex.practicum.tasks.Task;
-import ru.yandex.practicum.utils.DurationConverter;
-import ru.yandex.practicum.utils.HttpConverter;
-import ru.yandex.practicum.utils.TimeConverter;
+import ru.yandex.practicum.tasks.*;
+import ru.yandex.practicum.utils.*;
+
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.ZonedDateTime;
-import java.util.Set;
 
 import static ru.yandex.practicum.api.Endpoint.*;
-import static ru.yandex.practicum.api.HttpStatusCode.*;
+import static ru.yandex.practicum.api.HttpStatusCode.REQUEST_BODY_NULL;
 
 public class TasksHandler implements HttpHandler {
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
@@ -32,6 +29,7 @@ public class TasksHandler implements HttpHandler {
     private HttpExchange exchange;
     private URI url;
     private HttpMethod method;
+    private JsonElement body;
 
 
     public TasksHandler(TaskManager backedManager) {
@@ -50,6 +48,8 @@ public class TasksHandler implements HttpHandler {
         this.exchange = exchange;
         url = exchange.getRequestURI();
         method = HttpConverter.getEnumMethod(exchange.getRequestMethod());
+        body = JsonParser.parseString(new String(exchange.getRequestBody().readAllBytes()));
+
         Endpoint endpoint = getEndpoint(url, method);
 
         switch (endpoint) {
@@ -228,26 +228,26 @@ public class TasksHandler implements HttpHandler {
 
     private void handleDeleteAllTasks() throws IOException {
         manager.deleteAllTasks();
-        writeResponse(gson.toJson(HttpStatusCode.DELETE200.getMessage()), 200);
+        writeResponse(gson.toJson(HttpStatusCode.DELETE_ACCEPT.getMessage()), 200);
     }
 
     private void handleDeleteAllSubtasks() throws IOException {
         manager.deleteAllSubTasks();
-        writeResponse(gson.toJson(HttpStatusCode.DELETE200.getMessage()), 200);
+        writeResponse(gson.toJson(HttpStatusCode.DELETE_ACCEPT.getMessage()), 200);
     }
 
     private void handleDeleteAllEpics() throws IOException {
         manager.deleteAllEpics();
-        writeResponse(gson.toJson(HttpStatusCode.DELETE200.getMessage()), 200);
+        writeResponse(gson.toJson(HttpStatusCode.DELETE_ACCEPT.getMessage()), 200);
     }
 
     private void handleDeleteTaskByID() throws IOException {
         int id = getParameterID(url);
         try {
             manager.deleteTaskByID(id);
-            writeResponse(gson.toJson(HttpStatusCode.DELETE200.getMessage()), 200);
+            writeResponse(gson.toJson(HttpStatusCode.DELETE_ACCEPT.getMessage()), 200);
         } catch (ManagerNotFoundException e) {
-            writeResponse(gson.toJson(HttpStatusCode.ERROR404.getMessage()), 404);
+            writeResponse(gson.toJson(HttpStatusCode.NOT_FOUND.getMessage()), 404);
         }
     }
 
@@ -255,9 +255,9 @@ public class TasksHandler implements HttpHandler {
         int id = getParameterID(url);
         try {
             manager.deleteSubTaskByID(id);
-            writeResponse(gson.toJson(HttpStatusCode.DELETE200.getMessage()), 200);
+            writeResponse(gson.toJson(HttpStatusCode.DELETE_ACCEPT.getMessage()), 200);
         } catch (ManagerNotFoundException e) {
-            writeResponse(gson.toJson(HttpStatusCode.ERROR404.getMessage()), 404);
+            writeResponse(gson.toJson(HttpStatusCode.NOT_FOUND.getMessage()), 404);
         }
     }
 
@@ -265,37 +265,39 @@ public class TasksHandler implements HttpHandler {
         int id = getParameterID(url);
         try {
             manager.deleteEpicByID(id);
-            writeResponse(gson.toJson(HttpStatusCode.DELETE200.getMessage()), 200);
+            writeResponse(gson.toJson(HttpStatusCode.DELETE_ACCEPT.getMessage()), 200);
         } catch (ManagerNotFoundException e) {
-            writeResponse(gson.toJson(HttpStatusCode.ERROR404.getMessage()), 404);
+            writeResponse(gson.toJson(HttpStatusCode.NOT_FOUND.getMessage()), 404);
         }
     }
 
     private void handleCreateTask() throws IOException{
-        System.out.println(getJsonElement() == null);
         System.out.println("Запущен обработчик handleCreateTask");
+        if (body == null) {
+            writeResponse(gson.toJson(REQUEST_BODY_NULL.getMessage()), 400);
+            return;
+        }
+        JsonObject jsonObject = body.getAsJsonObject();
+        Task task = gson.fromJson(body, Task.class);
+
+        manager.create(task);
+        manager.getTaskByID(task.getID());
+
 
 
     }
 
     private void handleUpdateTask() throws IOException {
         System.out.println("Запущен обработчик handleUpdateTask");
+        System.out.println("шаг второй");
     }
 
     private boolean isHaveIdInBody() throws IOException {
-        JsonElement jsonElement = getJsonElement();
-        if (jsonElement == null || !jsonElement.isJsonObject() || !jsonElement.getAsJsonObject().has("id"))
+        if (body == null || !body.isJsonObject() || !body.getAsJsonObject().has("id"))
         {
             return false;
         }
         return true;
     }
 
-    private JsonElement getJsonElement() throws IOException {
-        try (InputStream is = exchange.getRequestBody()) {
-            String body = new String(is.readAllBytes(), DEFAULT_CHARSET);
-            JsonElement jsonElement = JsonParser.parseString(body);
-            return jsonElement;
-        }
-    }
 }
