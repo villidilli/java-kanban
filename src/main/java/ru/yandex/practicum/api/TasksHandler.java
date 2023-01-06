@@ -32,12 +32,14 @@ public class TasksHandler implements HttpHandler {
     private JsonElement body;
 
 
+
     public TasksHandler(TaskManager backedManager) {
         gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .serializeNulls()
                 .registerTypeAdapter(ZonedDateTime.class, new TimeConverter())
                 .registerTypeAdapter(Duration.class, new DurationConverter())
+//                .registerTypeAdapter(Task.class, new TaskJsonDeserializer())
                 .create();
         manager = backedManager;
     }
@@ -273,15 +275,10 @@ public class TasksHandler implements HttpHandler {
 
     private void handleCreateTask() throws IOException{
         System.out.println("Запущен обработчик handleCreateTask");
-        if (body == null) {
-            writeResponse(gson.toJson(REQUEST_BODY_NULL.getMessage()), 400);
-            return;
-        }
-        JsonObject jsonObject = body.getAsJsonObject();
+        System.out.println(body);
         Task task = gson.fromJson(body, Task.class);
-
+        System.out.println(task);
         manager.create(task);
-        manager.getTaskByID(task.getID());
 
 
 
@@ -293,11 +290,7 @@ public class TasksHandler implements HttpHandler {
     }
 
     private boolean isHaveIdInBody() throws IOException {
-        if (body == null || !body.isJsonObject() || !body.getAsJsonObject().has("id"))
-        {
-            return false;
-        }
-        return true;
+        return body != null && body.isJsonObject() && body.getAsJsonObject().has("id");
     }
 
 }

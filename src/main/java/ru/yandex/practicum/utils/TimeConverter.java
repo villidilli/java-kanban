@@ -31,19 +31,16 @@ public class TimeConverter extends TypeAdapter<ZonedDateTime>{
 
     @Override
     public void write(final JsonWriter jsonWriter, final ZonedDateTime zonedDateTime) throws IOException {
-        if (zonedDateTime == UNREACHEBLE_DATE) {
-            jsonWriter.nullValue();
-        } else {
+
             jsonWriter.value(zonedDateTime.format(ZONED_DATE_TIME_FORMATTER));
-        }
+
 
     }
 
     @Override
     public ZonedDateTime read(final JsonReader jsonReader) throws IOException {
-        if (jsonReader.nextString() == null) {
-            return UNREACHEBLE_DATE;
-        }
-        return ZonedDateTime.parse(jsonReader.nextString(), ZONED_DATE_TIME_FORMATTER);
+        ZonedDateTime zonedDateTime = ZonedDateTime.parse(jsonReader.nextString(), ZONED_DATE_TIME_FORMATTER);
+        System.out.println(zonedDateTime);
+        return zonedDateTime;
     }
 }
