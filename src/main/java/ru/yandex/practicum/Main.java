@@ -16,6 +16,13 @@ import java.time.ZonedDateTime;
 
 public class Main {
     public static void main(String[] args) {
+        try {
+            Servers.getHttpTaskServer().start();
+            Servers.getKVServer().start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
 //        TaskManager manager = new FileBackedTasksManager(new File("src/main/resources/Backup.csv"));
 //        Task task1 = new Task("Таск1", "-", ZonedDateTime.of(LocalDateTime.of(
 //                2022, 1, 1, 0, 0), ZoneId.systemDefault()), 1);
@@ -43,11 +50,6 @@ public class Main {
 
 
 
-        try {
-            Servers.getHttpTaskServer().start();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
 
     }
 }

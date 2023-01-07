@@ -21,7 +21,8 @@ public class HttpTaskServer {
 
     public void start() {
         server.start();
-        System.out.println("Сервер запущен на " + PORT + " порту!");
+        System.out.println("[" + this.getClass().getSimpleName() + "] запущен на порту [" + PORT + "]");
+
     }
 
 
