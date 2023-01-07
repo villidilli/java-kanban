@@ -122,7 +122,7 @@ public class TasksHandler implements HttpHandler {
         return Integer.parseInt(url.getQuery().substring(START_INDEX_ID));
     }
 
-    private Endpoint getEndpoint(URI url, HttpMethod method) throws IOException {
+    private Endpoint getEndpoint(URI url, HttpMethod method) {
         String[] pathParts = url.getPath().split(PATH_PARTS_SEPARATOR);
         boolean isHaveID = url.getQuery() != null;
 
@@ -352,7 +352,7 @@ public class TasksHandler implements HttpHandler {
 
     }
 
-    private boolean isHaveIdInBody() throws IOException {
+    private boolean isHaveIdInBody() {
         return body != null && body.isJsonObject() && body.getAsJsonObject().has("id");
     }
 }

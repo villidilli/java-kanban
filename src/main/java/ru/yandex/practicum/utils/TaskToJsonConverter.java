@@ -8,14 +8,14 @@ import java.lang.reflect.Type;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 
-import static ru.yandex.practicum.utils.TimeConverter.ZONED_DATE_TIME_FORMATTER;
+import static ru.yandex.practicum.utils.DateTimeConverter.ZONED_DATE_TIME_FORMATTER;
 
 public class TaskToJsonConverter implements JsonSerializer<Task>, JsonDeserializer<Task> {
     Gson gson = new GsonBuilder()
             .setPrettyPrinting()
             .serializeNulls()
             .registerTypeAdapter(Status.class, new TaskStatusAdapter())
-            .registerTypeAdapter(ZonedDateTime.class, new TimeConverter())
+            .registerTypeAdapter(ZonedDateTime.class, new DateTimeConverter())
             .registerTypeAdapter(Duration.class, new DurationConverter())
             .create();
 
@@ -36,7 +36,6 @@ public class TaskToJsonConverter implements JsonSerializer<Task>, JsonDeserializ
             object.add("startDateTime", new JsonPrimitive("--"));
         } else {
             object.add("startDateTime", new JsonPrimitive(task.getStartTime().format(ZONED_DATE_TIME_FORMATTER)));
-
         }
         object.add("duration", new JsonPrimitive(task.getDuration()));
         return object;

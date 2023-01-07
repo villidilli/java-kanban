@@ -9,14 +9,14 @@ import java.lang.reflect.Type;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 
-import static ru.yandex.practicum.utils.TimeConverter.ZONED_DATE_TIME_FORMATTER;
+import static ru.yandex.practicum.utils.DateTimeConverter.ZONED_DATE_TIME_FORMATTER;
 
 public class EpicToJsonConverter implements JsonSerializer<Epic>, JsonDeserializer<Epic> {
     Gson gson = new GsonBuilder()
             .setPrettyPrinting()
             .serializeNulls()
             .registerTypeAdapter(Status.class, new TaskStatusAdapter())
-            .registerTypeAdapter(ZonedDateTime.class, new TimeConverter())
+            .registerTypeAdapter(ZonedDateTime.class, new DateTimeConverter())
             .registerTypeAdapter(Duration.class, new DurationConverter())
             .create();
 

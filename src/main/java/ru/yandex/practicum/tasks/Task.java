@@ -1,6 +1,6 @@
 package ru.yandex.practicum.tasks;
 
-import ru.yandex.practicum.utils.TimeConverter;
+import ru.yandex.practicum.utils.DateTimeConverter;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -153,7 +153,7 @@ public class Task {
 
     public String printEndTime() {
         if (startTime != UNREACHEBLE_DATE && !duration.isZero()) {
-            return TimeConverter.dateTimeToString(getEndTime());
+            return DateTimeConverter.dateTimeToString(getEndTime());
         }
         return "--";
     }
@@ -169,6 +169,6 @@ public class Task {
         if (startTime == UNREACHEBLE_DATE) {
             return "--";
         }
-        return TimeConverter.dateTimeToString(startTime);
+        return DateTimeConverter.dateTimeToString(startTime);
     }
 }

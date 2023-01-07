@@ -1,7 +1,5 @@
 package ru.yandex.practicum.utils;
 
-import com.google.gson.JsonDeserializer;
-import com.google.gson.JsonSerializer;
 import ru.yandex.practicum.managers.HistoryManager;
 import ru.yandex.practicum.tasks.*;
 
@@ -19,7 +17,7 @@ public class TaskConverter {
                 task.getStatus() + "," +
                 task.getDescription() + "," +
                 task.getParentEpicID() + "," +
-                TimeConverter.dateTimeToString(task.getStartTime()) + "," +
+                DateTimeConverter.dateTimeToString(task.getStartTime()) + "," +
                 task.getDuration();
     }
 
@@ -46,7 +44,7 @@ public class TaskConverter {
         String name = fields[2];
         Status status = Status.valueOf(fields[3]);
         String description = fields[4];
-        ZonedDateTime startTime = TimeConverter.dateTimeFromString(fields[6]);
+        ZonedDateTime startTime = DateTimeConverter.dateTimeFromString(fields[6]);
         long duration = DurationConverter.durationFromString(fields[7]);
 
         switch (type) {
