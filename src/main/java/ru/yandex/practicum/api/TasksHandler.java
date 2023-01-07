@@ -10,7 +10,6 @@ import ru.yandex.practicum.utils.*;
 
 
 import java.io.IOException;
-import java.io.OutputStream;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -169,7 +168,7 @@ public class TasksHandler implements HttpHandler {
         return UNKNOWN;
     }
 
-    private void writeResponse(String responseString, int responseCode) throws IOException {
+    private void sendResponse(String responseString, int responseCode) throws IOException {
         if (responseString.isBlank()) {
             exchange.sendResponseHeaders(responseCode, 0);
             return;
@@ -182,83 +181,83 @@ public class TasksHandler implements HttpHandler {
     }
 
     private void handleGetAllTasks() throws IOException {
-        writeResponse(gson.toJson(manager.getAllTasks()), 200);
+        sendResponse(gson.toJson(manager.getAllTasks()), 200);
     }
 
     private void handleGetAllSubtasks() throws IOException {
-        writeResponse(gson.toJson(manager.getAllSubTasks()), 200);
+        sendResponse(gson.toJson(manager.getAllSubTasks()), 200);
     }
 
     private void handleGetAllEpics() throws IOException {
-        writeResponse(gson.toJson(manager.getAllEpics()), 200);
+        sendResponse(gson.toJson(manager.getAllEpics()), 200);
     }
 
     private void handleGetTaskByID() throws IOException {
         int id = getParameterID(url);
         try {
-            writeResponse(gson.toJson(manager.getTaskByID(id)), 200);
+            sendResponse(gson.toJson(manager.getTaskByID(id)), 200);
         } catch (ManagerNotFoundException e) {
-            writeResponse(gson.toJson(e.getMessage()), 404);
+            sendResponse(gson.toJson(e.getMessage()), 404);
         }
     }
 
     private void handleGetSubtaskByID() throws IOException {
         int id = getParameterID(url);
         try {
-            writeResponse(gson.toJson(manager.getSubTaskByID(id)), 200);
+            sendResponse(gson.toJson(manager.getSubTaskByID(id)), 200);
         } catch (ManagerNotFoundException e) {
-            writeResponse(gson.toJson(e.getMessage()), 404);
+            sendResponse(gson.toJson(e.getMessage()), 404);
         }
     }
 
     private void handleGetEpicByID() throws IOException {
         int id = getParameterID(url);
         try {
-            writeResponse(gson.toJson(manager.getEpicByID(id)), 200);
+            sendResponse(gson.toJson(manager.getEpicByID(id)), 200);
         } catch (ManagerNotFoundException e) {
-            writeResponse(gson.toJson(e.getMessage()), 404);
+            sendResponse(gson.toJson(e.getMessage()), 404);
         }
     }
 
     private void handleGetEpicSubtasks() throws IOException {
         int id = getParameterID(url);
         try {
-            writeResponse(gson.toJson(manager.getAllSubTasksByEpic(id)), 200);
+            sendResponse(gson.toJson(manager.getAllSubTasksByEpic(id)), 200);
         } catch (ManagerNotFoundException e) {
-            writeResponse(gson.toJson(e.getMessage()), 404);
+            sendResponse(gson.toJson(e.getMessage()), 404);
         }
     }
 
     private void handleGetPrioritizedTasks() throws IOException {
-        writeResponse(gson.toJson(manager.getPrioritizedTasks()), 200);
+        sendResponse(gson.toJson(manager.getPrioritizedTasks()), 200);
     }
 
     private void handleGetHistory() throws IOException {
-        writeResponse(gson.toJson(manager.getHistory()), 200);
+        sendResponse(gson.toJson(manager.getHistory()), 200);
     }
 
     private void handleDeleteAllTasks() throws IOException {
         manager.deleteAllTasks();
-        writeResponse(gson.toJson(HttpMessage.DELETE_ACCEPT.getMessage()), 200);
+        sendResponse(gson.toJson(HttpMessage.DELETE_ACCEPT.getMessage()), 200);
     }
 
     private void handleDeleteAllSubtasks() throws IOException {
         manager.deleteAllSubTasks();
-        writeResponse(gson.toJson(HttpMessage.DELETE_ACCEPT.getMessage()), 200);
+        sendResponse(gson.toJson(HttpMessage.DELETE_ACCEPT.getMessage()), 200);
     }
 
     private void handleDeleteAllEpics() throws IOException {
         manager.deleteAllEpics();
-        writeResponse(gson.toJson(HttpMessage.DELETE_ACCEPT.getMessage()), 200);
+        sendResponse(gson.toJson(HttpMessage.DELETE_ACCEPT.getMessage()), 200);
     }
 
     private void handleDeleteTaskByID() throws IOException {
         int id = getParameterID(url);
         try {
             manager.deleteTaskByID(id);
-            writeResponse(gson.toJson(HttpMessage.DELETE_ACCEPT.getMessage()), 200);
+            sendResponse(gson.toJson(HttpMessage.DELETE_ACCEPT.getMessage()), 200);
         } catch (ManagerNotFoundException e) {
-            writeResponse(gson.toJson(HttpMessage.NOT_FOUND.getMessage()), 404);
+            sendResponse(gson.toJson(HttpMessage.NOT_FOUND.getMessage()), 404);
         }
     }
 
@@ -266,9 +265,9 @@ public class TasksHandler implements HttpHandler {
         int id = getParameterID(url);
         try {
             manager.deleteSubTaskByID(id);
-            writeResponse(gson.toJson(HttpMessage.DELETE_ACCEPT.getMessage()), 200);
+            sendResponse(gson.toJson(HttpMessage.DELETE_ACCEPT.getMessage()), 200);
         } catch (ManagerNotFoundException e) {
-            writeResponse(gson.toJson(HttpMessage.NOT_FOUND.getMessage()), 404);
+            sendResponse(gson.toJson(HttpMessage.NOT_FOUND.getMessage()), 404);
         }
     }
 
@@ -276,9 +275,9 @@ public class TasksHandler implements HttpHandler {
         int id = getParameterID(url);
         try {
             manager.deleteEpicByID(id);
-            writeResponse(gson.toJson(HttpMessage.DELETE_ACCEPT.getMessage()), 200);
+            sendResponse(gson.toJson(HttpMessage.DELETE_ACCEPT.getMessage()), 200);
         } catch (ManagerNotFoundException e) {
-            writeResponse(gson.toJson(HttpMessage.NOT_FOUND.getMessage()), 404);
+            sendResponse(gson.toJson(HttpMessage.NOT_FOUND.getMessage()), 404);
         }
     }
 
@@ -287,9 +286,9 @@ public class TasksHandler implements HttpHandler {
         try {
             Task task = gson.fromJson(body, Task.class);
             manager.create(task);
-            writeResponse(gson.toJson(task), 200);
+            sendResponse(gson.toJson(task), 200);
         } catch (TimeValueException | JsonParseException e) {
-            writeResponse(e.getMessage(), 400);
+            sendResponse(e.getMessage(), 400);
         }
     }
 
@@ -298,9 +297,9 @@ public class TasksHandler implements HttpHandler {
         try {
             Task task = gson.fromJson(body, Task.class);
             manager.update(task);
-            writeResponse(gson.toJson(task), 200);
+            sendResponse(gson.toJson(task), 200);
         } catch (ManagerNotFoundException | TimeValueException | JsonParseException e) {
-            writeResponse(e.getMessage(), 400);
+            sendResponse(e.getMessage(), 400);
         }
 
     }
@@ -310,9 +309,9 @@ public class TasksHandler implements HttpHandler {
         try {
             SubTask subTask = gson.fromJson(body, SubTask.class);
             manager.create(subTask);
-            writeResponse(gson.toJson(subTask), 200);
+            sendResponse(gson.toJson(subTask), 200);
         } catch (TimeValueException | JsonParseException e) {
-            writeResponse(e.getMessage(), 400);
+            sendResponse(e.getMessage(), 400);
         }
     }
 
@@ -321,9 +320,9 @@ public class TasksHandler implements HttpHandler {
         try {
             SubTask subTask = gson.fromJson(body, SubTask.class);
             manager.update(subTask);
-            writeResponse(gson.toJson(subTask), 200);
+            sendResponse(gson.toJson(subTask), 200);
         } catch (ManagerNotFoundException | TimeValueException | JsonParseException e) {
-            writeResponse(e.getMessage(), 400);
+            sendResponse(e.getMessage(), 400);
         }
 
     }
@@ -333,9 +332,9 @@ public class TasksHandler implements HttpHandler {
         try {
             Epic epic = gson.fromJson(body, Epic.class);
             manager.create(epic);
-            writeResponse(gson.toJson(epic), 200);
+            sendResponse(gson.toJson(epic), 200);
         } catch (TimeValueException | JsonParseException e) {
-            writeResponse(e.getMessage(), 400);
+            sendResponse(e.getMessage(), 400);
         }
     }
 
@@ -344,9 +343,9 @@ public class TasksHandler implements HttpHandler {
         try {
             Epic epic = gson.fromJson(body, Epic.class);
             manager.update(epic);
-            writeResponse(gson.toJson(epic), 200);
+            sendResponse(gson.toJson(epic), 200);
         } catch (ManagerNotFoundException | TimeValueException | JsonParseException e) {
-            writeResponse(e.getMessage(), 400);
+            sendResponse(e.getMessage(), 400);
         }
 
     }
