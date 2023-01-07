@@ -1,5 +1,7 @@
 package ru.yandex.practicum.utils;
 
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonSerializer;
 import ru.yandex.practicum.managers.HistoryManager;
 import ru.yandex.practicum.tasks.*;
 

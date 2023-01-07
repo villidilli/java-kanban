@@ -42,7 +42,6 @@ public class TimeConverter extends TypeAdapter<ZonedDateTime>{
     @Override
     public ZonedDateTime read(final JsonReader jsonReader) throws IOException {
         ZonedDateTime zonedDateTime = ZonedDateTime.parse(jsonReader.nextString(), ZONED_DATE_TIME_FORMATTER);
-        System.out.println(zonedDateTime);
         return zonedDateTime;
     }
 }

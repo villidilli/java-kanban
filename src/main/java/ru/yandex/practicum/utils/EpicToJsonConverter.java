@@ -2,6 +2,7 @@ package ru.yandex.practicum.utils;
 
 import com.google.gson.*;
 import ru.yandex.practicum.tasks.Epic;
+import ru.yandex.practicum.tasks.Status;
 import ru.yandex.practicum.tasks.Task;
 
 import java.lang.reflect.Type;
@@ -10,10 +11,11 @@ import java.time.ZonedDateTime;
 
 import static ru.yandex.practicum.utils.TimeConverter.ZONED_DATE_TIME_FORMATTER;
 
-public class EpicJsonSerializer implements JsonSerializer<Epic> {
+public class EpicToJsonConverter implements JsonSerializer<Epic>, JsonDeserializer<Epic> {
     Gson gson = new GsonBuilder()
             .setPrettyPrinting()
             .serializeNulls()
+            .registerTypeAdapter(Status.class, new TaskStatusAdapter())
             .registerTypeAdapter(ZonedDateTime.class, new TimeConverter())
             .registerTypeAdapter(Duration.class, new DurationConverter())
             .create();
@@ -36,8 +38,22 @@ public class EpicJsonSerializer implements JsonSerializer<Epic> {
 
         }
         object.add("duration", new JsonPrimitive(epic.getDuration()));
-        object.add("parentEpicID", new JsonPrimitive(epic.getParentEpicID()));
-        object.add("epicSubtasks", new JsonPrimitive(gson.toJson(epic.getEpicSubTasks())));
         return object;
+    }
+
+    @Override
+    public Epic deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        JsonObject object = json.getAsJsonObject();
+        JsonElement id = object.get("id");
+        JsonElement name = object.get("name");
+        JsonElement description = object.get("description");
+
+
+        if (name == null || description == null) {
+            throw new JsonParseException("Необходимо установить значение полей [name/description]");
+        }
+        Epic epic = new Epic(name.getAsString(), description.getAsString());
+        if (id != null) epic.setID(id.getAsInt());
+        return epic;
     }
 }

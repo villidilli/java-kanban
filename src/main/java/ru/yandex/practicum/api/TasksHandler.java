@@ -14,11 +14,9 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.time.Duration;
-import java.time.ZonedDateTime;
 
 import static ru.yandex.practicum.api.Endpoint.*;
-import static ru.yandex.practicum.api.HttpStatusCode.REQUEST_BODY_NULL;
+import static ru.yandex.practicum.api.HttpMethod.GET;
 
 public class TasksHandler implements HttpHandler {
     private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
@@ -37,12 +35,9 @@ public class TasksHandler implements HttpHandler {
         gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .serializeNulls()
-//                .registerTypeAdapter(ZonedDateTime.class, new TimeConverter())
-//                .registerTypeAdapter(Duration.class, new DurationConverter())
-                .registerTypeAdapter(Task.class, new TaskJsonSerilizer())
-                .registerTypeAdapter(Task.class, new TaskJsonDeserializer())
-                .registerTypeAdapter(SubTask.class, new SubtaskJsonDeserializer())
-                .registerTypeAdapter(Epic.class, new EpicJsonDeserializer())
+                .registerTypeAdapter(Task.class, new TaskToJsonConverter())
+                .registerTypeAdapter(SubTask.class, new SubtaskToJsonConverter())
+                .registerTypeAdapter(Epic.class, new EpicToJsonConverter())
                 .create();
         manager = backedManager;
     }
@@ -58,57 +53,28 @@ public class TasksHandler implements HttpHandler {
         Endpoint endpoint = getEndpoint(url, method);
 
         switch (endpoint) {
-            case GET_ALL_TASKS:
-                handleGetAllTasks();
-                break;
-            case GET_ALL_SUBTASKS:
-                handleGetAllSubtasks();
-                break;
-            case GET_ALL_EPICS:
-                handleGetAllEpics();
-                break;
-            case GET_TASK_BY_ID:
-                handleGetTaskByID();
-                break;
-            case GET_SUBTASK_BY_ID:
-                handleGetSubtaskByID();
-                break;
-            case GET_EPIC_BY_ID:
-                handleGetEpicByID();
-                break;
-            case GET_ALL_SUBTASKS_BY_EPIC:
-                handleGetEpicSubtasks();
-                break;
-            case GET_PRIORITIZED_TASKS:
-                handleGetPrioritizedTasks();
-                break;
-            case GET_HISTORY:
-                handleGetHistory();
-                break;
-            case DELETE_ALL_TASKS:
-                handleDeleteAllTasks();
-                break;
-            case DELETE_ALL_SUBTASKS:
-                handleDeleteAllSubtasks();
-                break;
-            case DELETE_ALL_EPICS:
-                handleDeleteAllEpics();
-                break;
-            case DELETE_TASK_BY_ID:
-                handleDeleteTaskByID();
-                break;
-            case DELETE_SUBTASK_BY_ID:
-                handleDeleteSubtaskByID();
-                break;
-            case DELETE_EPIC_BY_ID:
-                handleDeleteEpicByID();
-                break;
+            case GET_ALL_TASKS: handleGetAllTasks();break;
+            case GET_ALL_SUBTASKS: handleGetAllSubtasks();break;
+            case GET_ALL_EPICS: handleGetAllEpics();break;
+            case GET_TASK_BY_ID: handleGetTaskByID();break;
+            case GET_SUBTASK_BY_ID: handleGetSubtaskByID();break;
+            case GET_EPIC_BY_ID: handleGetEpicByID();break;
+            case GET_ALL_SUBTASKS_BY_EPIC: handleGetEpicSubtasks();break;
+            case GET_PRIORITIZED_TASKS: handleGetPrioritizedTasks();break;
+            case GET_HISTORY: handleGetHistory();break;
+            case DELETE_ALL_TASKS: handleDeleteAllTasks();break;
+            case DELETE_ALL_SUBTASKS: handleDeleteAllSubtasks();break;
+            case DELETE_ALL_EPICS: handleDeleteAllEpics();break;
+            case DELETE_TASK_BY_ID: handleDeleteTaskByID();break;
+            case DELETE_SUBTASK_BY_ID: handleDeleteSubtaskByID();break;
+            case DELETE_EPIC_BY_ID: handleDeleteEpicByID();break;
             case CREATE_TASK: handleCreateTask(); break;
             case UPDATE_TASK: handleUpdateTask(); break;
-
-
+            case CREATE_SUBTASK: handleCreateSubtask(); break;
+            case UPDATE_SUBTASK: handleUpdateSubtask(); break;
+            case CREATE_EPIC: handleCreateEpic(); break;
+            case UPDATE_EPIC: handleUpdateEpic(); break;
         }
-
     }
 
     private int getParameterID(URI url) {
@@ -119,7 +85,7 @@ public class TasksHandler implements HttpHandler {
         String[] pathParts = url.getPath().split(PATH_PARTS_SEPARATOR);
         boolean isHaveID = url.getQuery() != null;
 
-        if (pathParts.length == 2) {
+        if (pathParts.length == 2 && method == GET) {
             return Endpoint.GET_PRIORITIZED_TASKS;
         }
         PathPart pathPart = HttpConverter.getEnumPathPart(pathParts[2]);
@@ -277,17 +243,72 @@ public class TasksHandler implements HttpHandler {
     }
 
     private void handleCreateTask() throws IOException{
-        System.out.println("Запущен обработчик handleCreateTask");
-        System.out.println(body);
-        Task task = gson.fromJson(body, Task.class);
-        manager.create(task);
-        System.out.println(manager.getTaskByID(task.getID()));
-        writeResponse(gson.toJson(task), 200);
+        System.out.println("/handleCreateTask");
+        try {
+            Task task = gson.fromJson(body, Task.class);
+            manager.create(task);
+            writeResponse(gson.toJson(task), 200);
+        } catch (TimeValueException | JsonParseException e) {
+            writeResponse(e.getMessage(), 400);
+        }
     }
 
     private void handleUpdateTask() throws IOException {
-        System.out.println("Запущен обработчик handleUpdateTask");
-        System.out.println("шаг второй");
+        System.out.println("/handleUpdateTask");
+        try {
+            Task task = gson.fromJson(body, Task.class);
+            manager.update(task);
+            writeResponse(gson.toJson(task), 200);
+        } catch (ManagerNotFoundException | TimeValueException | JsonParseException e) {
+            writeResponse(e.getMessage(), 400);
+        }
+
+    }
+
+    private void handleCreateSubtask() throws IOException{
+        System.out.println("/handleCreateSubtask");
+        try {
+            SubTask subTask = gson.fromJson(body, SubTask.class);
+            manager.create(subTask);
+            writeResponse(gson.toJson(subTask), 200);
+        } catch (TimeValueException | JsonParseException e) {
+            writeResponse(e.getMessage(), 400);
+        }
+    }
+
+    private void handleUpdateSubtask() throws IOException {
+        System.out.println("/handleUpdateSubtask");
+        try {
+            SubTask subTask = gson.fromJson(body, SubTask.class);
+            manager.update(subTask);
+            writeResponse(gson.toJson(subTask), 200);
+        } catch (ManagerNotFoundException | TimeValueException | JsonParseException e) {
+            writeResponse(e.getMessage(), 400);
+        }
+
+    }
+
+    private void handleCreateEpic() throws IOException{
+        System.out.println("/handleCreateEpic");
+        try {
+            Epic epic = gson.fromJson(body, Epic.class);
+            manager.create(epic);
+            writeResponse(gson.toJson(epic), 200);
+        } catch (TimeValueException | JsonParseException e) {
+            writeResponse(e.getMessage(), 400);
+        }
+    }
+
+    private void handleUpdateEpic() throws IOException {
+        System.out.println("/handleUpdateEpic");
+        try {
+            Epic epic = gson.fromJson(body, Epic.class);
+            manager.update(epic);
+            writeResponse(gson.toJson(epic), 200);
+        } catch (ManagerNotFoundException | TimeValueException | JsonParseException e) {
+            writeResponse(e.getMessage(), 400);
+        }
+
     }
 
     private boolean isHaveIdInBody() throws IOException {

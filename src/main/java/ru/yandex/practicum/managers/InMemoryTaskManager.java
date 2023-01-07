@@ -139,7 +139,7 @@ public class InMemoryTaskManager implements TaskManager {
         if (parentEpic == null) {
             throw new ManagerNotFoundException(ManagerNotFoundException.NOT_FOUND_PARENT);
         }
-        try {
+//        try {
             checkDuplicateAndIntersections(newSubTask);
             newSubTask.setID(generatorID);
             subTasks.put(generatorID, newSubTask);
@@ -147,9 +147,9 @@ public class InMemoryTaskManager implements TaskManager {
             updateEpic(parentEpic.getID());
             prioritizedTasks.add(newSubTask);
             generatorID++;
-        } catch (TimeValueException e) {
-            throw new TimeValueException(TimeValueException.INTERVAL_INTERSECTION);
-        }
+//        } catch (TimeValueException e) {
+//            throw new TimeValueException(TimeValueException.INTERVAL_INTERSECTION);
+//        }
     }
 
     @Override
@@ -171,13 +171,9 @@ public class InMemoryTaskManager implements TaskManager {
         if (currentTask == null) {
             throw new ManagerNotFoundException(ManagerNotFoundException.NOT_FOUND_PREV_VERSION);
         }
-        try {
             checkDuplicateAndIntersections(newTask);
             tasks.put(currentTask.getID(), newTask);
             prioritizedTasks.add(newTask);
-        } catch (TimeValueException e) {
-            System.out.println(e.getMessage());
-        }
     }
 
     @Override
@@ -193,15 +189,13 @@ public class InMemoryTaskManager implements TaskManager {
         if (parentEpic == null) {
             throw new ManagerNotFoundException(ManagerNotFoundException.NOT_FOUND_PARENT);
         }
-        try {
+
             checkDuplicateAndIntersections(newSubTask);
             parentEpic.getEpicSubTasks().put(currentSubTask.getID(), newSubTask);
             subTasks.put(currentSubTask.getID(), newSubTask);
             prioritizedTasks.add(newSubTask);
             updateEpic(parentEpic.getID());
-        } catch (TimeValueException e) {
-            System.out.println(e.getMessage());
-        }
+
     }
 
     @Override

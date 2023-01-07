@@ -10,10 +10,11 @@ import java.time.ZonedDateTime;
 
 import static ru.yandex.practicum.utils.TimeConverter.ZONED_DATE_TIME_FORMATTER;
 
-public class TaskJsonSerilizer implements JsonSerializer<Task> {
+public class TaskToJsonConverter implements JsonSerializer<Task>, JsonDeserializer<Task> {
     Gson gson = new GsonBuilder()
             .setPrettyPrinting()
             .serializeNulls()
+            .registerTypeAdapter(Status.class, new TaskStatusAdapter())
             .registerTypeAdapter(ZonedDateTime.class, new TimeConverter())
             .registerTypeAdapter(Duration.class, new DurationConverter())
             .create();
@@ -38,5 +39,26 @@ public class TaskJsonSerilizer implements JsonSerializer<Task> {
         }
         object.add("duration", new JsonPrimitive(task.getDuration()));
         return object;
+    }
+
+    @Override
+    public Task deserialize(JsonElement json, Type typeOfT, JsonDeserializationContext context) throws JsonParseException {
+        JsonObject object = json.getAsJsonObject();
+        JsonElement id = object.get("id");
+        JsonElement name = object.get("name");
+        JsonElement description = object.get("description");
+        JsonElement status = object.get("status");
+        JsonElement startDateTime = object.get("startDateTime");
+        JsonElement duration = object.get("duration");
+
+        if (name == null || description == null) {
+            throw new JsonParseException("Необходимо установить значение name и description");
+        }
+        Task task = new Task(name.getAsString(), description.getAsString());
+        if (id != null) task.setID(id.getAsInt());
+        if (status != null) task.setStatus(gson.fromJson(status, Status.class));
+        if (startDateTime != null) task.setStartTime(gson.fromJson(startDateTime, ZonedDateTime.class));
+        if (duration.getAsLong() != 0) task.setDuration(gson.fromJson(duration, Duration.class).toMinutes());
+        return task;
     }
 }
