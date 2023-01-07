@@ -28,6 +28,8 @@
 
         private void load(HttpExchange exchange) {
             // TODO Добавьте получение значения по ключу
+            System.out.println("\n/load");
+            if (!hasAuth(exchange)) {}
         }
 
         private void save(HttpExchange exchange) throws IOException {
@@ -39,9 +41,9 @@
                     return;
                 }
                 if (POST == HttpConverter.getEnumMethod(exchange.getRequestMethod())) {
-                    String key = exchange.getRequestURI().getPath().substring("/save/".length());
-                    if (key.isEmpty()) {
-                        System.out.println("Key для сохранения пустой. key указывается в пути: /save/{key}");
+                    String token = exchange.getRequestURI().getPath().substring("/save/".length());
+                    if (token.isEmpty()) {
+                        System.out.println("Key для сохранения пустой. token указывается в пути: /save/{token}");
                         exchange.sendResponseHeaders(400, 0);
                         return;
                     }
@@ -51,8 +53,8 @@
                         exchange.sendResponseHeaders(400, 0);
                         return;
                     }
-                    data.put(key, body);
-                    System.out.println("Значение для ключа " + key + " успешно обновлено!");
+                    data.put(token, body);
+                    System.out.println("Значение для ключа " + token + " успешно обновлено!");
                     exchange.sendResponseHeaders(200, 0);
                 } else {
                     System.out.println("/save ждёт POST-запрос, а получил: " + exchange.getRequestMethod());
@@ -96,10 +98,10 @@
             return new String(exchange.getRequestBody().readAllBytes(), UTF_8);
         }
 
-        protected void sendText(HttpExchange h, String text) throws IOException {
-            byte[] resp = text.getBytes(UTF_8);
-            h.getResponseHeaders().add("Content-Type", "application/json");
-            h.sendResponseHeaders(200, resp.length);
-            h.getResponseBody().write(resp);
+        protected void sendText(HttpExchange exchange, String text) throws IOException {
+            byte[] response = text.getBytes(UTF_8);
+            exchange.getResponseHeaders().add("Content-Type", "application/json");
+            exchange.sendResponseHeaders(200, response.length);
+            exchange.getResponseBody().write(response);
         }
     }

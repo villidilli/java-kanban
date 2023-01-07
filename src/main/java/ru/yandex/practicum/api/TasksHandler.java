@@ -19,7 +19,7 @@ import static ru.yandex.practicum.api.Endpoint.*;
 import static ru.yandex.practicum.api.HttpMethod.GET;
 
 public class TasksHandler implements HttpHandler {
-    private static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
+    public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
     private static final String PATH_PARTS_SEPARATOR = "/";
     private static final int START_INDEX_ID = 3;
     private final Gson gson;
@@ -174,11 +174,10 @@ public class TasksHandler implements HttpHandler {
             exchange.sendResponseHeaders(responseCode, 0);
             return;
         }
-        byte[] bytes = responseString.getBytes(DEFAULT_CHARSET);
-        exchange.sendResponseHeaders(responseCode, bytes.length);
-        try (OutputStream os = exchange.getResponseBody()) {
-            os.write(bytes);
-        }
+        byte[] response = responseString.getBytes(DEFAULT_CHARSET);
+        exchange.getResponseHeaders().add("Content-Type", "application/json");
+        exchange.sendResponseHeaders(responseCode, response.length);
+        exchange.getResponseBody().write(response);
         exchange.close();
     }
 
