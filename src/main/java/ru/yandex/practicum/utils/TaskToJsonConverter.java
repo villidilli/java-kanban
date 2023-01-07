@@ -18,6 +18,7 @@ public class TaskToJsonConverter implements JsonSerializer<Task>, JsonDeserializ
             .registerTypeAdapter(ZonedDateTime.class, new TimeConverter())
             .registerTypeAdapter(Duration.class, new DurationConverter())
             .create();
+
     @Override
     public JsonElement serialize(Task task, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject object = new JsonObject();

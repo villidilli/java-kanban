@@ -1,6 +1,5 @@
 package ru.yandex.practicum.utils;
 
-import ru.yandex.practicum.api.HttpServerException;
 import ru.yandex.practicum.api.HttpMethod;
 import ru.yandex.practicum.api.PathPart;
 

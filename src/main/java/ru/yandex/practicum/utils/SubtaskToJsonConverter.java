@@ -19,6 +19,7 @@ public class SubtaskToJsonConverter implements JsonSerializer<SubTask>, JsonDese
             .registerTypeAdapter(ZonedDateTime.class, new TimeConverter())
             .registerTypeAdapter(Duration.class, new DurationConverter())
             .create();
+
     @Override
     public JsonElement serialize(SubTask subTask, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject object = new JsonObject();

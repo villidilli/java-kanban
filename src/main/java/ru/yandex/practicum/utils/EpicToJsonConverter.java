@@ -19,6 +19,7 @@ public class EpicToJsonConverter implements JsonSerializer<Epic>, JsonDeserializ
             .registerTypeAdapter(ZonedDateTime.class, new TimeConverter())
             .registerTypeAdapter(Duration.class, new DurationConverter())
             .create();
+
     @Override
     public JsonElement serialize(Epic epic, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject object = new JsonObject();
