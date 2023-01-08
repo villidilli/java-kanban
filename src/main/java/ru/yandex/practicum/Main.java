@@ -3,6 +3,8 @@ package ru.yandex.practicum;
 import com.google.gson.JsonParseException;
 import ru.yandex.practicum.api.*;
 import ru.yandex.practicum.managers.FileBackedTasksManager;
+import ru.yandex.practicum.managers.HttpTaskManager;
+import ru.yandex.practicum.managers.Managers;
 import ru.yandex.practicum.managers.TaskManager;
 import ru.yandex.practicum.tasks.Epic;
 import ru.yandex.practicum.tasks.SubTask;
@@ -18,27 +20,7 @@ import java.time.ZonedDateTime;
 public class Main {
     public static void main(String[] args) throws IOException, InterruptedException {
 
-        KVServer kvServer = Servers.getKVServer();
-        kvServer.start();
-        KVTaskClient client1 = new KVTaskClient("http://localhost:8078");
-        KVTaskClient client2 = new KVTaskClient("http://localhost:8078");
 
-        String body1 = "Тело1";
-        String body2 = "Тело2";
-        String body3 = "Тело3";
-
-                try {
-                    client1.put("Ключ1", body1);
-                    client1.put("Ключ2", body2);
-                    client1.put("Ключ1", body3);
-                    System.out.println(client1.load("Ключ1") + "Ключ1");
-                    System.out.println(client1.load("Ключ2") + "Ключ2");
-                    client2.put("Ключ1", body1);
-                    System.out.println(client2.load("Ключ1") + "Ключ1");
-
-                } catch (IOException | InterruptedException | HttpException | JsonParseException e) {
-                    System.out.println(e.getMessage());
-                }
 
 
 

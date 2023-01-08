@@ -14,7 +14,7 @@ public class KVTaskClient {
     private final String API_TOKEN;
     private final String serverURL;
 
-    public KVTaskClient(String serverURL) throws IOException, InterruptedException {
+    public KVTaskClient(String serverURL) throws IOException, InterruptedException, HttpException {
         this.serverURL = serverURL;
         request = HttpRequest.newBuilder()
                 .GET()

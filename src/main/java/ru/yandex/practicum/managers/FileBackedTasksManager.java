@@ -16,13 +16,15 @@ import java.util.List;
 import java.util.Map;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
-    private final File backupfile;
+    private File backupfile; //todo заменить на статик, что будет
+
+    public FileBackedTasksManager() {}
 
     public FileBackedTasksManager(File file) {
         backupfile = file;
     }
 
-    public static FileBackedTasksManager loadFromFile(File file) {
+    public static FileBackedTasksManager load(File file) {
         final FileBackedTasksManager backedManager = new FileBackedTasksManager(file);
         final HistoryManager histManager = backedManager.historyManager;
         //считали из файла все строки
@@ -136,7 +138,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return "id,type,name,status,description,epic,start,duration";
     }
 
-    private void save() {
+    protected void save() {
         try (BufferedWriter bufferedWriter =
                      new BufferedWriter(new FileWriter(backupfile, StandardCharsets.UTF_8))) {
             //записали шапку
