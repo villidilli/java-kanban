@@ -20,9 +20,7 @@ import java.time.ZonedDateTime;
 
 public class Main {
     public static void main(String[] args) throws IOException, InterruptedException {
-        URI url = URI.create("http://localhost:8078/save/asdasda");
-        String key = url.getPath().substring("/save/".length());
-        System.out.println(key);
+
 //        Servers.getKVServer().start();
 //        KVTaskClient client1 = new KVTaskClient("http://localhost:8078");
 //        String token1 = client1.getAPI_TOKEN();
@@ -56,12 +54,12 @@ public class Main {
 
 
 
-//        try {
+        try {
 //            Servers.getHttpTaskServer().start();
-//            Servers.getKVServer().start();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+            Servers.getKVServer().start();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
 //        TaskManager manager = new FileBackedTasksManager(new File("src/main/resources/Backup.csv"));
 //        Task task1 = new Task("Таск1", "-", ZonedDateTime.of(LocalDateTime.of(

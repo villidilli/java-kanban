@@ -63,7 +63,7 @@ public class KVServer {
                 String key = getKeyFromRequest(exchange);
                 String requestBody = getRequestBody(exchange);
                 data.put(key, requestBody);
-                sendResponse(exchange, key, 200);
+                sendResponse(exchange, requestBody, 200);
             } else {
                 sendResponse(exchange, gson.toJson(METHOD_NOT_POST), 405);
                 throw new HttpException(METHOD_NOT_POST);
