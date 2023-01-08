@@ -74,16 +74,15 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             case TASK:
                 tasks.put(ID, task);
                 break;
+            case EPIC:
+                epics.put(ID, (Epic) task); break; //todo изменил порядок
             case SUBTASK:
                 subTasks.put(ID, (SubTask) task);
                 addSubTaskToEpic((SubTask) task);
-                break;
-            case EPIC:
-                epics.put(ID, (Epic) task);
         }
     }
 
-    private void addSubTaskToEpic(SubTask subTask) {
+    protected void addSubTaskToEpic(SubTask subTask) {
         if (subTask == null) {
             throw new ManagerNotFoundException(ManagerNotFoundException.NOT_TRANSFERRED_INPUT);
         }
@@ -91,7 +90,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         epic.getEpicSubTasks().put(subTask.getID(), subTask);
     }
 
-    private Task getTask(int ID) {
+    protected Task getTask(int ID) {
         Task task = tasks.get(ID);
         if (task == null) {
             task = subTasks.get(ID);
@@ -102,7 +101,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         return task;
     }
 
-    private void updateGeneratorID(Task task) {
+    protected void updateGeneratorID(Task task) {
         if (task == null) {
             throw new ManagerNotFoundException(ManagerNotFoundException.NOT_TRANSFERRED_INPUT);
         }

@@ -25,11 +25,11 @@ public class Managers {
         return FileBackedTasksManager.load(new File("src/main/resources/Backup.csv"));
     }
 
-    public static HttpTaskManager getDefaultHttp() {
-        try {
-            return HttpTaskManager.load("http://localhost:8078");
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
+//    public static HttpTaskManager getDefaultHttp() {
+//        try {
+//            return HttpTaskManager.load("http://localhost:8078");
+//        } catch (IOException | InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
 }

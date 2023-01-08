@@ -54,7 +54,7 @@ public class KVServer {
                 sendResponse(exchange, dataObject, 200);
                 return;
             }
-            sendResponse(exchange, gson.toJson(NOT_FOUND.getMessage()), 200);
+            sendResponse(exchange, gson.toJson(NOT_FOUND.getMessage()), 404);
             throw new HttpException(NOT_FOUND.getMessage());
         } finally {
             exchange.close();
