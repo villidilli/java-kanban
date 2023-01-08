@@ -1,15 +1,15 @@
 package ru.yandex.practicum.utils;
 
-import ru.yandex.practicum.api.HttpMethod;
+import ru.yandex.practicum.api.RequestMethod;
 import ru.yandex.practicum.api.PathPart;
 
 public class HttpConverter {
-    public static HttpMethod getEnumMethod(String method) {
+    public static RequestMethod getEnumMethod(String method) {
         switch (method.toUpperCase()) {
-            case "GET": return HttpMethod.GET;
-            case "POST": return HttpMethod.POST;
-            case "DELETE": return HttpMethod.DELETE;
-            default: return HttpMethod.UNKNOWN;
+            case "GET": return RequestMethod.GET;
+            case "POST": return RequestMethod.POST;
+            case "DELETE": return RequestMethod.DELETE;
+            default: return RequestMethod.UNKNOWN;
         }
     }
 

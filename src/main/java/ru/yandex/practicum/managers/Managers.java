@@ -10,11 +10,7 @@ public class Managers {
     }
 
 //    public static TaskManager getDefault() {
-//        try {
-//            return HttpTaskManager.load("http://localhost:8078");
-//        } catch (IOException | InterruptedException e) {
-//            throw new RuntimeException(e);
-//        }
+//        return new HttpTaskManager("http://localhost:8078");
 //    }
 
     public static HistoryManager getDefaultHistory() {
@@ -25,11 +21,7 @@ public class Managers {
         return FileBackedTasksManager.load(new File("src/main/resources/Backup.csv"));
     }
 
-//    public static HttpTaskManager getDefaultHttp() {
-//        try {
-//            return HttpTaskManager.load("http://localhost:8078");
-//        } catch (IOException | InterruptedException e) {
-//            throw new RuntimeException(e);
-//        }
-//    }
+    public static TaskManager getDefaultHttp() {
+        return new HttpTaskManager("http://localhost:8078");
+    }
 }

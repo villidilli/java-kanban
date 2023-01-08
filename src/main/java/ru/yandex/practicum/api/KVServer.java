@@ -10,9 +10,7 @@ import ru.yandex.practicum.utils.HttpConverter;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import com.google.gson.*;
@@ -20,9 +18,8 @@ import ru.yandex.practicum.utils.SubtaskToJsonConverter;
 import ru.yandex.practicum.utils.TaskToJsonConverter;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static ru.yandex.practicum.api.HttpException.*;
-import static ru.yandex.practicum.api.HttpMessage.NOT_FOUND;
-import static ru.yandex.practicum.api.HttpMethod.*;
+import static ru.yandex.practicum.api.APIException.*;
+import static ru.yandex.practicum.api.RequestMethod.*;
 
 public class KVServer {
     public static final int PORT = 8078;
@@ -32,7 +29,7 @@ public class KVServer {
     private final Gson gson;
 
     //ok
-    public KVServer() throws IOException, HttpException {
+    public KVServer() throws IOException, APIException {
         gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .registerTypeAdapter(Task.class, new TaskToJsonConverter())
@@ -46,7 +43,7 @@ public class KVServer {
         server.createContext("/load", this::load);
     }
 
-    private void load(HttpExchange exchange) throws IOException, HttpException {
+    private void load(HttpExchange exchange) throws IOException, APIException {
         try {
             isHaveApiTokenInQuery(exchange);
             String dataObject = data.get(getKeyFromRequest(exchange));
@@ -54,15 +51,14 @@ public class KVServer {
                 sendResponse(exchange, dataObject, 200);
                 return;
             }
-            sendResponse(exchange, gson.toJson(NOT_FOUND.getMessage()), 404);
-            throw new HttpException(NOT_FOUND.getMessage());
+            sendResponse(exchange, 200);
         } finally {
             exchange.close();
         }
     }
 
     //ok
-    private void save(HttpExchange exchange) throws IOException, HttpException {
+    private void save(HttpExchange exchange) throws IOException, APIException {
         try {
             isHaveApiTokenInQuery(exchange);
             if (POST == HttpConverter.getEnumMethod(exchange.getRequestMethod())) {
@@ -72,20 +68,20 @@ public class KVServer {
                 sendResponse(exchange, requestBody, 200);
             } else {
                 sendResponse(exchange, gson.toJson(METHOD_NOT_POST), 405);
-                throw new HttpException(METHOD_NOT_POST);
+                throw new APIException(METHOD_NOT_POST);
             }
         } finally {
             exchange.close();
         }
     }
 
-    private void register(HttpExchange exchange) throws IOException, HttpException {
+    private void register(HttpExchange exchange) throws IOException, APIException {
         try {
             if (GET == HttpConverter.getEnumMethod(exchange.getRequestMethod())) {
                 sendResponse(exchange, apiToken, 200);
             } else {
                 sendResponse(exchange, gson.toJson(METHOD_NOT_GET), 405);
-                throw new HttpException(METHOD_NOT_GET);
+                throw new APIException(METHOD_NOT_GET);
             }
         } finally {
             exchange.close();
@@ -109,29 +105,29 @@ public class KVServer {
     }
 
     //ok
-    private void isHaveApiTokenInQuery(HttpExchange exchange) throws IOException, HttpException {
+    private void isHaveApiTokenInQuery(HttpExchange exchange) throws IOException, APIException {
         if (!hasAuth(exchange)) {
             sendResponse(exchange, gson.toJson(API_TOKEN_NOT_FOUND), 403);
-            throw new HttpException(API_TOKEN_NOT_FOUND);
+            throw new APIException(API_TOKEN_NOT_FOUND);
         }
     }
 
     //ok
-    private String getKeyFromRequest(HttpExchange exchange) throws IOException, HttpException {
+    private String getKeyFromRequest(HttpExchange exchange) throws IOException, APIException {
         String key = exchange.getRequestURI().getPath().substring("/save/".length());
         if (key.isEmpty()) {
             sendResponse(exchange, gson.toJson(API_TOKEN_IS_EMPTY), 400);
-            throw new HttpException(API_TOKEN_IS_EMPTY);
+            throw new APIException(API_TOKEN_IS_EMPTY);
         }
         return key;
     }
 
     //ok
-    private String getRequestBody(HttpExchange exchange) throws IOException, HttpException {
+    private String getRequestBody(HttpExchange exchange) throws IOException, APIException {
             String body = new String(exchange.getRequestBody().readAllBytes(), UTF_8);
             if (body.isEmpty()) {
                 sendResponse(exchange, gson.toJson(BODY_IS_EMPTY), 400);
-                throw new HttpException(BODY_IS_EMPTY);
+                throw new APIException(BODY_IS_EMPTY);
             }
             return body;
     }
@@ -146,5 +142,10 @@ public class KVServer {
         exchange.getResponseHeaders().add("Content-Type", "application/json");
         exchange.sendResponseHeaders(responseCode, response.length);
         exchange.getResponseBody().write(response);
+    }
+
+    private void sendResponse(HttpExchange exchange, int responseCode) throws IOException {
+        exchange.getResponseHeaders().add("Content-Type", "application/json");
+        exchange.sendResponseHeaders(responseCode, 0);
     }
 }

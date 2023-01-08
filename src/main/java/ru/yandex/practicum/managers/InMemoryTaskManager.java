@@ -74,7 +74,7 @@ public class InMemoryTaskManager implements TaskManager {
         updateEpicStartTimeAndDuration(ID);
     }
 
-    public void updateEpicStartTimeAndDuration(int epicID) {
+    protected void updateEpicStartTimeAndDuration(int epicID) {
         Collection<SubTask> epicSubTasks = epics.get(epicID).getEpicSubTasks().values();
         if (!epicSubTasks.isEmpty()) {
             //блок обновления старттайм min

@@ -1,6 +1,6 @@
 package ru.yandex.practicum.api;
 
-public enum HttpMessage {
+public enum APIMessage {
     NOT_FOUND ("ОБЪЕКТ НЕ НАЙДЕН"),
     DELETE_ACCEPT("УДАЛЕНИЕ ЗАВЕРШЕНО УСПЕШНО"),
     CONTENT_TYPE("Content-Type"),
@@ -8,7 +8,7 @@ public enum HttpMessage {
     API_TOKEN_UPDATE_SUCCESS("Значение для ключа успешно обновлено!");
 
     private final String message;
-    HttpMessage(String message) {
+    APIMessage(String message) {
         this.message = message;
     }
 

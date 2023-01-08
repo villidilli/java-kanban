@@ -1,6 +1,6 @@
 package ru.yandex.practicum.api;
 
-public enum HttpMethod {
+public enum RequestMethod {
     GET,
     POST,
     DELETE,

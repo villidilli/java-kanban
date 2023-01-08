@@ -13,10 +13,14 @@ public class HttpTaskServer {
     private final HttpServer server;
     private final FileBackedTasksManager backedManager;
 
-    public HttpTaskServer() throws IOException {
-        backedManager = new FileBackedTasksManager(new File("src/main/resources/Backup.csv")); //todo
-        server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
-        server.createContext(ROOT_PATH, new TasksHandler(backedManager));
+    public HttpTaskServer() {
+        try {
+            backedManager = new FileBackedTasksManager(new File("src/main/resources/Backup.csv")); //todo
+            server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
+            server.createContext(ROOT_PATH, new TasksHandler(backedManager));
+        } catch (IOException e) {
+            throw new APIException(e.getMessage());
+        }
     }
 
     public void start() {

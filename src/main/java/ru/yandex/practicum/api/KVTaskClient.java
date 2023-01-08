@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
 
 import static java.net.http.HttpResponse.*;
 
@@ -14,7 +13,7 @@ public class KVTaskClient {
     private final String API_TOKEN;
     private final String serverURL;
 
-    public KVTaskClient(String serverURL) throws IOException, InterruptedException, HttpException {
+    public KVTaskClient(String serverURL) throws IOException, InterruptedException, APIException {
         this.serverURL = serverURL;
         request = HttpRequest.newBuilder()
                 .GET()
@@ -24,13 +23,14 @@ public class KVTaskClient {
                 .build();
         client = HttpClient.newHttpClient();
         API_TOKEN = client.send(request, BodyHandlers.ofString()).body();
+        System.out.println("[KVClient] зарегистрирован на [KVServer][API_TOKEN: " + API_TOKEN + "]");
     }
 
     public String getAPI_TOKEN() {
         return API_TOKEN;
     }
 
-    public void put(String key, String json) throws IOException, InterruptedException, HttpException {
+    public void put(String key, String json) throws IOException, InterruptedException, APIException {
         request = HttpRequest.newBuilder()
                 .POST(HttpRequest.BodyPublishers.ofString(json))
                 .uri(URI.create(serverURL + "/save/" + key + "?API_TOKEN=" + API_TOKEN))
@@ -39,22 +39,22 @@ public class KVTaskClient {
                 .build();
         try {
             client.send(request, BodyHandlers.ofString());
-        } catch (HttpException e) {
-            throw new HttpException(HttpException.NOT_PUT_TO_SERVER);
+        } catch (APIException e) {
+            throw new APIException(APIException.NOT_PUT_TO_SERVER);
         }
     }
 
-    public String load(String key) throws IOException, InterruptedException, HttpException {
+    public String load(String key) throws IOException, InterruptedException, APIException {
         request = HttpRequest.newBuilder()
                 .GET()
                 .uri(URI.create(serverURL + "/load/" + key + "?API_TOKEN=" + API_TOKEN))
                 .version(HttpClient.Version.HTTP_1_1)
                 .headers("Content-Type", "application/json")
                 .build();
-        try {
+//        try {
             return client.send(request, BodyHandlers.ofString()).body();
-        } catch (HttpException e) {
-            throw new HttpException(HttpException.NOT_LOAD_FROM_SERVER);
-        }
+//        } catch (HttpException e) {
+//            throw new HttpException(HttpException.NOT_LOAD_FROM_SERVER);
+//        }
     }
 }

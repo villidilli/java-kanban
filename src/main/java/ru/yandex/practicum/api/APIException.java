@@ -1,6 +1,6 @@
 package ru.yandex.practicum.api;
 
-public class HttpException extends RuntimeException {
+public class APIException extends RuntimeException {
     public static final String API_TOKEN_NOT_FOUND =
             "Запрос неавторизован, нужен параметр в query API_TOKEN со значением апи-ключа";
     public static final String API_TOKEN_IS_EMPTY =
@@ -11,7 +11,7 @@ public class HttpException extends RuntimeException {
     public static final String NOT_PUT_TO_SERVER = "В сохранении на сервер отказано";
     public static final String NOT_LOAD_FROM_SERVER = "В загрузке с сервера отказано";
 
-    public HttpException (String message) {
+    public APIException(String message) {
         super(message);
     }
 }

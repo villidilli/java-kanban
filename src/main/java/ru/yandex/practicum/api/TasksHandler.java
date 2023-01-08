@@ -15,7 +15,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 import static ru.yandex.practicum.api.Endpoint.*;
-import static ru.yandex.practicum.api.HttpMethod.GET;
+import static ru.yandex.practicum.api.RequestMethod.GET;
 
 public class TasksHandler implements HttpHandler {
     public static final Charset DEFAULT_CHARSET = StandardCharsets.UTF_8;
@@ -25,7 +25,7 @@ public class TasksHandler implements HttpHandler {
     private final TaskManager manager;
     private HttpExchange exchange;
     private URI url;
-    private HttpMethod method;
+    private RequestMethod method;
     private JsonElement body;
 
 
@@ -121,7 +121,7 @@ public class TasksHandler implements HttpHandler {
         return Integer.parseInt(url.getQuery().substring(START_INDEX_ID));
     }
 
-    private Endpoint getEndpoint(URI url, HttpMethod method) {
+    private Endpoint getEndpoint(URI url, RequestMethod method) {
         String[] pathParts = url.getPath().split(PATH_PARTS_SEPARATOR);
         boolean isHaveID = url.getQuery() != null;
 
@@ -238,26 +238,26 @@ public class TasksHandler implements HttpHandler {
 
     private void handleDeleteAllTasks() throws IOException {
         manager.deleteAllTasks();
-        sendResponse(gson.toJson(HttpMessage.DELETE_ACCEPT.getMessage()), 200);
+        sendResponse(gson.toJson(APIMessage.DELETE_ACCEPT.getMessage()), 200);
     }
 
     private void handleDeleteAllSubtasks() throws IOException {
         manager.deleteAllSubTasks();
-        sendResponse(gson.toJson(HttpMessage.DELETE_ACCEPT.getMessage()), 200);
+        sendResponse(gson.toJson(APIMessage.DELETE_ACCEPT.getMessage()), 200);
     }
 
     private void handleDeleteAllEpics() throws IOException {
         manager.deleteAllEpics();
-        sendResponse(gson.toJson(HttpMessage.DELETE_ACCEPT.getMessage()), 200);
+        sendResponse(gson.toJson(APIMessage.DELETE_ACCEPT.getMessage()), 200);
     }
 
     private void handleDeleteTaskByID() throws IOException {
         int id = getParameterID(url);
         try {
             manager.deleteTaskByID(id);
-            sendResponse(gson.toJson(HttpMessage.DELETE_ACCEPT.getMessage()), 200);
+            sendResponse(gson.toJson(APIMessage.DELETE_ACCEPT.getMessage()), 200);
         } catch (ManagerNotFoundException e) {
-            sendResponse(gson.toJson(HttpMessage.NOT_FOUND.getMessage()), 404);
+            sendResponse(gson.toJson(APIMessage.NOT_FOUND.getMessage()), 404);
         }
     }
 
@@ -265,9 +265,9 @@ public class TasksHandler implements HttpHandler {
         int id = getParameterID(url);
         try {
             manager.deleteSubTaskByID(id);
-            sendResponse(gson.toJson(HttpMessage.DELETE_ACCEPT.getMessage()), 200);
+            sendResponse(gson.toJson(APIMessage.DELETE_ACCEPT.getMessage()), 200);
         } catch (ManagerNotFoundException e) {
-            sendResponse(gson.toJson(HttpMessage.NOT_FOUND.getMessage()), 404);
+            sendResponse(gson.toJson(APIMessage.NOT_FOUND.getMessage()), 404);
         }
     }
 
@@ -275,9 +275,9 @@ public class TasksHandler implements HttpHandler {
         int id = getParameterID(url);
         try {
             manager.deleteEpicByID(id);
-            sendResponse(gson.toJson(HttpMessage.DELETE_ACCEPT.getMessage()), 200);
+            sendResponse(gson.toJson(APIMessage.DELETE_ACCEPT.getMessage()), 200);
         } catch (ManagerNotFoundException e) {
-            sendResponse(gson.toJson(HttpMessage.NOT_FOUND.getMessage()), 404);
+            sendResponse(gson.toJson(APIMessage.NOT_FOUND.getMessage()), 404);
         }
     }
 
