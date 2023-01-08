@@ -47,14 +47,18 @@ public class KVServer {
     }
 
     private void load(HttpExchange exchange) throws IOException, HttpException {
-        isHaveApiTokenInQuery(exchange);
-        String dataObject = data.get(getKeyFromRequest(exchange));
-        if (dataObject != null) {
-            sendResponse(exchange, dataObject, 200);
-            return;
+        try {
+            isHaveApiTokenInQuery(exchange);
+            String dataObject = data.get(getKeyFromRequest(exchange));
+            if (dataObject != null) {
+                sendResponse(exchange, dataObject, 200);
+                return;
+            }
+            sendResponse(exchange, gson.toJson(NOT_FOUND.getMessage()), 200);
+            throw new HttpException(NOT_FOUND.getMessage());
+        } finally {
+            exchange.close();
         }
-        sendResponse(exchange, gson.toJson(NOT_FOUND.getMessage()), 200);
-        throw new HttpException(NOT_FOUND.getMessage());
     }
 
     //ok
@@ -124,12 +128,12 @@ public class KVServer {
 
     //ok
     private String getRequestBody(HttpExchange exchange) throws IOException, HttpException {
-        String body = new String(exchange.getRequestBody().readAllBytes(), UTF_8);
-        if (body.isEmpty()) {
-            sendResponse(exchange, gson.toJson(BODY_IS_EMPTY), 400);
-            throw new HttpException(BODY_IS_EMPTY);
-        }
-        return body;
+            String body = new String(exchange.getRequestBody().readAllBytes(), UTF_8);
+            if (body.isEmpty()) {
+                sendResponse(exchange, gson.toJson(BODY_IS_EMPTY), 400);
+                throw new HttpException(BODY_IS_EMPTY);
+            }
+            return body;
     }
 
     //ok

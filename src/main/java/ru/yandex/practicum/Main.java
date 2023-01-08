@@ -21,31 +21,21 @@ public class Main {
         KVServer kvServer = Servers.getKVServer();
         kvServer.start();
         KVTaskClient client1 = new KVTaskClient("http://localhost:8078");
-        String token1 = client1.getAPI_TOKEN();
         KVTaskClient client2 = new KVTaskClient("http://localhost:8078");
-        String token2 = client2.getAPI_TOKEN();
-        System.out.println("client 1 TOKEN" + client1.getAPI_TOKEN());
-        System.out.println("client 2 TOKEN" + client2.getAPI_TOKEN());
 
-        String body1 = "{\n" +
-                "\t\"name\": \"task2\",\n" +
-                "\t\"description\": \"-\",\n" +
-                "\t\"startDateTime\": \"01-01-2022 | 03:00 | +03:00\",\n" +
-                "\t\"duration\": 1\n" +
-                "}";
-        String body2 = "{\n" +
-                "\t\"name\": \"task2\",\n" +
-                "\t\"description\": \"-\",\n" +
-                "\t\"startDateTime\": \"01-01-2022 | 23:00 | +03:00\",\n" +
-                "\t\"duration\": 1\n" +
-                "}";
+        String body1 = "Тело1";
+        String body2 = "Тело2";
+        String body3 = "Тело3";
 
                 try {
-                    client1.put("1", body1);
-                    System.out.println(kvServer.data);
-                    client2.put("1", body2);
-                    System.out.println(kvServer.data);
-                    System.out.println(client1.load("1"));
+                    client1.put("Ключ1", body1);
+                    client1.put("Ключ2", body2);
+                    client1.put("Ключ1", body3);
+                    System.out.println(client1.load("Ключ1") + "Ключ1");
+                    System.out.println(client1.load("Ключ2") + "Ключ2");
+                    client2.put("Ключ1", body1);
+                    System.out.println(client2.load("Ключ1") + "Ключ1");
+
                 } catch (IOException | InterruptedException | HttpException | JsonParseException e) {
                     System.out.println(e.getMessage());
                 }
