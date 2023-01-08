@@ -10,7 +10,9 @@ import ru.yandex.practicum.utils.HttpConverter;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.google.gson.*;
@@ -26,7 +28,7 @@ public class KVServer {
     public static final int PORT = 8078;
     private final String apiToken;
     private final HttpServer server;
-    private final Map<String, String> data = new HashMap<>();
+    public final Map<String, String> data = new HashMap<>(); //todo заприватить
     private final Gson gson;
 
     //ok
@@ -58,8 +60,8 @@ public class KVServer {
     //ok
     private void save(HttpExchange exchange) throws IOException, HttpException {
         try {
+            isHaveApiTokenInQuery(exchange);
             if (POST == HttpConverter.getEnumMethod(exchange.getRequestMethod())) {
-                isHaveApiTokenInQuery(exchange);
                 String key = getKeyFromRequest(exchange);
                 String requestBody = getRequestBody(exchange);
                 data.put(key, requestBody);
