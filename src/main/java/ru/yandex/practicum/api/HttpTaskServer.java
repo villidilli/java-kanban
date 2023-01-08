@@ -15,7 +15,7 @@ public class HttpTaskServer {
 
     public HttpTaskServer() throws IOException {
         backedManager = new FileBackedTasksManager(new File("src/main/resources/Backup.csv")); //todo
-        server = HttpServer.create(new InetSocketAddress(PORT), 0);
+        server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
         server.createContext(ROOT_PATH, new TasksHandler(backedManager));
     }
 

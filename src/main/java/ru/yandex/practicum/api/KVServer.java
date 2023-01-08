@@ -29,7 +29,8 @@ public class KVServer {
     private final Map<String, String> data = new HashMap<>();
     private final Gson gson;
 
-    public KVServer() throws IOException {
+    //ok
+    public KVServer() throws IOException, HttpException {
         gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .registerTypeAdapter(Task.class, new TaskToJsonConverter())
@@ -43,54 +44,26 @@ public class KVServer {
         server.createContext("/load", this::load);
     }
 
-    private void load(HttpExchange exchange) throws IOException {
-        System.out.println("\n/load");
+    private void load(HttpExchange exchange) throws IOException, HttpException {
         isHaveApiTokenInQuery(exchange);
-        String token = getApiTokenFromRequest(exchange);
-        String dataObject = data.get(getApiTokenFromRequest(exchange));
+        String dataObject = data.get(getKeyFromRequest(exchange));
         if (dataObject != null) {
             sendResponse(exchange, dataObject, 200);
             return;
         }
-        sendResponse(exchange, gson.toJson(new HttpException(NOT_FOUND.getMessage())), 200);
+        sendResponse(exchange, gson.toJson(NOT_FOUND.getMessage()), 200);
+        throw new HttpException(NOT_FOUND.getMessage());
     }
 
-    private void isHaveApiTokenInQuery(HttpExchange exchange) throws IOException, HttpException {
-        System.out.println("\n/checkApiTokenInQuery");
-        if (!hasAuth(exchange)) {
-            sendResponse(exchange, gson.toJson(API_TOKEN_NOT_FOUND), 403);
-            throw new HttpException(API_TOKEN_NOT_FOUND);
-        }
-    }
-
-    private String getApiTokenFromRequest(HttpExchange exchange) throws IOException, HttpException {
-        System.out.println("\n/checkApiTokenAvailable");
-        String token = exchange.getRequestURI().getPath().substring("/save/".length());
-        if (token.isEmpty()) {
-            sendResponse(exchange, gson.toJson(API_TOKEN_IS_EMPTY), 400);
-            throw new HttpException(API_TOKEN_IS_EMPTY);
-        }
-        return token;
-    }
-
-    private String getRequestBody(HttpExchange exchange) throws IOException, HttpException {
-        String body = readRequest(exchange);
-        if (body.isEmpty()) {
-            sendResponse(exchange, gson.toJson(BODY_IS_EMPTY), 400);
-            throw new HttpException(BODY_IS_EMPTY);
-        }
-        return body;
-    }
-
-    private void save(HttpExchange exchange) throws IOException {
+    //ok
+    private void save(HttpExchange exchange) throws IOException, HttpException {
         try {
-            System.out.println("\n/save");
             if (POST == HttpConverter.getEnumMethod(exchange.getRequestMethod())) {
                 isHaveApiTokenInQuery(exchange);
-                String token = getApiTokenFromRequest(exchange);
+                String key = getKeyFromRequest(exchange);
                 String requestBody = getRequestBody(exchange);
-                data.put(token, requestBody);
-                sendResponse(exchange, requestBody, 200);
+                data.put(key, requestBody);
+                sendResponse(exchange, key, 200);
             } else {
                 sendResponse(exchange, gson.toJson(METHOD_NOT_POST), 405);
                 throw new HttpException(METHOD_NOT_POST);
@@ -100,9 +73,8 @@ public class KVServer {
         }
     }
 
-    private void register(HttpExchange exchange) throws IOException {
+    private void register(HttpExchange exchange) throws IOException, HttpException {
         try {
-            System.out.println("\n/register");
             if (GET == HttpConverter.getEnumMethod(exchange.getRequestMethod())) {
                 sendResponse(exchange, apiToken, 200);
             } else {
@@ -124,15 +96,41 @@ public class KVServer {
         return "" + System.currentTimeMillis();
     }
 
+    //ok
     private boolean hasAuth(HttpExchange exchange) {
         String rawQuery = exchange.getRequestURI().getRawQuery();
         return rawQuery != null && (rawQuery.contains("API_TOKEN=" + apiToken) || rawQuery.contains("API_TOKEN=DEBUG"));
     }
 
-    private String readRequest(HttpExchange exchange) throws IOException {
-        return new String(exchange.getRequestBody().readAllBytes(), UTF_8);
+    //ok
+    private void isHaveApiTokenInQuery(HttpExchange exchange) throws IOException, HttpException {
+        if (!hasAuth(exchange)) {
+            sendResponse(exchange, gson.toJson(API_TOKEN_NOT_FOUND), 403);
+            throw new HttpException(API_TOKEN_NOT_FOUND);
+        }
     }
 
+    //ok
+    private String getKeyFromRequest(HttpExchange exchange) throws IOException, HttpException {
+        String key = exchange.getRequestURI().getPath().substring("/save/".length());
+        if (key.isEmpty()) {
+            sendResponse(exchange, gson.toJson(API_TOKEN_IS_EMPTY), 400);
+            throw new HttpException(API_TOKEN_IS_EMPTY);
+        }
+        return key;
+    }
+
+    //ok
+    private String getRequestBody(HttpExchange exchange) throws IOException, HttpException {
+        String body = new String(exchange.getRequestBody().readAllBytes(), UTF_8);
+        if (body.isEmpty()) {
+            sendResponse(exchange, gson.toJson(BODY_IS_EMPTY), 400);
+            throw new HttpException(BODY_IS_EMPTY);
+        }
+        return body;
+    }
+
+    //ok
     private void sendResponse(HttpExchange exchange, String responseString, int responseCode) throws IOException {
         if (responseString.isBlank()) {
             exchange.sendResponseHeaders(responseCode, 0);

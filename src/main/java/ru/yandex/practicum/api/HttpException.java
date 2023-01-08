@@ -8,6 +8,8 @@ public class HttpException extends RuntimeException {
     public static final String BODY_IS_EMPTY = "Ничего не передано в тело";
     public static final String METHOD_NOT_POST = "Ожидался POST запрос";
     public static final String METHOD_NOT_GET = "Ожидался GET запрос";
+    public static final String NOT_PUT_TO_SERVER = "В сохранении на сервер отказано";
+    public static final String NOT_LOAD_FROM_SERVER = "В загрузке с сервера отказано";
 
     public HttpException (String message) {
         super(message);
