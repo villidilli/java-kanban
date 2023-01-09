@@ -23,7 +23,8 @@ public class KVTaskClient {
                 .build();
         client = HttpClient.newHttpClient();
         API_TOKEN = client.send(request, BodyHandlers.ofString()).body();
-        System.out.println("[KVClient] зарегистрирован на [KVServer][API_TOKEN: " + API_TOKEN + "]");
+        System.out.println("[KVClient] успешно зарегистрировался на [KVServer] [API_TOKEN: " + API_TOKEN + "]");
+        System.out.println("[KVClient] готов к работе");
     }
 
     public String getAPI_TOKEN() {
@@ -53,6 +54,7 @@ public class KVTaskClient {
                 .build();
 //        try {
             return client.send(request, BodyHandlers.ofString()).body();
+
 //        } catch (HttpException e) {
 //            throw new HttpException(HttpException.NOT_LOAD_FROM_SERVER);
 //        }

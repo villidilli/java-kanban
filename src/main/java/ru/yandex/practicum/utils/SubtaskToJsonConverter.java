@@ -61,7 +61,7 @@ public class SubtaskToJsonConverter implements JsonSerializer<SubTask>, JsonDese
         if (id != null) subTask.setID(id.getAsInt());
         if (status != null) subTask.setStatus(gson.fromJson(status, Status.class));
         if (startDateTime != null) subTask.setStartTime(gson.fromJson(startDateTime, ZonedDateTime.class));
-        if (duration.getAsLong() != 0) subTask.setDuration(gson.fromJson(duration, Duration.class).toMinutes());
+        if (duration != null && duration.getAsLong() != 0) subTask.setDuration(gson.fromJson(duration, Duration.class).toMinutes());
         return subTask;
     }
 }

@@ -58,7 +58,7 @@ public class TaskToJsonConverter implements JsonSerializer<Task>, JsonDeserializ
         if (id != null) task.setID(id.getAsInt());
         if (status != null) task.setStatus(gson.fromJson(status, Status.class));
         if (startDateTime != null) task.setStartTime(gson.fromJson(startDateTime, ZonedDateTime.class));
-        if (duration.getAsLong() != 0) task.setDuration(gson.fromJson(duration, Duration.class).toMinutes());
+        if (duration != null && duration.getAsLong() != 0) task.setDuration(gson.fromJson(duration, Duration.class).toMinutes());
         return task;
     }
 }

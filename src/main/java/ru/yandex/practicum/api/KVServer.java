@@ -10,8 +10,7 @@ import ru.yandex.practicum.utils.HttpConverter;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 import com.google.gson.*;
 import ru.yandex.practicum.utils.SubtaskToJsonConverter;
@@ -29,7 +28,7 @@ public class KVServer {
     private final Gson gson;
 
     //ok
-    public KVServer() throws IOException, APIException {
+    public KVServer() throws APIException {
         gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .registerTypeAdapter(Task.class, new TaskToJsonConverter())
@@ -37,10 +36,15 @@ public class KVServer {
                 .registerTypeAdapter(Epic.class, new EpicToJsonConverter())
                 .create();
         apiToken = generateApiToken();
-        server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
+        try {
+            server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
+        } catch (IOException e) {
+            throw new APIException(e.getMessage());
+        }
         server.createContext("/register", this::register);
         server.createContext("/save", this::save);
         server.createContext("/load", this::load);
+        System.out.println("[KVServer] [" + PORT + "] инициализирован");
     }
 
     private void load(HttpExchange exchange) throws IOException, APIException {
@@ -89,8 +93,7 @@ public class KVServer {
     }
 
     public void start() {
-        System.out.println("[" + this.getClass().getSimpleName() + "] запущен на порту [" + PORT + "]");
-        System.out.println("API_TOKEN: " + apiToken);
+        System.out.println("[KVServer] [" + PORT + "] [API_TOKEN: " + apiToken + "] готов к работе");
         server.start();
     }
 

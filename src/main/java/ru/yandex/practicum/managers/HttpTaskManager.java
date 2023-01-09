@@ -19,7 +19,7 @@ import static ru.yandex.practicum.managers.HttpManagerKey.*;
 
 public class HttpTaskManager extends FileBackedTasksManager {
     private static String serverURL;
-    private final KVTaskClient kvClient;
+    public final KVTaskClient kvClient; //todo заприватить
     private final Gson gson;
 //    private HttpTaskServer httpServer;
 
@@ -90,15 +90,17 @@ public class HttpTaskManager extends FileBackedTasksManager {
         }
     }
 
-    private void load() {
+    public void load() {
         restoreTasks();
         restoreHistory();
         restorePrioritizedTasks();
         restoreID();
-    }
+        System.out.println("[HttpManager] восстановил данные с [KVServer]");
+    } //todo был приват
 
     @Override
-    protected void save() {
+    public void save() { //todo был протект
+        System.out.println("HttpManager save");
         try {
             kvClient.put(TASKS.name(), gson.toJson(tasks));
             kvClient.put(EPICS.name(), gson.toJson(epics));
@@ -109,8 +111,6 @@ public class HttpTaskManager extends FileBackedTasksManager {
             throw new RuntimeException(e);
         }
     }
-
-
 }
 
 

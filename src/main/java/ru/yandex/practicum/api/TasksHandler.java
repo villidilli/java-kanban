@@ -4,6 +4,7 @@ import com.google.gson.*;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 import ru.yandex.practicum.managers.ManagerNotFoundException;
+import ru.yandex.practicum.managers.Managers;
 import ru.yandex.practicum.managers.TaskManager;
 import ru.yandex.practicum.tasks.*;
 import ru.yandex.practicum.utils.*;
@@ -29,7 +30,7 @@ public class TasksHandler implements HttpHandler {
     private JsonElement body;
 
 
-    public TasksHandler(TaskManager manager) {
+    public TasksHandler() {
         gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .serializeNulls()
@@ -37,7 +38,7 @@ public class TasksHandler implements HttpHandler {
                 .registerTypeAdapter(SubTask.class, new SubtaskToJsonConverter())
                 .registerTypeAdapter(Epic.class, new EpicToJsonConverter())
                 .create();
-        this.manager = manager;
+        this.manager = Managers.getDefault();
     }
 
     @Override
