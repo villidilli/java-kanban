@@ -29,7 +29,7 @@ public class TasksHandler implements HttpHandler {
     private JsonElement body;
 
 
-    public TasksHandler(TaskManager backedManager) {
+    public TasksHandler(TaskManager manager) {
         gson = new GsonBuilder()
                 .setPrettyPrinting()
                 .serializeNulls()
@@ -37,7 +37,7 @@ public class TasksHandler implements HttpHandler {
                 .registerTypeAdapter(SubTask.class, new SubtaskToJsonConverter())
                 .registerTypeAdapter(Epic.class, new EpicToJsonConverter())
                 .create();
-        manager = backedManager;
+        this.manager = manager;
     }
 
     @Override

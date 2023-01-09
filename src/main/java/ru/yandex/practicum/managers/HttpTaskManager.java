@@ -43,26 +43,6 @@ public class HttpTaskManager extends FileBackedTasksManager {
         }
     }
 
-    private void load() {
-        restoreTasks();
-        restoreHistory();
-        restorePrioritizedTasks();
-        restoreID();
-    }
-
-    @Override
-    protected void save() {
-        try {
-            kvClient.put(TASKS.name(), gson.toJson(tasks));
-            kvClient.put(EPICS.name(), gson.toJson(epics));
-            kvClient.put(SUBTASKS.name(), gson.toJson(subTasks));
-            kvClient.put(PRIORITIZED_LIST.name(), gson.toJson(prioritizedList));
-            kvClient.put(HISTORY.name(), gson.toJson(historyManager.getHistory()));
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     private void restoreID() {
         tasks.values().forEach(this::updateGeneratorID);
         subTasks.values().forEach(this::updateGeneratorID);
@@ -109,6 +89,28 @@ public class HttpTaskManager extends FileBackedTasksManager {
             throw new APIException(e.getMessage());
         }
     }
+
+    private void load() {
+        restoreTasks();
+        restoreHistory();
+        restorePrioritizedTasks();
+        restoreID();
+    }
+
+    @Override
+    protected void save() {
+        try {
+            kvClient.put(TASKS.name(), gson.toJson(tasks));
+            kvClient.put(EPICS.name(), gson.toJson(epics));
+            kvClient.put(SUBTASKS.name(), gson.toJson(subTasks));
+            kvClient.put(PRIORITIZED_LIST.name(), gson.toJson(prioritizedList));
+            kvClient.put(HISTORY.name(), gson.toJson(historyManager.getHistory()));
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+
 }
 
 
