@@ -14,6 +14,7 @@ public class HttpTaskServer {
 		try {
 			server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
 			server.createContext(ROOT_PATH, new TasksHandler());
+			System.out.println("[HttpTaskServer] [" + PORT + "] инициализирован");
 		} catch (IOException e) {
 			throw new APIException(e.getMessage());
 		}
@@ -21,6 +22,6 @@ public class HttpTaskServer {
 
 	public void start() {
 		server.start();
-		System.out.println("[HttpTaskServer] [" + PORT + "] готов к работе ");
+		System.out.println("[HttpTaskServer] [" + PORT + "] готов к работе");
 	}
 }

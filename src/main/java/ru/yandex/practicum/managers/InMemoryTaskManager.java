@@ -207,8 +207,15 @@ public class InMemoryTaskManager implements TaskManager {
         if (currentEpic == null) {
             throw new ManagerNotFoundException(ManagerNotFoundException.NOT_FOUND_PREV_VERSION);
         }
+        HashMap<Integer, SubTask> epicSubtasks = currentEpic.getEpicSubTasks();
         epics.put(currentEpic.getID(), newEpic);
         updateEpic(currentEpic.getID());
+        copingSubtasks(currentEpic, newEpic);
+    }
+
+    protected Epic copingSubtasks(Epic oldEpic, Epic newEpic) {
+        newEpic.getEpicSubTasks().putAll(oldEpic.getEpicSubTasks());
+        return newEpic;
     }
 
     @Override

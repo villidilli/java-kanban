@@ -31,13 +31,7 @@ public class TasksHandler implements HttpHandler {
 
 
     public TasksHandler() {
-        gson = new GsonBuilder()
-                .setPrettyPrinting()
-                .serializeNulls()
-                .registerTypeAdapter(Task.class, new TaskToJsonConverter())
-                .registerTypeAdapter(SubTask.class, new SubtaskToJsonConverter())
-                .registerTypeAdapter(Epic.class, new EpicToJsonConverter())
-                .create();
+        gson = GsonConfig.getGsonTaskConfig();
         this.manager = Managers.getDefault();
     }
 

@@ -11,13 +11,7 @@ import java.time.ZonedDateTime;
 import static ru.yandex.practicum.utils.DateTimeConverter.ZONED_DATE_TIME_FORMATTER;
 
 public class TaskToJsonConverter implements JsonSerializer<Task>, JsonDeserializer<Task> {
-    Gson gson = new GsonBuilder()
-            .setPrettyPrinting()
-            .serializeNulls()
-            .registerTypeAdapter(Status.class, new TaskStatusAdapter())
-            .registerTypeAdapter(ZonedDateTime.class, new DateTimeConverter())
-            .registerTypeAdapter(Duration.class, new DurationConverter())
-            .create();
+    private final Gson gson = GsonConfig.getGsonConverterConfig();
 
     @Override
     public JsonElement serialize(Task task, Type typeOfSrc, JsonSerializationContext context) {
@@ -52,7 +46,7 @@ public class TaskToJsonConverter implements JsonSerializer<Task>, JsonDeserializ
         JsonElement duration = object.get("duration");
 
         if (name == null || description == null) {
-            throw new JsonParseException("Необходимо установить значение name и description");
+            throw new JsonParseException(gson.toJson("Необходимо установить значение name и description"));
         }
         Task task = new Task(name.getAsString(), description.getAsString());
         if (id != null) task.setID(id.getAsInt());

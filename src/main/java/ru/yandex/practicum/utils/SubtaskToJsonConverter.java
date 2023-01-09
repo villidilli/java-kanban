@@ -12,13 +12,7 @@ import java.time.ZonedDateTime;
 import static ru.yandex.practicum.utils.DateTimeConverter.ZONED_DATE_TIME_FORMATTER;
 
 public class SubtaskToJsonConverter implements JsonSerializer<SubTask>, JsonDeserializer<SubTask> {
-    Gson gson = new GsonBuilder()
-            .setPrettyPrinting()
-            .serializeNulls()
-            .registerTypeAdapter(Status.class, new TaskStatusAdapter())
-            .registerTypeAdapter(ZonedDateTime.class, new DateTimeConverter())
-            .registerTypeAdapter(Duration.class, new DurationConverter())
-            .create();
+    private final Gson gson = GsonConfig.getGsonConverterConfig();
 
     @Override
     public JsonElement serialize(SubTask subTask, Type typeOfSrc, JsonSerializationContext context) {
@@ -55,7 +49,9 @@ public class SubtaskToJsonConverter implements JsonSerializer<SubTask>, JsonDese
         JsonElement parentEpicID = object.get("parentEpicID");
 
         if (name == null || description == null || parentEpicID == null) {
-            throw new JsonParseException("Необходимо передать значения полей [name/description/parentEpicID]");
+            throw new JsonParseException(
+                    gson.toJson("Необходимо передать значения полей [name/description/parentEpicID]")
+            );
         }
         SubTask subTask = new SubTask(name.getAsString(), description.getAsString(), parentEpicID.getAsInt());
         if (id != null) subTask.setID(id.getAsInt());
