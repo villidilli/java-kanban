@@ -42,6 +42,7 @@ public class Main {
         manager.getTaskByID(task1.getID());
         manager.getSubTaskByID(subTask1.getID());
         manager.getTaskByID(task2.getID());
+        System.out.println(manager.getPrioritizedTasks());
 
 
         HttpTaskManager manager1 = new HttpTaskManager("http://localhost:8078");
@@ -51,13 +52,13 @@ public class Main {
 //        System.out.println(manager.getEpicByID(epic1.getID()));
 //        System.out.println(manager.getTaskByID(task1.getID()));
 //        System.out.println(manager.getTaskByID(3));
-//        System.out.println(manager1.getPrioritizedTasks());
-        manager1.create(epic2);
-        System.out.println(manager1.getEpicByID(epic2.getID()));
-        System.out.println(manager1.getAllEpics());
-        Epic epic3 = new Epic(1, "Вася", "-");
-        manager1.update(epic3);
-        System.out.println(manager1.getAllEpics());
+        System.out.println(manager1.getPrioritizedTasks());
+//        manager1.create(epic2);
+//        System.out.println(manager1.getEpicByID(epic2.getID()));
+//        System.out.println(manager1.getAllEpics());
+//        Epic epic3 = new Epic(1, "Вася", "-");
+//        manager1.update(epic3);
+//        System.out.println(manager1.getAllEpics());
 
 
     }
