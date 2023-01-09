@@ -2,7 +2,6 @@ package ru.yandex.practicum.managers;
 
 import com.google.gson.Gson;
 import ru.yandex.practicum.api.APIException;
-import ru.yandex.practicum.api.HttpTaskServer;
 import ru.yandex.practicum.api.KVTaskClient;
 import ru.yandex.practicum.tasks.*;
 
@@ -18,7 +17,7 @@ import java.util.*;
 import static ru.yandex.practicum.managers.HttpManagerKey.*;
 
 public class HttpTaskManager extends FileBackedTasksManager {
-    private static String serverURL;
+    private static String kvServerURL;
     public final KVTaskClient kvClient; //todo заприватить
     private final Gson gson;
 //    private HttpTaskServer httpServer;
@@ -35,7 +34,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
                     .create();
 //            backedManager = new FileBackedTasksManager();
 //            httpServer = new HttpTaskServer();
-            serverURL = url;
+            kvServerURL = url;
             kvClient = new KVTaskClient(url);
             load();
         } catch (IOException | InterruptedException e) {
@@ -51,17 +50,17 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
     private void restoreTasks() {
         try {
-            if (!kvClient.load(EPICS.name()).isBlank()) {
-                epics.putAll(gson.fromJson(kvClient.load(TASKS.name()), HashMap.class));
+            if (!kvClient.load(EPICS.name()).isEmpty()) {
+                epics.putAll(gson.fromJson(kvClient.load(EPICS.name()), HashMap.class));
             }
 
-            if (!kvClient.load(TASKS.name()).isBlank()) {
+            if (!kvClient.load(TASKS.name()).isEmpty()) {
                 tasks.putAll(gson.fromJson(kvClient.load(TASKS.name()), HashMap.class));
             }
 
-            if (!kvClient.load(SUBTASKS.name()).isBlank()) {
-                subTasks.putAll(gson.fromJson(kvClient.load(TASKS.name()), HashMap.class));
-                subTasks.values().forEach(this::addSubTaskToEpic);
+            if (!kvClient.load(SUBTASKS.name()).isEmpty()) {
+                subTasks.putAll(gson.fromJson(kvClient.load(SUBTASKS.name()), HashMap.class));
+                subTasks.values().forEach(this::addSubTaskToEpic); //todo была ошибка проверить
             }
         } catch (IOException | InterruptedException e) {
             throw new APIException(e.getMessage());
@@ -82,7 +81,10 @@ public class HttpTaskManager extends FileBackedTasksManager {
 
     private void restorePrioritizedTasks() {
         try {
+            String set = kvClient.load(PRIORITIZED_LIST.name());
             if (!kvClient.load(PRIORITIZED_LIST.name()).isBlank()) {
+                String set1 = kvClient.load(PRIORITIZED_LIST.name());
+                System.out.println(set.getClass());
                 prioritizedList.addAll(gson.fromJson(kvClient.load(PRIORITIZED_LIST.name()), Set.class));
             }
         } catch (IOException | InterruptedException e) {

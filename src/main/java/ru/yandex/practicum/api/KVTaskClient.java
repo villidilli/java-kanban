@@ -53,7 +53,8 @@ public class KVTaskClient {
                 .headers("Content-Type", "application/json")
                 .build();
 //        try {
-            return client.send(request, BodyHandlers.ofString()).body();
+            String object = client.send(request, BodyHandlers.ofString()).body();
+            return object;
 
 //        } catch (HttpException e) {
 //            throw new HttpException(HttpException.NOT_LOAD_FROM_SERVER);
