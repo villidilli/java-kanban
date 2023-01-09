@@ -33,9 +33,7 @@ public class Main {
                 2022, 1, 1, 0, 0), ZoneId.systemDefault()), 1);
 
 
-        KVServer server = new KVServer();
-        server.start();
-        HttpTaskManager httpManager = new HttpTaskManager("http://localhost:8078");
+        TaskManager httpManager = Managers.getDefault();
         httpManager.create(epic1);
         httpManager.create(task1);
         httpManager.create(task2);
@@ -48,6 +46,10 @@ public class Main {
         System.out.println(httpManager.getAllTasks());
         System.out.println(httpManager.getAllSubTasks());
         System.out.println(httpManager.getAllEpics());
+
+
+//        TaskManager httpManager1 = Managers.getDefault();
+//        System.out.println(httpManager1.getAllTasks());
 
 //        System.out.println(httpManager.getAllTasks());
 

@@ -16,7 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
-    private File backupfile; //todo заменить на статик, что будет
+    private File backupfile;
 
     public FileBackedTasksManager() {}
 
@@ -75,7 +75,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 tasks.put(ID, task);
                 break;
             case EPIC:
-                epics.put(ID, (Epic) task); break; //todo изменил порядок
+                epics.put(ID, (Epic) task); break;
             case SUBTASK:
                 subTasks.put(ID, (SubTask) task);
                 addSubTaskToEpic((SubTask) task);

@@ -25,7 +25,7 @@ public class KVServer {
     public static final int PORT = 8078;
     private final String apiToken;
     private final HttpServer server;
-    public final Map<String, String> data = new HashMap<>(); //todo заприватить
+    private final Map<String, String> data = new HashMap<>();
     private final Gson gson;
 
     //ok
@@ -92,6 +92,11 @@ public class KVServer {
         System.out.println("[" + this.getClass().getSimpleName() + "] запущен на порту [" + PORT + "]");
         System.out.println("API_TOKEN: " + apiToken);
         server.start();
+    }
+
+    public void stop() {
+        System.out.println("[" + this.getClass().getSimpleName() + "] остановлен [" + PORT + "]");
+        server.stop(1);
     }
 
     private String generateApiToken() {

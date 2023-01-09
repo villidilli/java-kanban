@@ -21,7 +21,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
     private static String serverURL;
     private final KVTaskClient kvClient;
     private final Gson gson;
-    private HttpTaskServer httpServer;
+//    private HttpTaskServer httpServer;
 
 //    private final FileBackedTasksManager backedManager;
 
@@ -34,7 +34,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
                     .registerTypeAdapter(Epic.class, new EpicToJsonConverter())
                     .create();
 //            backedManager = new FileBackedTasksManager();
-            httpServer = new HttpTaskServer();
+//            httpServer = new HttpTaskServer();
             serverURL = url;
             kvClient = new KVTaskClient(url);
             load();
