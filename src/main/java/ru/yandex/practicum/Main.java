@@ -33,19 +33,21 @@ public class Main {
                 2022, 1, 1, 0, 0), ZoneId.systemDefault()), 1);
 
 
-        TaskManager httpManager = Managers.getDefault();
-        httpManager.create(epic1);
-        httpManager.create(task1);
-        httpManager.create(task2);
-        httpManager.getTaskByID(task1.getID());
-        httpManager.create(epic2);
-        httpManager.create(subTask3);
-        httpManager.create(subTask1);
-        httpManager.create(subTask2);
-        httpManager.deleteAllSubTasks();
-        System.out.println(httpManager.getAllTasks());
-        System.out.println(httpManager.getAllSubTasks());
-        System.out.println(httpManager.getAllEpics());
+
+
+//        TaskManager httpManager = Managers.getDefault();
+//        httpManager.create(epic1);
+//        httpManager.create(task1);
+//        httpManager.create(task2);
+//        httpManager.getTaskByID(task1.getID());
+//        httpManager.create(epic2);
+//        httpManager.create(subTask3);
+//        httpManager.create(subTask1);
+//        httpManager.create(subTask2);
+//        httpManager.deleteAllSubTasks();
+//        System.out.println(httpManager.getAllTasks());
+//        System.out.println(httpManager.getAllSubTasks());
+//        System.out.println(httpManager.getAllEpics());
 
 
 //        TaskManager httpManager1 = Managers.getDefault();
