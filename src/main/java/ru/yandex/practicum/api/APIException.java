@@ -9,6 +9,7 @@ public class APIException extends RuntimeException {
     public static final String METHOD_NOT_POST = "Ожидался POST запрос";
     public static final String METHOD_NOT_GET = "Ожидался GET запрос";
     public static final String NOT_PUT_TO_SERVER = "В сохранении на сервер отказано";
+    public static final String UNABLE_TO_DETERMINE_ENDPOINT = "Эндпоинт для данного запроса не зарегистрирован";
 
     public APIException(String message) {
         super(message);

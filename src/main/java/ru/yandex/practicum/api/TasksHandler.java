@@ -20,6 +20,7 @@ import java.net.URI;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
+import static ru.yandex.practicum.api.APIException.UNABLE_TO_DETERMINE_ENDPOINT;
 import static ru.yandex.practicum.api.APIMessage.APPLICATION_JSON;
 import static ru.yandex.practicum.api.APIMessage.CONTENT_TYPE;
 import static ru.yandex.practicum.api.Endpoint.*;
@@ -288,6 +289,13 @@ public class TasksHandler implements HttpHandler {
             sendResponse(e.getMessage(), 400);
         }
 
+    }
+
+    public void checkEndpoint(Endpoint endpoint) throws IOException, APIException {
+        if (endpoint == UNKNOWN) {
+            sendResponse(gson.toJson(UNABLE_TO_DETERMINE_ENDPOINT), 404);
+            throw new APIException(UNABLE_TO_DETERMINE_ENDPOINT);
+        }
     }
 
     public boolean isHaveIdInBody() {

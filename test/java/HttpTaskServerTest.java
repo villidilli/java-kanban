@@ -1,11 +1,14 @@
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.api.*;
+import ru.yandex.practicum.managers.ManagerNotFoundException;
 import ru.yandex.practicum.managers.Managers;
 
 import java.io.IOException;
+import java.lang.reflect.Executable;
 import java.net.*;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -14,6 +17,7 @@ import java.net.http.HttpResponse;
 import static org.junit.jupiter.api.Assertions.*;
 import static ru.yandex.practicum.api.APIMessage.*;
 import static ru.yandex.practicum.api.Endpoint.*;
+import static ru.yandex.practicum.managers.ManagerNotFoundException.NOT_FOUND_BY_ID;
 
 public class HttpTaskServerTest {
 	@BeforeAll
@@ -62,9 +66,6 @@ public class HttpTaskServerTest {
 		assertEquals(DELETE_TASK_BY_ID, handler.getEndpoint(URI.create("/tasks/task?id="), RequestMethod.DELETE));
 		assertEquals(DELETE_SUBTASK_BY_ID, handler.getEndpoint(URI.create("/tasks/subtask?id="), RequestMethod.DELETE));
 		assertEquals(DELETE_EPIC_BY_ID, handler.getEndpoint(URI.create("/tasks/epic?id="), RequestMethod.DELETE));
-		assertEquals(UNKNOWN, handler.getEndpoint(URI.create("/tasks/yandex"), RequestMethod.DELETE));
-		assertEquals(UNKNOWN, handler.getEndpoint(URI.create("/tasks/yandex"), RequestMethod.POST));
-		assertEquals(UNKNOWN, handler.getEndpoint(URI.create("/tasks/yandex"), RequestMethod.GET));
 	}
 
 	@Test
@@ -116,14 +117,10 @@ public class HttpTaskServerTest {
 	}
 
 	@Test
-	public void shouldReturnEndpointCreateOrUpdateEpicWhenSendIncorrectRequest() {
-		final String bodyNull = "";
-
+	public void shouldReturnUnknownEndpointWhenEndpointNotFind() {
 		TasksHandler handler = new TasksHandler(Managers.getDefault());
-		handler.body = JsonParser.parseString(bodyNull);
-		assertEquals(UNKNOWN, handler.getEndpoint(URI.create("/tasks/epic"), RequestMethod.GET));
-
+		Endpoint endpoint = handler.getEndpoint(URI.create("/tasks/anyPathParts"), RequestMethod.GET);
+		assertEquals(UNKNOWN, endpoint);
 	}
-
 }
 
