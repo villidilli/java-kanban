@@ -6,6 +6,8 @@ public enum APIMessage {
     CONTENT_TYPE("Content-Type"),
     APPLICATION_JSON("application/json"),
     NOT_INPUT_MIN_FIELD_EPIC("Необходимо установить значение полей [name/description]"),
+    INVALID_INPUT_FIELDS_EPIC("Ввод полей [startDateTime/duration/status] не требуется"),
+    PARENT_EPIC_NOT_FOUND("Родительский эпик с указанным ID не существует"),
     NOT_INPUT_MIN_FIELD_SUBTASK("Необходимо передать значения полей [name/description/parentEpicID]"),
     NOT_INPUT_MIN_FIELD_TASK("Необходимо установить значение name и description"),
     HTTP_TASK_SERVER_CREATED("[HttpTaskServer] инициализирован"),

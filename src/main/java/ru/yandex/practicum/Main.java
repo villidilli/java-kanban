@@ -38,36 +38,37 @@ public class Main {
 
         Servers.getKVServer().start();
         Servers.getHttpTaskServer().start();
-        HttpTaskManager manager = Managers.getDefault();
-        manager.create(epic1);
-        manager.create(task1);
-        manager.create(task2);
-        manager.create(subTask1);
-        manager.getTaskByID(task1.getID());
-        manager.getSubTaskByID(subTask1.getID());
-        manager.getTaskByID(task2.getID());
-        System.out.println(manager.getPrioritizedTasks());
-
-//        HttpTaskManager manager1 = new HttpTaskManager("http://localhost:8078");
-
-        TasksHandler tasksHandler = new TasksHandler(manager);
-        System.out.println(tasksHandler.getEndpoint(URI.create("http://localhost:8078/tasks"), GET));
-
-
-    }
-
-    private static HttpResponse<String> getResponse(String path) {
-        HttpRequest request = HttpRequest.newBuilder()
-                .GET()
-                .uri(URI.create("http://localhost:8080/" + path))
-                .headers("Content-Type", "application/json")
-                .version(HttpClient.Version.HTTP_1_1)
-                .build();
-        HttpClient client = HttpClient.newHttpClient();
-        try {
-            return client.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
-    }
+//        HttpTaskManager manager = Managers.getDefault();
+//        manager.create(epic1);
+//        manager.create(task1);
+//        manager.create(task2);
+//        manager.create(subTask1);
+//        manager.getTaskByID(task1.getID());
+//        manager.getSubTaskByID(subTask1.getID());
+//        manager.getTaskByID(task2.getID());
+//        System.out.println(manager.getPrioritizedTasks());
+//
+////        HttpTaskManager manager1 = new HttpTaskManager("http://localhost:8078");
+//
+//        TasksHandler tasksHandler = new TasksHandler(manager);
+//        System.out.println(tasksHandler.getEndpoint(URI.create("http://localhost:8078/tasks"), GET));
+//
+//
+//    }
+//
+//    private static HttpResponse<String> getResponse(String path) {
+//        HttpRequest request = HttpRequest.newBuilder()
+//                .GET()
+//                .uri(URI.create("http://localhost:8080/" + path))
+//                .headers("Content-Type", "application/json")
+//                .version(HttpClient.Version.HTTP_1_1)
+//                .build();
+//        HttpClient client = HttpClient.newHttpClient();
+//        try {
+//            return client.send(request, HttpResponse.BodyHandlers.ofString());
+//        } catch (IOException | InterruptedException e) {
+//            throw new RuntimeException(e);
+//        }
+//    }
+}
 }

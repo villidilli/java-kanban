@@ -6,6 +6,7 @@ import ru.yandex.practicum.tasks.*;
 
 import java.lang.reflect.Type;
 
+import static ru.yandex.practicum.api.APIMessage.INVALID_INPUT_FIELDS_EPIC;
 import static ru.yandex.practicum.api.APIMessage.NOT_INPUT_MIN_FIELD_EPIC;
 import static ru.yandex.practicum.utils.DateTimeConverter.ZONED_DATE_TIME_FORMATTER;
 
@@ -43,8 +44,15 @@ public class EpicToJsonConverter implements JsonSerializer<Epic>, JsonDeserializ
         JsonElement id = object.get("id");
         JsonElement name = object.get("name");
         JsonElement description = object.get("description");
+        JsonElement startDateTime = object.get("startDateTime");
+        JsonElement duration = object.get("duration");
+        JsonElement status = object.get("status");
+
         if (name == null || description == null) {
-            throw new JsonParseException(gson.toJson(NOT_INPUT_MIN_FIELD_EPIC));
+            throw new JsonParseException(gson.toJson(NOT_INPUT_MIN_FIELD_EPIC.getMessage()));
+        }
+        if (startDateTime != null || duration != null || status != null) {
+            throw new JsonParseException(gson.toJson(INVALID_INPUT_FIELDS_EPIC.getMessage()));
         }
         Epic epic = new Epic(name.getAsString(), description.getAsString());
         if (id != null) epic.setID(id.getAsInt());

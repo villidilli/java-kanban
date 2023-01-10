@@ -51,7 +51,9 @@ public class TaskToJsonConverter implements JsonSerializer<Task>, JsonDeserializ
         JsonElement startDateTime = object.get("startDateTime");
         JsonElement duration = object.get("duration");
 
-        if (name == null || description == null) throw new JsonParseException(gson.toJson(NOT_INPUT_MIN_FIELD_TASK));
+        if (name == null || description == null) throw new JsonParseException(
+                gson.toJson(NOT_INPUT_MIN_FIELD_TASK.getMessage())
+        );
         Task task = new Task(name.getAsString(), description.getAsString());
         if (id != null) task.setID(id.getAsInt());
         if (status != null) task.setStatus(gson.fromJson(status, Status.class));

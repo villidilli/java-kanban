@@ -21,8 +21,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 import static ru.yandex.practicum.api.APIException.UNABLE_TO_DETERMINE_ENDPOINT;
-import static ru.yandex.practicum.api.APIMessage.APPLICATION_JSON;
-import static ru.yandex.practicum.api.APIMessage.CONTENT_TYPE;
+import static ru.yandex.practicum.api.APIMessage.*;
 import static ru.yandex.practicum.api.Endpoint.*;
 import static ru.yandex.practicum.api.RequestMethod.GET;
 
@@ -39,7 +38,7 @@ public class TasksHandler implements HttpHandler {
 
     public TasksHandler(HttpTaskManager httpManager) {
         gson = GsonConfig.getGsonTaskConfig();
-        this.manager = Managers.getDefault();
+        this.manager = httpManager;
     }
 
     private int getParameterID(URI url) {
@@ -249,6 +248,14 @@ public class TasksHandler implements HttpHandler {
         System.out.println("/createSubtask");
         try {
             SubTask subTask = gson.fromJson(body, SubTask.class);
+            System.out.println(subTask.getParentEpicID());
+            System.out.println(manager.getAllEpics());
+            try {
+                manager.getEpicByID(subTask.getParentEpicID());
+            } catch (ManagerNotFoundException e) {
+                sendResponse(gson.toJson(PARENT_EPIC_NOT_FOUND.getMessage()), 400);
+                throw new APIException(PARENT_EPIC_NOT_FOUND.getMessage());
+            }
             manager.create(subTask);
             sendResponse(gson.toJson(subTask), 200);
         } catch (TimeValueException | JsonParseException e) {
