@@ -104,7 +104,7 @@ public class HttpTaskManager extends FileBackedTasksManager {
     }
 
     @Override
-    public void save() { //todo был протект
+    protected void save() { //todo был протект
         System.out.println("HttpManager save");
         try {
             kvClient.put(TASKS.name(), gson.toJson(getAllTasks()));
