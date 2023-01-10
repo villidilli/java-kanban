@@ -14,13 +14,13 @@ public class HttpConverter {
     }
 
     public static PathPart getEnumPathPart(String pathPart) {
-            switch (pathPart.toUpperCase()) {
-                case "TASKS": return PathPart.TASKS;
-                case "TASK": return PathPart.TASK;
-                case "SUBTASK": return PathPart.SUBTASK;
-                case "EPIC": return PathPart.EPIC;
-                case "HISTORY": return PathPart.HISTORY;
-            }
+        switch (pathPart.toUpperCase()) {
+            case "TASKS": return PathPart.TASKS;
+            case "TASK": return PathPart.TASK;
+            case "SUBTASK": return PathPart.SUBTASK;
+            case "EPIC": return PathPart.EPIC;
+            case "HISTORY": return PathPart.HISTORY;
+        }
         return PathPart.NOT_REGISTERED;
     }
 }

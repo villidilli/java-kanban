@@ -1,20 +1,26 @@
 package ru.yandex.practicum.api;
 
 import com.google.gson.*;
+
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
+
 import ru.yandex.practicum.managers.ManagerNotFoundException;
 import ru.yandex.practicum.managers.Managers;
 import ru.yandex.practicum.managers.TaskManager;
+
 import ru.yandex.practicum.tasks.*;
 import ru.yandex.practicum.utils.*;
 
-
 import java.io.IOException;
+
 import java.net.URI;
+
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
+import static ru.yandex.practicum.api.APIMessage.APPLICATION_JSON;
+import static ru.yandex.practicum.api.APIMessage.CONTENT_TYPE;
 import static ru.yandex.practicum.api.Endpoint.*;
 import static ru.yandex.practicum.api.RequestMethod.GET;
 
@@ -29,87 +35,9 @@ public class TasksHandler implements HttpHandler {
     private RequestMethod method;
     private JsonElement body;
 
-
     public TasksHandler() {
         gson = GsonConfig.getGsonTaskConfig();
         this.manager = Managers.getDefault();
-    }
-
-    @Override
-    public void handle(HttpExchange exchange) throws IOException {
-        System.out.println("Началась обработка запроса от клиента.");
-        this.exchange = exchange;
-        url = exchange.getRequestURI();
-        method = HttpConverter.getEnumMethod(exchange.getRequestMethod());
-        body = JsonParser.parseString(new String(exchange.getRequestBody().readAllBytes()));
-
-        Endpoint endpoint = getEndpoint(url, method);
-
-        switch (endpoint) {
-            case GET_ALL_TASKS:
-                handleGetAllTasks();
-                break;
-            case GET_ALL_SUBTASKS:
-                handleGetAllSubtasks();
-                break;
-            case GET_ALL_EPICS:
-                handleGetAllEpics();
-                break;
-            case GET_TASK_BY_ID:
-                handleGetTaskByID();
-                break;
-            case GET_SUBTASK_BY_ID:
-                handleGetSubtaskByID();
-                break;
-            case GET_EPIC_BY_ID:
-                handleGetEpicByID();
-                break;
-            case GET_ALL_SUBTASKS_BY_EPIC:
-                handleGetEpicSubtasks();
-                break;
-            case GET_PRIORITIZED_TASKS:
-                handleGetPrioritizedTasks();
-                break;
-            case GET_HISTORY:
-                handleGetHistory();
-                break;
-            case DELETE_ALL_TASKS:
-                handleDeleteAllTasks();
-                break;
-            case DELETE_ALL_SUBTASKS:
-                handleDeleteAllSubtasks();
-                break;
-            case DELETE_ALL_EPICS:
-                handleDeleteAllEpics();
-                break;
-            case DELETE_TASK_BY_ID:
-                handleDeleteTaskByID();
-                break;
-            case DELETE_SUBTASK_BY_ID:
-                handleDeleteSubtaskByID();
-                break;
-            case DELETE_EPIC_BY_ID:
-                handleDeleteEpicByID();
-                break;
-            case CREATE_TASK:
-                handleCreateTask();
-                break;
-            case UPDATE_TASK:
-                handleUpdateTask();
-                break;
-            case CREATE_SUBTASK:
-                handleCreateSubtask();
-                break;
-            case UPDATE_SUBTASK:
-                handleUpdateSubtask();
-                break;
-            case CREATE_EPIC:
-                handleCreateEpic();
-                break;
-            case UPDATE_EPIC:
-                handleUpdateEpic();
-                break;
-        }
     }
 
     private int getParameterID(URI url) {
@@ -169,7 +97,7 @@ public class TasksHandler implements HttpHandler {
             return;
         }
         byte[] response = responseString.getBytes(DEFAULT_CHARSET);
-        exchange.getResponseHeaders().add("Content-Type", "application/json");
+        exchange.getResponseHeaders().add(CONTENT_TYPE.name(), APPLICATION_JSON.name());
         exchange.sendResponseHeaders(responseCode, response.length);
         exchange.getResponseBody().write(response);
         exchange.close();
@@ -277,7 +205,6 @@ public class TasksHandler implements HttpHandler {
     }
 
     private void handleCreateTask() throws IOException {
-        System.out.println("/handleCreateTask");
         try {
             Task task = gson.fromJson(body, Task.class);
             manager.create(task);
@@ -288,7 +215,6 @@ public class TasksHandler implements HttpHandler {
     }
 
     private void handleUpdateTask() throws IOException {
-        System.out.println("/handleUpdateTask");
         try {
             Task task = gson.fromJson(body, Task.class);
             manager.update(task);
@@ -300,7 +226,6 @@ public class TasksHandler implements HttpHandler {
     }
 
     private void handleCreateSubtask() throws IOException {
-        System.out.println("/handleCreateSubtask");
         try {
             SubTask subTask = gson.fromJson(body, SubTask.class);
             manager.create(subTask);
@@ -311,7 +236,6 @@ public class TasksHandler implements HttpHandler {
     }
 
     private void handleUpdateSubtask() throws IOException {
-        System.out.println("/handleUpdateSubtask");
         try {
             SubTask subTask = gson.fromJson(body, SubTask.class);
             manager.update(subTask);
@@ -323,7 +247,6 @@ public class TasksHandler implements HttpHandler {
     }
 
     private void handleCreateEpic() throws IOException {
-        System.out.println("/handleCreateEpic");
         try {
             Epic epic = gson.fromJson(body, Epic.class);
             manager.create(epic);
@@ -334,7 +257,6 @@ public class TasksHandler implements HttpHandler {
     }
 
     private void handleUpdateEpic() throws IOException {
-        System.out.println("/handleUpdateEpic");
         try {
             Epic epic = gson.fromJson(body, Epic.class);
             manager.update(epic);
@@ -346,6 +268,41 @@ public class TasksHandler implements HttpHandler {
     }
 
     private boolean isHaveIdInBody() {
-        return body != null && body.isJsonObject() && body.getAsJsonObject().has("id");
+        return body != null && body.isJsonObject()
+                && body.getAsJsonObject().has("id");
+    }
+
+    @Override
+    public void handle(HttpExchange exchange) throws IOException {
+        System.out.println("Началась обработка запроса от клиента.");
+        this.exchange = exchange;
+        url = exchange.getRequestURI();
+        method = HttpConverter.getEnumMethod(exchange.getRequestMethod());
+        body = JsonParser.parseString(new String(exchange.getRequestBody().readAllBytes()));
+        Endpoint endpoint = getEndpoint(url, method);
+
+        switch (endpoint) {
+            case GET_ALL_TASKS: handleGetAllTasks();break;
+            case GET_ALL_SUBTASKS: handleGetAllSubtasks();break;
+            case GET_ALL_EPICS: handleGetAllEpics();break;
+            case GET_TASK_BY_ID: handleGetTaskByID();break;
+            case GET_SUBTASK_BY_ID: handleGetSubtaskByID();break;
+            case GET_EPIC_BY_ID: handleGetEpicByID();break;
+            case GET_ALL_SUBTASKS_BY_EPIC: handleGetEpicSubtasks();break;
+            case GET_PRIORITIZED_TASKS: handleGetPrioritizedTasks();break;
+            case GET_HISTORY: handleGetHistory();break;
+            case DELETE_ALL_TASKS: handleDeleteAllTasks();break;
+            case DELETE_ALL_SUBTASKS: handleDeleteAllSubtasks();break;
+            case DELETE_ALL_EPICS: handleDeleteAllEpics();break;
+            case DELETE_TASK_BY_ID: handleDeleteTaskByID();break;
+            case DELETE_SUBTASK_BY_ID: handleDeleteSubtaskByID();break;
+            case DELETE_EPIC_BY_ID: handleDeleteEpicByID();break;
+            case CREATE_TASK: handleCreateTask();break;
+            case UPDATE_TASK: handleUpdateTask();break;
+            case CREATE_SUBTASK: handleCreateSubtask();break;
+            case UPDATE_SUBTASK: handleUpdateSubtask();break;
+            case CREATE_EPIC: handleCreateEpic();break;
+            case UPDATE_EPIC: handleUpdateEpic();break;
+        }
     }
 }

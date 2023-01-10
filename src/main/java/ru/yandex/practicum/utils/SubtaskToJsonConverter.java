@@ -1,14 +1,15 @@
 package ru.yandex.practicum.utils;
 
 import com.google.gson.*;
-import ru.yandex.practicum.tasks.Status;
-import ru.yandex.practicum.tasks.SubTask;
-import ru.yandex.practicum.tasks.Task;
+
+import ru.yandex.practicum.tasks.*;
 
 import java.lang.reflect.Type;
+
 import java.time.Duration;
 import java.time.ZonedDateTime;
 
+import static ru.yandex.practicum.api.APIMessage.NOT_INPUT_MIN_FIELD_SUBTASK;
 import static ru.yandex.practicum.utils.DateTimeConverter.ZONED_DATE_TIME_FORMATTER;
 
 public class SubtaskToJsonConverter implements JsonSerializer<SubTask>, JsonDeserializer<SubTask> {
@@ -29,8 +30,9 @@ public class SubtaskToJsonConverter implements JsonSerializer<SubTask>, JsonDese
         if (subTask.getStartTime() == Task.UNREACHEBLE_DATE) {
             object.add("startDateTime", new JsonPrimitive("--"));
         } else {
-            object.add("startDateTime", new JsonPrimitive(subTask.getStartTime().format(ZONED_DATE_TIME_FORMATTER)));
-
+            object.add("startDateTime", new JsonPrimitive(
+                    subTask.getStartTime().format(ZONED_DATE_TIME_FORMATTER)
+            ));
         }
         object.add("duration", new JsonPrimitive(subTask.getDuration()));
         object.add("parentEpicID", new JsonPrimitive(subTask.getParentEpicID()));
@@ -49,15 +51,15 @@ public class SubtaskToJsonConverter implements JsonSerializer<SubTask>, JsonDese
         JsonElement parentEpicID = object.get("parentEpicID");
 
         if (name == null || description == null || parentEpicID == null) {
-            throw new JsonParseException(
-                    gson.toJson("Необходимо передать значения полей [name/description/parentEpicID]")
-            );
+            throw new JsonParseException(gson.toJson(NOT_INPUT_MIN_FIELD_SUBTASK));
         }
         SubTask subTask = new SubTask(name.getAsString(), description.getAsString(), parentEpicID.getAsInt());
         if (id != null) subTask.setID(id.getAsInt());
         if (status != null) subTask.setStatus(gson.fromJson(status, Status.class));
         if (startDateTime != null) subTask.setStartTime(gson.fromJson(startDateTime, ZonedDateTime.class));
-        if (duration != null && duration.getAsLong() != 0) subTask.setDuration(gson.fromJson(duration, Duration.class).toMinutes());
+        if (duration != null && duration.getAsLong() != 0) {
+            subTask.setDuration(gson.fromJson(duration, Duration.class).toMinutes());
+        }
         return subTask;
     }
 }

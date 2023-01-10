@@ -1,17 +1,19 @@
 package ru.yandex.practicum.api;
 
 import java.io.IOException;
+
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 
 import static java.net.http.HttpResponse.*;
+import static ru.yandex.practicum.api.APIMessage.*;
 
 public class KVTaskClient {
     private final HttpClient client;
-    private HttpRequest request;
     private final String API_TOKEN;
     private final String serverURL;
+    private HttpRequest request;
 
     public KVTaskClient(String serverURL) throws IOException, InterruptedException, APIException {
         this.serverURL = serverURL;
@@ -19,7 +21,7 @@ public class KVTaskClient {
                 .GET()
                 .uri(URI.create(serverURL + "/register"))
                 .version(HttpClient.Version.HTTP_1_1)
-                .headers("Content-Type", "application/json")
+                .headers(CONTENT_TYPE.name(), APPLICATION_JSON.name())
                 .build();
         client = HttpClient.newHttpClient();
         API_TOKEN = client.send(request, BodyHandlers.ofString()).body();
@@ -36,7 +38,7 @@ public class KVTaskClient {
                 .POST(HttpRequest.BodyPublishers.ofString(json))
                 .uri(URI.create(serverURL + "/save/" + key + "?API_TOKEN=" + API_TOKEN))
                 .version(HttpClient.Version.HTTP_1_1)
-                .headers("Content-Type", "application/json")
+                .headers(CONTENT_TYPE.name(), APPLICATION_JSON.name())
                 .build();
         try {
             client.send(request, BodyHandlers.ofString());
@@ -50,14 +52,8 @@ public class KVTaskClient {
                 .GET()
                 .uri(URI.create(serverURL + "/load/" + key + "?API_TOKEN=" + API_TOKEN))
                 .version(HttpClient.Version.HTTP_1_1)
-                .headers("Content-Type", "application/json")
+                .headers(CONTENT_TYPE.name(), APPLICATION_JSON.name())
                 .build();
-//        try {
-            String object = client.send(request, BodyHandlers.ofString()).body();
-            return object;
-
-//        } catch (HttpException e) {
-//            throw new HttpException(HttpException.NOT_LOAD_FROM_SERVER);
-//        }
+        return client.send(request, BodyHandlers.ofString()).body();
     }
 }

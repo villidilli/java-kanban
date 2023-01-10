@@ -2,22 +2,22 @@ package ru.yandex.practicum.api;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
-import ru.yandex.practicum.tasks.Epic;
-import ru.yandex.practicum.tasks.SubTask;
-import ru.yandex.practicum.tasks.Task;
-import ru.yandex.practicum.utils.EpicToJsonConverter;
+
 import ru.yandex.practicum.utils.HttpConverter;
 
 import java.io.IOException;
+
 import java.net.InetSocketAddress;
+
 import java.util.*;
 
 import com.google.gson.*;
-import ru.yandex.practicum.utils.SubtaskToJsonConverter;
-import ru.yandex.practicum.utils.TaskToJsonConverter;
+
+import ru.yandex.practicum.utils.*;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static ru.yandex.practicum.api.APIException.*;
+import static ru.yandex.practicum.api.APIMessage.*;
 import static ru.yandex.practicum.api.RequestMethod.*;
 
 public class KVServer {
@@ -27,14 +27,8 @@ public class KVServer {
     private final Map<String, String> data = new HashMap<>();
     private final Gson gson;
 
-    //ok
     public KVServer() throws APIException {
-        gson = new GsonBuilder()
-                .setPrettyPrinting()
-                .registerTypeAdapter(Task.class, new TaskToJsonConverter())
-                .registerTypeAdapter(SubTask.class, new SubtaskToJsonConverter())
-                .registerTypeAdapter(Epic.class, new EpicToJsonConverter())
-                .create();
+        gson = GsonConfig.getGsonTaskConfig();
         apiToken = generateApiToken();
         try {
             server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
@@ -61,7 +55,6 @@ public class KVServer {
         }
     }
 
-    //ok
     private void save(HttpExchange exchange) throws IOException, APIException {
         try {
             isHaveApiTokenInQuery(exchange);
@@ -92,27 +85,15 @@ public class KVServer {
         }
     }
 
-    public void start() {
-        System.out.println("[KVServer] [" + PORT + "] [API_TOKEN: " + apiToken + "] готов к работе");
-        server.start();
-    }
-
-    public void stop() {
-        System.out.println("[" + this.getClass().getSimpleName() + "] остановлен [" + PORT + "]");
-        server.stop(1);
-    }
-
     private String generateApiToken() {
         return "" + System.currentTimeMillis();
     }
 
-    //ok
     private boolean hasAuth(HttpExchange exchange) {
         String rawQuery = exchange.getRequestURI().getRawQuery();
         return rawQuery != null && (rawQuery.contains("API_TOKEN=" + apiToken) || rawQuery.contains("API_TOKEN=DEBUG"));
     }
 
-    //ok
     private void isHaveApiTokenInQuery(HttpExchange exchange) throws IOException, APIException {
         if (!hasAuth(exchange)) {
             sendResponse(exchange, gson.toJson(API_TOKEN_NOT_FOUND), 403);
@@ -120,7 +101,6 @@ public class KVServer {
         }
     }
 
-    //ok
     private String getKeyFromRequest(HttpExchange exchange) throws IOException, APIException {
         String key = exchange.getRequestURI().getPath().substring("/save/".length());
         if (key.isEmpty()) {
@@ -130,30 +110,38 @@ public class KVServer {
         return key;
     }
 
-    //ok
     private String getRequestBody(HttpExchange exchange) throws IOException, APIException {
-            String body = new String(exchange.getRequestBody().readAllBytes(), UTF_8);
-            if (body.isEmpty()) {
-                sendResponse(exchange, gson.toJson(BODY_IS_EMPTY), 400);
-                throw new APIException(BODY_IS_EMPTY);
-            }
-            return body;
+        String body = new String(exchange.getRequestBody().readAllBytes(), UTF_8);
+        if (body.isEmpty()) {
+            sendResponse(exchange, gson.toJson(BODY_IS_EMPTY), 400);
+            throw new APIException(BODY_IS_EMPTY);
+        }
+        return body;
     }
 
-    //ok
     private void sendResponse(HttpExchange exchange, String responseString, int responseCode) throws IOException {
         if (responseString.isBlank()) {
             exchange.sendResponseHeaders(responseCode, 0);
             return;
         }
         byte[] response = responseString.getBytes(UTF_8);
-        exchange.getResponseHeaders().add("Content-Type", "application/json");
+        exchange.getResponseHeaders().add(CONTENT_TYPE.name(), APPLICATION_JSON.name());
         exchange.sendResponseHeaders(responseCode, response.length);
         exchange.getResponseBody().write(response);
     }
 
     private void sendResponse(HttpExchange exchange, int responseCode) throws IOException {
-        exchange.getResponseHeaders().add("Content-Type", "application/json");
+        exchange.getResponseHeaders().add(CONTENT_TYPE.name(), APPLICATION_JSON.name());
         exchange.sendResponseHeaders(responseCode, 0);
+    }
+
+    public void start() {
+        System.out.println("[KVServer] [" + PORT + "] [API_TOKEN: " + apiToken + "] готов к работе");
+        server.start();
+    }
+
+    public void stop() {
+        System.out.println("[" + this.getClass().getSimpleName() + "] остановлен [" + PORT + "]");
+        server.stop(1);
     }
 }

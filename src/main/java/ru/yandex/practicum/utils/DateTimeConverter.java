@@ -5,14 +5,15 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
 import java.io.IOException;
+
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 
 import static ru.yandex.practicum.tasks.Task.UNREACHEBLE_DATE;
 
-public class DateTimeConverter extends TypeAdapter<ZonedDateTime>{
+public class DateTimeConverter extends TypeAdapter<ZonedDateTime> {
     protected static final DateTimeFormatter ZONED_DATE_TIME_FORMATTER =
-                                            DateTimeFormatter.ofPattern("dd-MM-yyyy | HH:mm | ZZZZZ");
+            DateTimeFormatter.ofPattern("dd-MM-yyyy | HH:mm | ZZZZZ");
 
     public static String dateTimeToString(ZonedDateTime dateTime) {
         if (dateTime == UNREACHEBLE_DATE) {
