@@ -7,7 +7,10 @@ public enum APIMessage {
     APPLICATION_JSON("application/json"),
     NOT_INPUT_MIN_FIELD_EPIC("Необходимо установить значение полей [name/description]"),
     NOT_INPUT_MIN_FIELD_SUBTASK("Необходимо передать значения полей [name/description/parentEpicID]"),
-    NOT_INPUT_MIN_FIELD_TASK("Необходимо установить значение name и description");
+    NOT_INPUT_MIN_FIELD_TASK("Необходимо установить значение name и description"),
+    HTTP_TASK_SERVER_CREATED("[HttpTaskServer] инициализирован"),
+    HTTP_TASK_SERVER_STARTED("[HttpTaskServer] готов к работе"),
+    HTTP_TASK_SERVER_STOPPED("[HttpTaskServer] остановлен");
 
     private final String message;
 

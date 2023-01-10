@@ -5,7 +5,7 @@ import java.io.File;
 
 public class Managers {
 
-	public static TaskManager getDefault() {
+	public static HttpTaskManager getDefault() {
 		return new HttpTaskManager("http://localhost:8078");
 	}
 

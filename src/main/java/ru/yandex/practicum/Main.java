@@ -1,20 +1,23 @@
 package ru.yandex.practicum;
 
-
 import ru.yandex.practicum.api.*;
 import ru.yandex.practicum.managers.HttpTaskManager;
 import ru.yandex.practicum.managers.Managers;
-import ru.yandex.practicum.managers.TaskManager;
 import ru.yandex.practicum.tasks.Epic;
 import ru.yandex.practicum.tasks.SubTask;
 import ru.yandex.practicum.tasks.Task;
 
 
-import java.io.File;
 import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+
+import static ru.yandex.practicum.api.RequestMethod.GET;
 
 
 public class Main {
@@ -34,7 +37,8 @@ public class Main {
 
 
         Servers.getKVServer().start();
-        TaskManager manager = Managers.getDefault();
+        Servers.getHttpTaskServer().start();
+        HttpTaskManager manager = Managers.getDefault();
         manager.create(epic1);
         manager.create(task1);
         manager.create(task2);
@@ -44,26 +48,26 @@ public class Main {
         manager.getTaskByID(task2.getID());
         System.out.println(manager.getPrioritizedTasks());
 
+//        HttpTaskManager manager1 = new HttpTaskManager("http://localhost:8078");
 
-        HttpTaskManager manager1 = new HttpTaskManager("http://localhost:8078");
-//        System.out.println(manager1.getAllTasks());
-//        System.out.println(manager1.getAllEpics());
-//        System.out.println(manager1.getAllSubTasks());
-//        System.out.println(manager.getEpicByID(epic1.getID()));
-//        System.out.println(manager.getTaskByID(task1.getID()));
-//        System.out.println(manager.getTaskByID(3));
-//        System.out.println(manager1.getPrioritizedTasks());
-        manager1.create(epic2);
-        manager1.create(subTask2);
-        System.out.println(manager1.getEpicByID(epic2.getID()));
-        System.out.println(manager1.getSubTaskByID(subTask2.getID()));
-        System.out.println(manager1.getPrioritizedTasks());
-//        System.out.println(manager1.getAllEpics());
-//        Epic epic3 = new Epic(1, "Вася", "-");
-//        manager1.update(epic3);
-//        System.out.println(manager1.getAllEpics());
-//        System.out.println(manager1.getHistory());
+        TasksHandler tasksHandler = new TasksHandler(manager);
+        System.out.println(tasksHandler.getEndpoint(URI.create("http://localhost:8078/tasks"), GET));
 
 
+    }
+
+    private static HttpResponse<String> getResponse(String path) {
+        HttpRequest request = HttpRequest.newBuilder()
+                .GET()
+                .uri(URI.create("http://localhost:8080/" + path))
+                .headers("Content-Type", "application/json")
+                .version(HttpClient.Version.HTTP_1_1)
+                .build();
+        HttpClient client = HttpClient.newHttpClient();
+        try {
+            return client.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (IOException | InterruptedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

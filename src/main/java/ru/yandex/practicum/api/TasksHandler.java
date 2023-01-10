@@ -5,6 +5,7 @@ import com.google.gson.*;
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpHandler;
 
+import ru.yandex.practicum.managers.HttpTaskManager;
 import ru.yandex.practicum.managers.ManagerNotFoundException;
 import ru.yandex.practicum.managers.Managers;
 import ru.yandex.practicum.managers.TaskManager;
@@ -29,13 +30,13 @@ public class TasksHandler implements HttpHandler {
     private static final String PATH_PARTS_SEPARATOR = "/";
     private static final int START_INDEX_ID = 3;
     private final Gson gson;
-    private final TaskManager manager;
+    private final HttpTaskManager manager;
     private HttpExchange exchange;
     private URI url;
     private RequestMethod method;
-    private JsonElement body;
+    public JsonElement body;
 
-    public TasksHandler() {
+    public TasksHandler(HttpTaskManager httpManager) {
         gson = GsonConfig.getGsonTaskConfig();
         this.manager = Managers.getDefault();
     }
@@ -44,7 +45,7 @@ public class TasksHandler implements HttpHandler {
         return Integer.parseInt(url.getQuery().substring(START_INDEX_ID));
     }
 
-    private Endpoint getEndpoint(URI url, RequestMethod method) {
+    public Endpoint getEndpoint(URI url, RequestMethod method) {
         String[] pathParts = url.getPath().split(PATH_PARTS_SEPARATOR);
         boolean isHaveID = url.getQuery() != null;
 
@@ -92,6 +93,7 @@ public class TasksHandler implements HttpHandler {
     }
 
     private void sendResponse(String responseString, int responseCode) throws IOException {
+        System.out.println("/sendResponce");
         if (responseString.isBlank()) {
             exchange.sendResponseHeaders(responseCode, 0);
             return;
@@ -104,18 +106,22 @@ public class TasksHandler implements HttpHandler {
     }
 
     private void handleGetAllTasks() throws IOException {
+        System.out.println("/getAllTasks");
         sendResponse(gson.toJson(manager.getAllTasks()), 200);
     }
 
     private void handleGetAllSubtasks() throws IOException {
+        System.out.println("/getAllSubtasks");
         sendResponse(gson.toJson(manager.getAllSubTasks()), 200);
     }
 
     private void handleGetAllEpics() throws IOException {
+        System.out.println("/getAllEpics");
         sendResponse(gson.toJson(manager.getAllEpics()), 200);
     }
 
     private void handleGetTaskByID() throws IOException {
+        System.out.println("/getTaskByID");
         int id = getParameterID(url);
         try {
             sendResponse(gson.toJson(manager.getTaskByID(id)), 200);
@@ -125,6 +131,7 @@ public class TasksHandler implements HttpHandler {
     }
 
     private void handleGetSubtaskByID() throws IOException {
+        System.out.println("/getSubtaskByID");
         int id = getParameterID(url);
         try {
             sendResponse(gson.toJson(manager.getSubTaskByID(id)), 200);
@@ -134,6 +141,7 @@ public class TasksHandler implements HttpHandler {
     }
 
     private void handleGetEpicByID() throws IOException {
+        System.out.println("/getEpicByID");
         int id = getParameterID(url);
         try {
             sendResponse(gson.toJson(manager.getEpicByID(id)), 200);
@@ -143,6 +151,7 @@ public class TasksHandler implements HttpHandler {
     }
 
     private void handleGetEpicSubtasks() throws IOException {
+        System.out.println("/getEpicSubtasks");
         int id = getParameterID(url);
         try {
             sendResponse(gson.toJson(manager.getAllSubTasksByEpic(id)), 200);
@@ -152,29 +161,35 @@ public class TasksHandler implements HttpHandler {
     }
 
     private void handleGetPrioritizedTasks() throws IOException {
+        System.out.println("/getPrioritizedTasks");
         sendResponse(gson.toJson(manager.getPrioritizedTasks()), 200);
     }
 
     private void handleGetHistory() throws IOException {
+        System.out.println("/getHistory");
         sendResponse(gson.toJson(manager.getHistory()), 200);
     }
 
     private void handleDeleteAllTasks() throws IOException {
+        System.out.println("/deleteAllTasks");
         manager.deleteAllTasks();
         sendResponse(gson.toJson(APIMessage.DELETE_ACCEPT.getMessage()), 200);
     }
 
     private void handleDeleteAllSubtasks() throws IOException {
+        System.out.println("/deleteAllSubtasks");
         manager.deleteAllSubTasks();
         sendResponse(gson.toJson(APIMessage.DELETE_ACCEPT.getMessage()), 200);
     }
 
     private void handleDeleteAllEpics() throws IOException {
+        System.out.println("/deleteAllEpics");
         manager.deleteAllEpics();
         sendResponse(gson.toJson(APIMessage.DELETE_ACCEPT.getMessage()), 200);
     }
 
     private void handleDeleteTaskByID() throws IOException {
+        System.out.println("/deleteTaskByID");
         int id = getParameterID(url);
         try {
             manager.deleteTaskByID(id);
@@ -185,6 +200,7 @@ public class TasksHandler implements HttpHandler {
     }
 
     private void handleDeleteSubtaskByID() throws IOException {
+        System.out.println("/deleteSubtaskByID");
         int id = getParameterID(url);
         try {
             manager.deleteSubTaskByID(id);
@@ -195,6 +211,7 @@ public class TasksHandler implements HttpHandler {
     }
 
     private void handleDeleteEpicByID() throws IOException {
+        System.out.println("/deleteEpicByID");
         int id = getParameterID(url);
         try {
             manager.deleteEpicByID(id);
@@ -205,6 +222,7 @@ public class TasksHandler implements HttpHandler {
     }
 
     private void handleCreateTask() throws IOException {
+        System.out.println("/createTask");
         try {
             Task task = gson.fromJson(body, Task.class);
             manager.create(task);
@@ -215,6 +233,7 @@ public class TasksHandler implements HttpHandler {
     }
 
     private void handleUpdateTask() throws IOException {
+        System.out.println("/updateTask");
         try {
             Task task = gson.fromJson(body, Task.class);
             manager.update(task);
@@ -226,6 +245,7 @@ public class TasksHandler implements HttpHandler {
     }
 
     private void handleCreateSubtask() throws IOException {
+        System.out.println("/createSubtask");
         try {
             SubTask subTask = gson.fromJson(body, SubTask.class);
             manager.create(subTask);
@@ -236,6 +256,7 @@ public class TasksHandler implements HttpHandler {
     }
 
     private void handleUpdateSubtask() throws IOException {
+        System.out.println("/updateSubtask");
         try {
             SubTask subTask = gson.fromJson(body, SubTask.class);
             manager.update(subTask);
@@ -247,6 +268,7 @@ public class TasksHandler implements HttpHandler {
     }
 
     private void handleCreateEpic() throws IOException {
+        System.out.println("/createEpic");
         try {
             Epic epic = gson.fromJson(body, Epic.class);
             manager.create(epic);
@@ -257,6 +279,7 @@ public class TasksHandler implements HttpHandler {
     }
 
     private void handleUpdateEpic() throws IOException {
+        System.out.println("/updateEpic");
         try {
             Epic epic = gson.fromJson(body, Epic.class);
             manager.update(epic);
@@ -267,14 +290,14 @@ public class TasksHandler implements HttpHandler {
 
     }
 
-    private boolean isHaveIdInBody() {
+    public boolean isHaveIdInBody() {
         return body != null && body.isJsonObject()
                 && body.getAsJsonObject().has("id");
     }
 
     @Override
     public void handle(HttpExchange exchange) throws IOException {
-        System.out.println("Началась обработка запроса от клиента.");
+        System.out.println("/handle");
         this.exchange = exchange;
         url = exchange.getRequestURI();
         method = HttpConverter.getEnumMethod(exchange.getRequestMethod());

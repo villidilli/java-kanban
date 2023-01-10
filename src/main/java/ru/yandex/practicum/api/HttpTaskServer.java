@@ -1,20 +1,26 @@
 package ru.yandex.practicum.api;
 
 import com.sun.net.httpserver.HttpServer;
+import ru.yandex.practicum.managers.Managers;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
+
+import static ru.yandex.practicum.api.APIMessage.*;
 
 public class HttpTaskServer {
     public static final int PORT = 8080;
     public static final String ROOT_PATH = "/tasks";
     private final HttpServer server;
 
+    private APIMessage statusServer;
+
     public HttpTaskServer() {
         try {
             server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
-            server.createContext(ROOT_PATH, new TasksHandler());
-            System.out.println("[HttpTaskServer] [" + PORT + "] инициализирован");
+            server.createContext(ROOT_PATH, new TasksHandler(Managers.getDefault()));
+            statusServer = HTTP_TASK_SERVER_CREATED;
+            System.out.println(HTTP_TASK_SERVER_CREATED.getMessage());
         } catch (IOException e) {
             throw new APIException(e.getMessage());
         }
@@ -22,6 +28,17 @@ public class HttpTaskServer {
 
     public void start() {
         server.start();
-        System.out.println("[HttpTaskServer] [" + PORT + "] готов к работе");
+        statusServer = HTTP_TASK_SERVER_STARTED;
+        System.out.println(HTTP_TASK_SERVER_STARTED.getMessage());
+    }
+
+    public void stop() {
+        server.stop(1);
+        statusServer = HTTP_TASK_SERVER_STOPPED;
+        System.out.println(HTTP_TASK_SERVER_STOPPED.getMessage());
+    }
+
+    public APIMessage getStatusServer() {
+        return statusServer;
     }
 }
