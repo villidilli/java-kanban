@@ -5,11 +5,8 @@ import java.io.File;
 
 public class Managers {
 
-	public static TaskManager getDefault() {
-		return new InMemoryTaskManager();
-	}
-	public static TaskManager getDefault(String url) {
-		return new HttpTaskManager(url);
+	public static HttpTaskManager getDefault() {
+		return new HttpTaskManager("http://localhost:8078");
 	}
 
 	public static HistoryManager getDefaultHistory() {
