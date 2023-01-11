@@ -1,5 +1,6 @@
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ru.yandex.practicum.managers.InMemoryTaskManager;
 import ru.yandex.practicum.managers.ManagerNotFoundException;
 import ru.yandex.practicum.managers.Managers;
 import ru.yandex.practicum.managers.TaskManager;
@@ -34,7 +35,7 @@ public abstract class TaskManagerTest<T extends TaskManager> {
 
     @BeforeEach
     public void beforeEach() {
-        manager = Managers.getDefault();
+        manager = new InMemoryTaskManager();
         task1 = new Task("Таск1", "-", ZonedDateTime.of(LocalDateTime.of(
                 2022, 1, 1, 0, 0), ZoneId.systemDefault()), 1);
         task2 = new Task("Таск2", "-");
