@@ -356,4 +356,9 @@ public class InMemoryTaskManager implements TaskManager {
     public List<Task> getPrioritizedTasks() {
         return new ArrayList<>(prioritizedList);
     }
+
+    @Override
+    public int getGeneratorID() {
+        return generatorID;
+    }
 }

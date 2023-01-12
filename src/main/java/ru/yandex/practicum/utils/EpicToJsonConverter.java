@@ -51,11 +51,11 @@ public class EpicToJsonConverter implements JsonSerializer<Epic>, JsonDeserializ
         if (name == null || description == null) {
             throw new JsonParseException(gson.toJson(NOT_INPUT_MIN_FIELD_EPIC.getMessage()));
         }
-        if (startDateTime != null || duration != null || status != null) {
-            throw new JsonParseException(gson.toJson(INVALID_INPUT_FIELDS_EPIC.getMessage()));
-        }
+//        if (startDateTime != null || duration != null || status != null) {
+//            throw new JsonParseException(gson.toJson(INVALID_INPUT_FIELDS_EPIC.getMessage()));
+//        }
         Epic epic = new Epic(name.getAsString(), description.getAsString());
-        if (id != null) epic.setID(id.getAsInt());
+        if (id != null && !id.isJsonNull()) epic.setID(id.getAsInt());
         return epic;
     }
 }

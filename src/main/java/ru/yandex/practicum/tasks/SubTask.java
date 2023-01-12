@@ -4,7 +4,7 @@ import java.time.ZonedDateTime;
 
 public class SubTask extends Task {
 
-    private final int parentEpicID;
+    private int parentEpicID;
 //    private final TaskTypes taskType = TaskTypes.SUBTASK;
 
     public SubTask(String name, String description, int parentEpicID) {
@@ -50,6 +50,10 @@ public class SubTask extends Task {
     @Override
     public Integer getParentEpicID() {
         return parentEpicID;
+    }
+
+    public void setParentEpicID(int id) {
+        this.parentEpicID = id;
     }
 
     @Override

@@ -54,7 +54,7 @@ public class SubtaskToJsonConverter implements JsonSerializer<SubTask>, JsonDese
             throw new JsonParseException(gson.toJson(NOT_INPUT_MIN_FIELD_SUBTASK));
         }
         SubTask subTask = new SubTask(name.getAsString(), description.getAsString(), parentEpicID.getAsInt());
-        if (id != null) subTask.setID(id.getAsInt());
+        if (id != null && !id.isJsonNull()) subTask.setID(id.getAsInt());
         if (status != null) subTask.setStatus(gson.fromJson(status, Status.class));
         if (startDateTime != null) subTask.setStartTime(gson.fromJson(startDateTime, ZonedDateTime.class));
         if (duration != null && duration.getAsLong() != 0) {

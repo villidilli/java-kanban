@@ -248,8 +248,6 @@ public class TasksHandler implements HttpHandler {
         System.out.println("/createSubtask");
         try {
             SubTask subTask = gson.fromJson(body, SubTask.class);
-            System.out.println(subTask.getParentEpicID());
-            System.out.println(manager.getAllEpics());
             try {
                 manager.getEpicByID(subTask.getParentEpicID());
             } catch (ManagerNotFoundException e) {
@@ -305,9 +303,13 @@ public class TasksHandler implements HttpHandler {
         }
     }
 
-    public boolean isHaveIdInBody() {
-        return body != null && body.isJsonObject()
-                && body.getAsJsonObject().has("id");
+    public boolean isHaveIdInBody() { //todo
+        boolean result;
+        result =  body != null
+                && body.isJsonObject()
+                && body.getAsJsonObject().has("id")
+                && !body.getAsJsonObject().get("id").isJsonNull();
+        return result;
     }
 
     @Override

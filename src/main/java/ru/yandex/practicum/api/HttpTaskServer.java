@@ -1,6 +1,7 @@
 package ru.yandex.practicum.api;
 
 import com.sun.net.httpserver.HttpServer;
+import ru.yandex.practicum.managers.HttpTaskManager;
 import ru.yandex.practicum.managers.Managers;
 
 import java.io.IOException;
@@ -12,13 +13,14 @@ public class HttpTaskServer {
     public static final int PORT = 8080;
     public static final String ROOT_PATH = "/tasks";
     private final HttpServer server;
-
     private APIMessage statusServer;
+    private final HttpTaskManager httpManager;
 
     public HttpTaskServer() {
         try {
+            httpManager = Managers.getDefault();
             server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
-            server.createContext(ROOT_PATH, new TasksHandler(Managers.getDefault()));
+            server.createContext(ROOT_PATH, new TasksHandler(httpManager));
             statusServer = HTTP_TASK_SERVER_CREATED;
             System.out.println(HTTP_TASK_SERVER_CREATED.getMessage());
         } catch (IOException e) {
@@ -40,5 +42,9 @@ public class HttpTaskServer {
 
     public APIMessage getStatusServer() {
         return statusServer;
+    }
+
+    public int getGeneratedID() {
+        return httpManager.getGeneratorID();
     }
 }
