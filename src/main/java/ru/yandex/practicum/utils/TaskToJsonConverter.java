@@ -11,6 +11,7 @@ import java.time.Duration;
 import java.time.ZonedDateTime;
 
 import static ru.yandex.practicum.api.APIMessage.NOT_INPUT_MIN_FIELD_TASK;
+import static ru.yandex.practicum.tasks.Task.UNREACHEBLE_DATE;
 import static ru.yandex.practicum.utils.DateTimeConverter.ZONED_DATE_TIME_FORMATTER;
 
 public class TaskToJsonConverter implements JsonSerializer<Task>, JsonDeserializer<Task> {
@@ -20,21 +21,17 @@ public class TaskToJsonConverter implements JsonSerializer<Task>, JsonDeserializ
     public JsonElement serialize(Task task, Type typeOfSrc, JsonSerializationContext context) {
         JsonObject object = new JsonObject();
         object.add("type", new JsonPrimitive(task.getType().name()));
-        if (task.getID() == 0) {
-            object.add("id", null);
-        } else {
-            object.add("id", new JsonPrimitive(task.getID()));
-        }
+        if (task.getID() == 0) object.add("id", null);
+        else  object.add("id", new JsonPrimitive(task.getID()));
         object.add("name", new JsonPrimitive(task.getName()));
         object.add("description", new JsonPrimitive(task.getDescription()));
         object.add("status", new JsonPrimitive(task.getStatus().name()));
         object.add("status", new JsonPrimitive(task.getStatus().name()));
-        if (task.getStartTime() == Task.UNREACHEBLE_DATE) {
+        if (task.getStartTime() == UNREACHEBLE_DATE) {
             object.add("startDateTime", new JsonPrimitive("--"));
         } else {
             object.add("startDateTime", new JsonPrimitive(
-                    task.getStartTime().format(ZONED_DATE_TIME_FORMATTER)
-            ));
+                    task.getStartTime().format(ZONED_DATE_TIME_FORMATTER)));
         }
         object.add("duration", new JsonPrimitive(task.getDuration()));
         return object;
@@ -52,12 +49,9 @@ public class TaskToJsonConverter implements JsonSerializer<Task>, JsonDeserializ
         JsonElement duration = object.get("duration");
 
         if (name == null || description == null) throw new JsonParseException(
-                gson.toJson(NOT_INPUT_MIN_FIELD_TASK.getMessage())
-        );
+                gson.toJson(NOT_INPUT_MIN_FIELD_TASK.getMessage()));
         Task task = new Task(name.getAsString(), description.getAsString());
-        if (id != null && !id.isJsonNull()) {
-            task.setID(id.getAsInt());
-        }
+        if (id != null && !id.isJsonNull()) task.setID(id.getAsInt());
         if (status != null) task.setStatus(gson.fromJson(status, Status.class));
         if (startDateTime != null) task.setStartTime(gson.fromJson(startDateTime, ZonedDateTime.class));
         if (duration != null && duration.getAsLong() != 0) {

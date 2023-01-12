@@ -9,44 +9,41 @@ import ru.yandex.practicum.tasks.Task;
 import ru.yandex.practicum.utils.GsonConfig;
 
 import java.io.IOException;
+
 import java.lang.reflect.Type;
+
 import java.net.*;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.util.ArrayList;
-import java.util.List;
+
+import java.util.Arrays;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 import static ru.yandex.practicum.api.APIMessage.*;
 import static ru.yandex.practicum.api.Endpoint.*;
+import static ru.yandex.practicum.api.RequestMethod.*;
 
 public class HttpTaskServerTest {
-	private final String uriHttpServer = "http://localhost:8080";
 	static KVServer kvServer;
 	static HttpTaskServer httpServer;
+	private final String uriHttpServer = "http://localhost:8080";
+	private final HttpClient client = HttpClient.newHttpClient();
+	private final Gson gson = GsonConfig.getGsonTaskConfig();
 	TasksHandler handler;
 	HttpRequest request;
-	private final HttpClient client = HttpClient.newHttpClient();
 	private HttpResponse<String> response;
-	private final Gson gson = GsonConfig.getGsonTaskConfig();
-	private String taskBody1;
-	private String taskBody2;
-	private String subtaskBody1;
-	private String subtaskBody2;
-	private String epicBody1;
-	private String epicBody2;
 	private Task task1;
 	private Task task2;
 	private Epic epic1;
 	private Epic epic2;
 	private SubTask subTask1;
 	private SubTask subTask2;
-	private SubTask subTask3;
-	private SubTask subTask4;
 	private ZonedDateTime startTime1;
 	private int expectedID;
 
@@ -67,9 +64,7 @@ public class HttpTaskServerTest {
 
 	@BeforeEach
 	public void beforeEach() {
-		sendRequestDELETE("/tasks/task");
-		sendRequestDELETE("/tasks/subtask");
-		sendRequestDELETE("/tasks/epic");
+		clearAllTasks();
 		task1 = new Task("Таск1", "-", ZonedDateTime.of(LocalDateTime.of(
 				2022, 1, 1, 0, 0), ZoneId.systemDefault()), 1);
 		task2 = new Task("Таск2", "-");
@@ -79,11 +74,14 @@ public class HttpTaskServerTest {
 				2022, 2, 2, 0, 0), ZoneId.systemDefault()), 1);
 		subTask2 = new SubTask("Саб2", "-", 1, ZonedDateTime.of(LocalDateTime.of(
 				2022, 2, 2, 1, 0), ZoneId.systemDefault()), 1);
-		subTask3 = new SubTask("Саб3", "-", 1);
-		subTask4 = new SubTask("Саб4", "-", 1, ZonedDateTime.of(LocalDateTime.of(
-				2022, 1, 1, 0, 0), ZoneId.systemDefault()), 1);
 		startTime1 = ZonedDateTime.of(
 				LocalDateTime.of(2030, 12, 12, 0, 0), ZoneId.systemDefault());
+	}
+
+	private void clearAllTasks() {
+		sendRequestDELETE("/tasks/task");
+		sendRequestDELETE("/tasks/subtask");
+		sendRequestDELETE("/tasks/epic");
 	}
 
 	private int getActGenerID() {
@@ -116,8 +114,7 @@ public class HttpTaskServerTest {
 					.version(HttpClient.Version.HTTP_1_1)
 					.build();
 			response = client.send(request, HttpResponse.BodyHandlers.ofString());
-		} catch (IOException | InterruptedException ignored) {
-		}
+		} catch (IOException | InterruptedException ignored) {}
 		return response;
 	}
 
@@ -131,73 +128,34 @@ public class HttpTaskServerTest {
 					.version(HttpClient.Version.HTTP_1_1)
 					.build();
 			response = client.send(request, HttpResponse.BodyHandlers.ofString());
-		} catch (IOException | InterruptedException ignored) {
-		}
+		} catch (IOException | InterruptedException ignored) {}
 		return response;
 	}
 
 	@Test
 	public void shouldReturnEndpointExcludeCreateUpdateWhenSendTrueRequest() {
 		handler = new TasksHandler(Managers.getDefault());
-		assertEquals(GET_ALL_TASKS, handler.getEndpoint(URI.create("/tasks/task"), RequestMethod.GET));
-		assertEquals(GET_ALL_SUBTASKS, handler.getEndpoint(URI.create("/tasks/subtask"), RequestMethod.GET));
-		assertEquals(GET_ALL_EPICS, handler.getEndpoint(URI.create("/tasks/epic"), RequestMethod.GET));
-		assertEquals(GET_TASK_BY_ID, handler.getEndpoint(URI.create("/tasks/task?id="), RequestMethod.GET));
-		assertEquals(GET_SUBTASK_BY_ID, handler.getEndpoint(URI.create("/tasks/subtask?id="), RequestMethod.GET));
-		assertEquals(GET_EPIC_BY_ID, handler.getEndpoint(URI.create("/tasks/epic?id="), RequestMethod.GET));
-		assertEquals(GET_ALL_SUBTASKS_BY_EPIC, handler.getEndpoint(URI.create("/tasks/subtask/epic?id="),
-																							RequestMethod.GET));
-		assertEquals(GET_PRIORITIZED_TASKS, handler.getEndpoint(URI.create("/tasks"), RequestMethod.GET));
-		assertEquals(GET_HISTORY, handler.getEndpoint(URI.create("/tasks/history"), RequestMethod.GET));
-		assertEquals(DELETE_ALL_TASKS, handler.getEndpoint(URI.create("/tasks/task"), RequestMethod.DELETE));
-		assertEquals(DELETE_ALL_SUBTASKS, handler.getEndpoint(URI.create("/tasks/subtask"), RequestMethod.DELETE));
-		assertEquals(DELETE_ALL_EPICS, handler.getEndpoint(URI.create("/tasks/epic"), RequestMethod.DELETE));
-		assertEquals(DELETE_TASK_BY_ID, handler.getEndpoint(URI.create("/tasks/task?id="), RequestMethod.DELETE));
-		assertEquals(DELETE_SUBTASK_BY_ID, handler.getEndpoint(URI.create("/tasks/subtask?id="), RequestMethod.DELETE));
-		assertEquals(DELETE_EPIC_BY_ID, handler.getEndpoint(URI.create("/tasks/epic?id="), RequestMethod.DELETE));
+		assertEquals(GET_ALL_TASKS, handler.getEndpoint(URI.create("/tasks/task"), GET));
+		assertEquals(GET_ALL_SUBTASKS, handler.getEndpoint(URI.create("/tasks/subtask"), GET));
+		assertEquals(GET_ALL_EPICS, handler.getEndpoint(URI.create("/tasks/epic"), GET));
+		assertEquals(GET_TASK_BY_ID, handler.getEndpoint(URI.create("/tasks/task?id="), GET));
+		assertEquals(GET_SUBTASK_BY_ID, handler.getEndpoint(URI.create("/tasks/subtask?id="), GET));
+		assertEquals(GET_EPIC_BY_ID, handler.getEndpoint(URI.create("/tasks/epic?id="), GET));
+		assertEquals(GET_ALL_SUBTASKS_BY_EPIC, handler.getEndpoint(URI.create("/tasks/subtask/epic?id="), GET));
+		assertEquals(GET_PRIORITIZED_TASKS, handler.getEndpoint(URI.create("/tasks"), GET));
+		assertEquals(GET_HISTORY, handler.getEndpoint(URI.create("/tasks/history"), GET));
+		assertEquals(DELETE_ALL_TASKS, handler.getEndpoint(URI.create("/tasks/task"), DELETE));
+		assertEquals(DELETE_ALL_SUBTASKS, handler.getEndpoint(URI.create("/tasks/subtask"), DELETE));
+		assertEquals(DELETE_ALL_EPICS, handler.getEndpoint(URI.create("/tasks/epic"), DELETE));
+		assertEquals(DELETE_TASK_BY_ID, handler.getEndpoint(URI.create("/tasks/task?id="), DELETE));
+		assertEquals(DELETE_SUBTASK_BY_ID, handler.getEndpoint(URI.create("/tasks/subtask?id="), DELETE));
+		assertEquals(DELETE_EPIC_BY_ID, handler.getEndpoint(URI.create("/tasks/epic?id="), DELETE));
 	}
-
-//	@Test
-//	public void shouldReturnEndpointCreateOrUpdateTaskWhenSendTrueRequest() {
-//		TasksHandler handler = new TasksHandler(Managers.getDefault());
-//		handler.body = JsonParser.parseString(bodyWithID);
-//		assertEquals(UPDATE_TASK, handler.getEndpoint(URI.create("/tasks/task"), RequestMethod.POST));
-//		handler.body = JsonParser.parseString(bodyWithoutID);
-//		assertEquals(CREATE_TASK, handler.getEndpoint(URI.create("/tasks/task"), RequestMethod.POST));
-//	}
-//
-//	@Test
-//	public void shouldReturnEndpointCreateOrUpdateSubtaskWhenSendTrueRequest() {
-//		handler = new TasksHandler(Managers.getDefault());
-//		handler.body = JsonParser.parseString(bodyWithID);
-//		assertEquals(UPDATE_SUBTASK, handler.getEndpoint(URI.create("/tasks/subtask"), RequestMethod.POST));
-//		handler.body = JsonParser.parseString(bodyWithoutID);
-//		assertEquals(CREATE_SUBTASK, handler.getEndpoint(URI.create("/tasks/subtask"), RequestMethod.POST));
-//	}
-//
-//	@Test
-//	public void shouldReturnEndpointCreateOrUpdateEpicWhenSendTrueRequest() {
-//		handler = new TasksHandler(Managers.getDefault());
-//		handler.body = JsonParser.parseString(bodyWithID);
-//		assertEquals(UPDATE_EPIC, handler.getEndpoint(URI.create("/tasks/epic"), RequestMethod.POST));
-//		handler.body = JsonParser.parseString(bodyWithoutID);
-//		assertEquals(CREATE_EPIC, handler.getEndpoint(URI.create("/tasks/epic"), RequestMethod.POST));
-//	}
-
-//	@Test
-//	public void shouldReturnUnknownEndpointWhenEndpointNotFind() {
-//		handler = new TasksHandler(Managers.getDefault());
-//		Endpoint endpoint = handler.getEndpoint(URI.create("/tasks/anyPathParts"), RequestMethod.GET);
-//		assertEquals(UNKNOWN, endpoint);
-//	}
-//
-
 
 	@Test
 	public void shouldReturnSameTaskAfterCreated() {
 		response = sendRequestPOST(gson.toJson(task1), "/tasks/task");
-		JsonObject jsonObject = JsonParser.parseString(response.body()).getAsJsonObject();
-		Task responceTask = gson.fromJson(jsonObject, Task.class);
+		Task responceTask = gson.fromJson(response.body(), Task.class);
 		expectedID = getActGenerID();
 		assertEquals(expectedID, responceTask.getID());
 		responceTask.setID(0);
@@ -207,8 +165,7 @@ public class HttpTaskServerTest {
 	@Test
 	public void shouldReturnSameEpicAfterCreated() {
 		response = sendRequestPOST(gson.toJson(epic1), "/tasks/epic");
-		JsonObject jsonObject = JsonParser.parseString(response.body()).getAsJsonObject();
-		Epic responceTask = gson.fromJson(jsonObject, Epic.class);
+		Epic responceTask = gson.fromJson(response.body(), Epic.class);
 		expectedID = getActGenerID();
 		assertEquals(expectedID, responceTask.getID());
 		responceTask.setID(0);
@@ -221,8 +178,7 @@ public class HttpTaskServerTest {
 		int epic1ID = getActGenerID();
 		subTask1.setParentEpicID(epic1ID);
 		response = sendRequestPOST(gson.toJson(subTask1), "/tasks/subtask");
-		JsonObject jsonObject = JsonParser.parseString(response.body()).getAsJsonObject();
-		SubTask responceTask = gson.fromJson(jsonObject, SubTask.class);
+		SubTask responceTask = gson.fromJson(response.body(), SubTask.class);
 		expectedID = getActGenerID();
 		assertEquals(expectedID, responceTask.getID());
 		responceTask.setID(0);
@@ -232,14 +188,12 @@ public class HttpTaskServerTest {
 	@Test
 	public void shouldReturnUpdatedTaskWithNewFieldsAndSameID() {
 		response = sendRequestPOST(gson.toJson(task1), "/tasks/task");
-		JsonObject jsonObject = JsonParser.parseString(response.body()).getAsJsonObject();
-		Task responseTask1 = gson.fromJson(jsonObject, Task.class);
+		Task responseTask1 = gson.fromJson(response.body(), Task.class);
 		responseTask1.setName("newName");
 		responseTask1.setStartTime(startTime1);
 		response = sendRequestPOST(gson.toJson(responseTask1), "/tasks/task?id="
-																+ String.valueOf(responseTask1.getID()));
-		jsonObject = JsonParser.parseString(response.body()).getAsJsonObject();
-		Task responseTask2 = gson.fromJson(jsonObject, Task.class);
+				+ responseTask1.getID());
+		Task responseTask2 = gson.fromJson(response.body(), Task.class);
 		assertEquals(responseTask1.getID(), responseTask2.getID());
 		assertEquals(responseTask1, responseTask2);
 	}
@@ -247,13 +201,11 @@ public class HttpTaskServerTest {
 	@Test
 	public void shouldReturnUpdatedEpicWithNewFieldsAndSameID() {
 		response = sendRequestPOST(gson.toJson(epic1), "/tasks/epic");
-		JsonObject jsonObject = JsonParser.parseString(response.body()).getAsJsonObject();
-		Epic responseTask1 = gson.fromJson(jsonObject, Epic.class);
+		Epic responseTask1 = gson.fromJson(response.body(), Epic.class);
 		responseTask1.setName("newName");
 		response = sendRequestPOST(gson.toJson(responseTask1), "/tasks/epic?id="
-																	+ String.valueOf(responseTask1.getID()));
-		jsonObject = JsonParser.parseString(response.body()).getAsJsonObject();
-		Epic responseTask2 = gson.fromJson(jsonObject, Epic.class);
+				+ responseTask1.getID());
+		Epic responseTask2 = gson.fromJson(response.body(), Epic.class);
 		assertEquals(responseTask1.getID(), responseTask2.getID());
 		assertEquals(responseTask1, responseTask2);
 	}
@@ -261,20 +213,17 @@ public class HttpTaskServerTest {
 	@Test
 	public void shouldReturnUpdatedSubtasksWithNewFieldsAndSameID() {
 		response = sendRequestPOST(gson.toJson(epic1), "/tasks/epic");
-		JsonObject jsonObject = JsonParser.parseString(response.body()).getAsJsonObject();
-		Epic responseEpic = gson.fromJson(jsonObject, Epic.class);
+		Epic responseEpic = gson.fromJson(response.body(), Epic.class);
 		int epicID = responseEpic.getID();
 		subTask1.setParentEpicID(epicID);
 		response = sendRequestPOST(gson.toJson(subTask1), "/tasks/subtask");
-		jsonObject = JsonParser.parseString(response.body()).getAsJsonObject();
-		SubTask responseSubtask1 = gson.fromJson(jsonObject, SubTask.class);
+		SubTask responseSubtask1 = gson.fromJson(response.body(), SubTask.class);
 		int responseSubtask1ID = responseSubtask1.getID();
 		subTask1.setName("newName");
 		subTask1.setID(responseSubtask1ID);
 		response = sendRequestPOST(gson.toJson(subTask1), "/tasks/subtask?id="
-															+ String.valueOf(responseSubtask1.getID()));
-		jsonObject = JsonParser.parseString(response.body()).getAsJsonObject();
-		SubTask responseSubtask2 = gson.fromJson(jsonObject, SubTask.class);
+				+ responseSubtask1.getID());
+		SubTask responseSubtask2 = gson.fromJson(response.body(), SubTask.class);
 		assertEquals(responseSubtask1.getID(), responseSubtask2.getID());
 		assertEquals(responseSubtask1, responseSubtask2);
 	}
@@ -282,52 +231,44 @@ public class HttpTaskServerTest {
 	@Test
 	public void shouldReturnCreatedTaskIfCallGetByID() {
 		response = sendRequestPOST(gson.toJson(task1), "/tasks/task");
-		JsonObject jsonObject = JsonParser.parseString(response.body()).getAsJsonObject();
-		Task expectedTask = gson.fromJson(jsonObject, Task.class);
+		Task expectedTask = gson.fromJson(response.body(), Task.class);
 		int idToFind = expectedTask.getID();
 		response = sendRequestGET("/tasks/task?id="
-									+ String.valueOf(idToFind));
-		jsonObject = JsonParser.parseString(response.body()).getAsJsonObject();
-		Task actualTask = gson.fromJson(jsonObject, Task.class);
+				+ idToFind);
+		Task actualTask = gson.fromJson(response.body(), Task.class);
 		assertEquals(expectedTask, actualTask);
 	}
 
 	@Test
 	public void shouldReturnCreatedEpicIfCallGetByID() {
 		response = sendRequestPOST(gson.toJson(epic1), "/tasks/epic");
-		JsonObject jsonObject = JsonParser.parseString(response.body()).getAsJsonObject();
-		Epic expectedEpic = gson.fromJson(jsonObject, Epic.class);
+		Epic expectedEpic = gson.fromJson(response.body(), Epic.class);
 		int idToFind = expectedEpic.getID();
 		response = sendRequestGET("/tasks/epic?id="
-				+ String.valueOf(idToFind));
-		jsonObject = JsonParser.parseString(response.body()).getAsJsonObject();
-		Epic actualTask = gson.fromJson(jsonObject, Epic.class);
+				+ idToFind);
+		Epic actualTask = gson.fromJson(response.body(), Epic.class);
 		assertEquals(expectedEpic, actualTask);
 	}
 
 	@Test
 	public void shouldReturnCreatedSubtaskIfCallGetByID() {
 		response = sendRequestPOST(gson.toJson(epic1), "/tasks/epic");
-		JsonObject jsonObject = JsonParser.parseString(response.body()).getAsJsonObject();
-		Epic epic = gson.fromJson(jsonObject, Epic.class);
+		Epic epic = gson.fromJson(response.body(), Epic.class);
 		int epicID = epic.getID();
 		subTask1.setParentEpicID(epicID);
 		response = sendRequestPOST(gson.toJson(subTask1), "/tasks/subtask");
-		jsonObject = JsonParser.parseString(response.body()).getAsJsonObject();
-		SubTask expectedSubtask = gson.fromJson(jsonObject, SubTask.class);
+		SubTask expectedSubtask = gson.fromJson(response.body(), SubTask.class);
 		int idToFind = expectedSubtask.getID();
 		response = sendRequestGET("/tasks/subtask?id="
-				+ String.valueOf(idToFind));
-		jsonObject = JsonParser.parseString(response.body()).getAsJsonObject();
-		SubTask actualSubtask = gson.fromJson(jsonObject, SubTask.class);
+				+ idToFind);
+		SubTask actualSubtask = gson.fromJson(response.body(), SubTask.class);
 		assertEquals(expectedSubtask, actualSubtask);
 	}
 
 	@Test
 	public void shouldReturnSuccessBodyMessageIfDeletedTask() {
 		response = sendRequestPOST(gson.toJson(task1), "/tasks/task");
-		JsonObject jsonObject = JsonParser.parseString(response.body()).getAsJsonObject();
-		Task deletingTask = gson.fromJson(jsonObject, Task.class);
+		Task deletingTask = gson.fromJson(response.body(), Task.class);
 		response = sendRequestDELETE("/tasks/task?id=" + deletingTask.getID());
 		assertEquals("\"" + APIMessage.DELETE_ACCEPT.getMessage() + "\"", response.body());
 	}
@@ -335,13 +276,11 @@ public class HttpTaskServerTest {
 	@Test
 	public void shouldReturnSuccessBodyMessageIfDeletedSubtask() {
 		response = sendRequestPOST(gson.toJson(epic1), "/tasks/epic");
-		JsonObject jsonObject = JsonParser.parseString(response.body()).getAsJsonObject();
-		Epic epic = gson.fromJson(jsonObject, Epic.class);
+		Epic epic = gson.fromJson(response.body(), Epic.class);
 		int epicID = epic.getID();
 		subTask1.setParentEpicID(epicID);
 		response = sendRequestPOST(gson.toJson(subTask1), "/tasks/subtask");
-		jsonObject = JsonParser.parseString(response.body()).getAsJsonObject();
-		SubTask deletingSubtask = gson.fromJson(jsonObject, SubTask.class);
+		SubTask deletingSubtask = gson.fromJson(response.body(), SubTask.class);
 		response = sendRequestDELETE("/tasks/subtask?id=" + deletingSubtask.getID());
 		assertEquals("\"" + APIMessage.DELETE_ACCEPT.getMessage() + "\"", response.body());
 	}
@@ -349,23 +288,114 @@ public class HttpTaskServerTest {
 	@Test
 	public void shouldReturnSuccessBodyMessageIfDeletedEpic() {
 		response = sendRequestPOST(gson.toJson(epic1), "/tasks/epic");
-		JsonObject jsonObject = JsonParser.parseString(response.body()).getAsJsonObject();
-		Epic deletingEpic = gson.fromJson(jsonObject, Epic.class);
+		Epic deletingEpic = gson.fromJson(response.body(), Epic.class);
 		response = sendRequestDELETE("/tasks/epic?id=" + deletingEpic.getID());
 		assertEquals("\"" + APIMessage.DELETE_ACCEPT.getMessage() + "\"", response.body());
 	}
 
 	@Test
-	public void shouldListOfTaskWhenGetAllTasks() {
+	public void shouldReturnSameListOfTaskWhenGetAllTasks() {
 		response = sendRequestPOST(gson.toJson(task1), "/tasks/task");
-		JsonObject jsonObject = JsonParser.parseString(response.body()).getAsJsonObject();
-		Task task = gson.fromJson(jsonObject, Task.class);
-		List<Task> expectedList = List.of(task);
+		Task expectedTask1 = gson.fromJson(response.body(), Task.class);
+		response = sendRequestPOST(gson.toJson(task2), "/tasks/task");
+		Task expectedTask2 = gson.fromJson(response.body(), Task.class);
+		Task[] expectedArray = new Task[]{expectedTask1, expectedTask2};
 		response = sendRequestGET("/tasks/task");
-		jsonObject
-		Type type = new TypeToken<List<Task>>(){}.getType();
-		List<Task> list = gson.fromJson()
+		Type type = new TypeToken<Task[]>() {}.getType();
+		Task[] actualArray = gson.fromJson(response.body(), type);
+		assertArrayEquals(expectedArray, actualArray);
 	}
 
+	@Test
+	public void shouldReturnSameListOfEpicWhenGetAllEpics() {
+		response = sendRequestPOST(gson.toJson(epic1), "/tasks/epic");
+		Epic expectedTask1 = gson.fromJson(response.body(), Epic.class);
+		response = sendRequestPOST(gson.toJson(epic2), "/tasks/epic");
+		Epic expectedTask2 = gson.fromJson(response.body(), Epic.class);
+		Epic[] expectedArray = new Epic[]{expectedTask1, expectedTask2};
+		response = sendRequestGET("/tasks/epic");
+		Type type = new TypeToken<Epic[]>() {}.getType();
+		Epic[] actualArray = gson.fromJson(response.body(), type);
+		assertArrayEquals(expectedArray, actualArray);
+	}
 
+	@Test
+	public void shouldReturnSameListOfSubtaskWhenGetAllSubtasks() {
+		response = sendRequestPOST(gson.toJson(epic1), "/tasks/epic");
+		Epic epic = gson.fromJson(response.body(), Epic.class);
+		int epicID = epic.getID();
+		subTask1.setParentEpicID(epicID);
+		subTask2.setParentEpicID(epicID);
+		response = sendRequestPOST(gson.toJson(subTask1), "/tasks/subtask");
+		SubTask expectedTask1 = gson.fromJson(response.body(), SubTask.class);
+		response = sendRequestPOST(gson.toJson(subTask2), "/tasks/subtask");
+		SubTask expectedTask2 = gson.fromJson(response.body(), SubTask.class);
+		SubTask[] expectedArray = new SubTask[]{expectedTask1, expectedTask2};
+		response = sendRequestGET("/tasks/subtask");
+		Type type = new TypeToken<SubTask[]>() {}.getType();
+		SubTask[] actualArray = gson.fromJson(response.body(), type);
+		assertArrayEquals(expectedArray, actualArray);
+	}
+
+	@Test
+	public void shouldReturnPrioritizedList() {
+		response = sendRequestPOST(gson.toJson(task1), "/tasks/task");
+		Task expectedTask1 = gson.fromJson(response.body(), Task.class);
+		response = sendRequestPOST(gson.toJson(task2), "/tasks/task");
+		Task expectedTask2 = gson.fromJson(response.body(), Task.class);
+		response = sendRequestPOST(gson.toJson(epic1), "/tasks/epic");
+		Epic epic = gson.fromJson(response.body(), Epic.class);
+		int epicID = epic.getID();
+		subTask1.setParentEpicID(epicID);
+		subTask2.setParentEpicID(epicID);
+		response = sendRequestPOST(gson.toJson(subTask1), "/tasks/subtask");
+		SubTask expectedSubtask1 = gson.fromJson(response.body(), SubTask.class);
+		response = sendRequestPOST(gson.toJson(subTask2), "/tasks/subtask");
+		SubTask expectedSubtask2 = gson.fromJson(response.body(), SubTask.class);
+		response = sendRequestGET("/tasks");
+		int[] expectedArray = new int[] {
+				expectedTask1.getID(), expectedSubtask1.getID(), expectedSubtask2.getID(), expectedTask2.getID()};
+		Type type = new TypeToken<Task[]>() {}.getType();
+		Task[] responseArray = gson.fromJson(response.body(), type);
+		int[] actualArray = Arrays.stream(responseArray).mapToInt(Task::getID).toArray();
+		assertArrayEquals(expectedArray, actualArray);
+	}
+
+	@Test
+	public void shouldReturnHistoryList() {
+		response = sendRequestPOST(gson.toJson(task1), "/tasks/task");
+		Task expectedTask1 = gson.fromJson(response.body(), Task.class);
+		response = sendRequestPOST(gson.toJson(epic1), "/tasks/epic");
+		Epic expectedEpic1 = gson.fromJson(response.body(), Epic.class);
+		subTask1.setParentEpicID(expectedEpic1.getID());
+		response = sendRequestPOST(gson.toJson(subTask1), "/tasks/subtask");
+		SubTask expectedSubtask1 = gson.fromJson(response.body(), SubTask.class);
+		sendRequestGET("/tasks/task?id=" + expectedTask1.getID());
+		sendRequestGET("/tasks/subtask?id=" + expectedSubtask1.getID());
+		sendRequestGET("/tasks/epic?id=" + expectedEpic1.getID());
+		response = sendRequestGET("/tasks/history");
+		int[] expectedArray = new int[] {
+				expectedTask1.getID(), expectedSubtask1.getID(), expectedEpic1.getID()};
+		Type type = new TypeToken<Task[]>() {}.getType();
+		Task[] responseArray = gson.fromJson(response.body(), type);
+		int[] actualArray = Arrays.stream(responseArray).mapToInt(Task::getID).toArray();
+		assertArrayEquals(expectedArray, actualArray);
+	}
+
+	@Test
+	public void shouldLoadSameTasksWhenCreateNewHttpTaskServer() {
+		response = sendRequestPOST(gson.toJson(task1), "/tasks/task");
+		Task expectedTask1 = gson.fromJson(response.body(), Task.class);
+		response = sendRequestPOST(gson.toJson(task2), "/tasks/task");
+		Task expectedTask2 = gson.fromJson(response.body(), Task.class);
+		Task[] expectedArray = new Task[]{expectedTask1, expectedTask2};
+		response = sendRequestGET("/tasks/task");
+		httpServer.stop();
+		httpServer = Servers.getHttpTaskServer();
+		httpServer.start();
+		System.out.println();
+		Type type = new TypeToken<Task[]>() {}.getType();
+		Task[] actualArray = gson.fromJson(response.body(), type);
+		assertArrayEquals(expectedArray, actualArray);
+	}
 }
