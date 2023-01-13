@@ -21,10 +21,10 @@ public class HttpTaskManager extends FileBackedTasksManager {
 	private final KVTaskClient kvClient;
 	private final Gson gson;
 
-	public HttpTaskManager(String url) {
+	public HttpTaskManager(int serverPort) {
 		try {
 			gson = GsonConfig.getGsonTaskConfig();
-			kvClient = new KVTaskClient(url);
+			kvClient = new KVTaskClient(serverPort);
 			load();
 		} catch (IOException | InterruptedException e) {
 			throw new APIException(e.getMessage());

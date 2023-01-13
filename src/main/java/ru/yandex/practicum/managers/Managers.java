@@ -1,12 +1,14 @@
 package ru.yandex.practicum.managers;
 
 
+import ru.yandex.practicum.api.KVServer;
+
 import java.io.File;
 
 public class Managers {
 
 	public static HttpTaskManager getDefault() {
-		return new HttpTaskManager("http://localhost:8078");
+		return new HttpTaskManager(KVServer.PORT);
 	}
 
 	public static HistoryManager getDefaultHistory() {

@@ -14,20 +14,24 @@ import static ru.yandex.practicum.api.APIMessage.*;
 public class KVTaskClient {
 	private final HttpClient client;
 	private String API_TOKEN;
-	private final String serverURL;
+	private final int serverPort;
 	private HttpRequest request;
 
-	public KVTaskClient(String serverURL) throws IOException, InterruptedException, APIException {
-		this.serverURL = serverURL;
+	public KVTaskClient(int serverPort) throws IOException, InterruptedException, APIException {
+		this.serverPort = serverPort;
 		client = HttpClient.newHttpClient();
 		register();
+	}
+
+	private URI collectURI(String path) {
+		return URI.create("http://localhost:" + serverPort + path);
 	}
 
 	private void register() {
 		try {
 			request = HttpRequest.newBuilder()
 					.GET()
-					.uri(URI.create(serverURL + "/register"))
+					.uri(collectURI("/register"))
 					.version(HttpClient.Version.HTTP_1_1)
 					.headers(CONTENT_TYPE.name(), APPLICATION_JSON.name())
 					.build();
@@ -42,7 +46,7 @@ public class KVTaskClient {
 	public void put(String key, String json) throws IOException, InterruptedException, APIException {
 		request = HttpRequest.newBuilder()
 				.POST(HttpRequest.BodyPublishers.ofString(json))
-				.uri(URI.create(serverURL + "/save/" + key + "?API_TOKEN=" + API_TOKEN))
+				.uri(collectURI("/save/" + key + "?API_TOKEN=" + API_TOKEN))
 				.version(HttpClient.Version.HTTP_1_1)
 				.headers(CONTENT_TYPE.name(), APPLICATION_JSON.name())
 				.build();
@@ -56,7 +60,7 @@ public class KVTaskClient {
 	public String load(String key) throws IOException, InterruptedException, APIException {
 		request = HttpRequest.newBuilder()
 				.GET()
-				.uri(URI.create(serverURL + "/load/" + key + "?API_TOKEN=" + API_TOKEN))
+				.uri(collectURI("/load/" + key + "?API_TOKEN=" + API_TOKEN))
 				.version(HttpClient.Version.HTTP_1_1)
 				.headers(CONTENT_TYPE.name(), APPLICATION_JSON.name())
 				.build();
