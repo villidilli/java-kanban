@@ -13,7 +13,7 @@ public class Managers {
 		return new InMemoryHistoryManager();
 	}
 
-	public static FileBackedTasksManager getDefaultFileBacked() { //todo заменил с filebackedmanager на taskmanager. проверить
+	public static FileBackedTasksManager getDefaultFileBacked() {
 		return FileBackedTasksManager.load(new File("src/main/resources/Backup.csv"));
 	}
 }
