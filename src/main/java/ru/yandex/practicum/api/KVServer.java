@@ -141,7 +141,7 @@ public class KVServer {
 	}
 
 	public void stop() {
-		System.out.println("[" + this.getClass().getSimpleName() + "] остановлен [" + PORT + "]");
-		server.stop(1);
+		System.out.println("[[KVServer][" + PORT + "] остановлен ");
+		server.stop(0);
 	}
 }

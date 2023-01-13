@@ -12,7 +12,8 @@ public enum APIMessage {
 	NOT_INPUT_MIN_FIELD_TASK("Необходимо установить значение name и description"),
 	HTTP_TASK_SERVER_CREATED("[HttpTaskServer] инициализирован"),
 	HTTP_TASK_SERVER_STARTED("[HttpTaskServer] готов к работе"),
-	HTTP_TASK_SERVER_STOPPED("[HttpTaskServer] остановлен");
+	HTTP_TASK_SERVER_STOPPED("[HttpTaskServer] остановлен"),
+	ATTENTION_CODE_CONDITION("ATTENTION -> Сервер вернул код состояния: ");
 
 	private final String message;
 
