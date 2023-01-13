@@ -20,7 +20,7 @@ public class HttpTaskServer {
 	public HttpTaskServer() {
 		try {
 			httpManager = Managers.getDefault();
-			server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
+			server = HttpServer.create(new InetSocketAddress(PORT), 0);
 			server.createContext(ROOT_PATH, new TasksHandler(httpManager));
 			System.out.println(HTTP_TASK_SERVER_CREATED.getMessage());
 		} catch (IOException e) {

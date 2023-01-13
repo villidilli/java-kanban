@@ -31,7 +31,7 @@ public class KVServer {
 		gson = GsonConfig.getGsonTaskConfig();
 		apiToken = generateApiToken();
 		try {
-			server = HttpServer.create(new InetSocketAddress("localhost", PORT), 0);
+			server = HttpServer.create(new InetSocketAddress(PORT), 0);
 		} catch (IOException e) {
 			throw new APIException(e.getMessage());
 		}
