@@ -13,22 +13,30 @@ import static ru.yandex.practicum.api.APIMessage.*;
 
 public class KVTaskClient {
 	private final HttpClient client;
-	private final String API_TOKEN;
+	private String API_TOKEN;
 	private final String serverURL;
 	private HttpRequest request;
 
 	public KVTaskClient(String serverURL) throws IOException, InterruptedException, APIException {
 		this.serverURL = serverURL;
-		request = HttpRequest.newBuilder()
-				.GET()
-				.uri(URI.create(serverURL + "/register"))
-				.version(HttpClient.Version.HTTP_1_1)
-				.headers(CONTENT_TYPE.name(), APPLICATION_JSON.name())
-				.build();
 		client = HttpClient.newHttpClient();
-		API_TOKEN = client.send(request, BodyHandlers.ofString()).body();
-		System.out.println("[KVClient] успешно зарегистрировался на [KVServer] [API_TOKEN: " + API_TOKEN + "]");
-		System.out.println("[KVClient] готов к работе");
+		register();
+	}
+
+	private void register() {
+		try {
+			request = HttpRequest.newBuilder()
+					.GET()
+					.uri(URI.create(serverURL + "/register"))
+					.version(HttpClient.Version.HTTP_1_1)
+					.headers(CONTENT_TYPE.name(), APPLICATION_JSON.name())
+					.build();
+			API_TOKEN = client.send(request, BodyHandlers.ofString()).body();
+			System.out.println("[KVClient] успешно зарегистрировался на [KVServer] [API_TOKEN: " + API_TOKEN + "]");
+			System.out.println("[KVClient] готов к работе");
+		} catch (IOException | InterruptedException e) {
+			throw new APIException(e.getMessage());
+		}
 	}
 
 	public void put(String key, String json) throws IOException, InterruptedException, APIException {
